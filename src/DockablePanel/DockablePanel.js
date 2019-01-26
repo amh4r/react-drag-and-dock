@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import Draggable from 'react-draggable';
 
-const modalRoot = document.getElementById('root');
 
 const _getDimensionsFromRef = (ref) => {
   if (!ref || !ref.current) return {};
@@ -30,7 +29,7 @@ class DockablePanel extends React.Component {
   }
 
   componentDidMount() {
-    modalRoot.appendChild(this.el);
+    document.body.appendChild(this.el);
 
     const { context } = this.props;
 
@@ -54,7 +53,7 @@ class DockablePanel extends React.Component {
   }
 
   componentWillUnmount() {
-    modalRoot.removeChild(this.el);
+    document.body.removeChild(this.el);
   }
 
   didSnappedTargetChange = () => {

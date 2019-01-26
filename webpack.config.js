@@ -1,7 +1,11 @@
+var webpack = require('webpack');
+
 module.exports = {
   output: {
     library: 'DragAndDock',
+    libraryExport: 'default',
     libraryTarget: 'umd',
+    // globalObject: "(typeof window !== 'undefined' ? window : this)",
   },
   module: {
     rules: [
@@ -28,4 +32,5 @@ module.exports = {
       root: 'ReactDOM',
     },
   },
+  plugins: [new webpack.optimize.ModuleConcatenationPlugin()],
 };

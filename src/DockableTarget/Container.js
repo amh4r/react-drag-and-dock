@@ -12,7 +12,7 @@ class DockableTargetContainer extends Component {
       <Context.Consumer>
         {(context) => {
           return (
-            <DockableTarget context={context} ref={this.ref}>
+            <DockableTarget context={context}>
               {children}
             </DockableTarget>
           );
