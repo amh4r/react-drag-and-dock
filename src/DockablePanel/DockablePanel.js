@@ -1,0 +1,186 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import ReactDOM from 'react-dom';
+import Draggable from 'react-draggable';
+
+const modalRoot = document.getElementById('root');
+
+const _getDimensionsFromRef = (ref) => {
+  if (!ref || !ref.current) return {};
+
+  return ref.current.getBoundingClientRect();
+};
+
+class DockablePanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.deltaX = 0;
+    this.deltaY = 0;
+    this.el = document.createElement('div');
+    this.isDraggedOverTarget = false;
+    this.ref = React.createRef();
+    this.prevSnappedTargeDimensions = {};
+
+    this.state = {
+      height: null,
+      width: null,
+      left: null,
+      top: null,
+    };
+  }
+
+  componentDidMount() {
+    modalRoot.appendChild(this.el);
+
+    const { context } = this.props;
+
+    context.registerPanel(this.ref);
+  }
+
+  componentDidUpdate() {
+    const snappedTarget = this.getSnappedTarget();
+    const didSnappedTargetChange = this.didSnappedTargetChange();
+
+    if (snappedTarget && didSnappedTargetChange) {
+      const { height, width, left, top } = _getDimensionsFromRef(snappedTarget);
+
+      this.setState({
+        height,
+        width,
+        left: left - this.deltaX,
+        top: top - this.deltaY,
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    modalRoot.removeChild(this.el);
+  }
+
+  didSnappedTargetChange = () => {
+    const snappedTarget = this.getSnappedTarget();
+    const { height, width, left, top } = _getDimensionsFromRef(snappedTarget);
+
+    const {
+      height: prevHeight,
+      width: prevWidth,
+      left: prevLeft,
+      top: prevTop,
+    } = this.prevSnappedTargeDimensions;
+
+    this.prevSnappedTargeDimensions = {
+      height,
+      width,
+      left,
+      top,
+    };
+
+    if (height !== prevHeight || width !== prevWidth || left !== prevLeft || top !== prevTop) {
+      return true;
+    }
+
+    return false;
+  };
+
+  getDraggedOverTarget = (e) => {
+    const { context } = this.props;
+    const { targets } = context;
+
+    let draggedOverTarget = null;
+
+    targets.forEach((target) => {
+      const { bottom, left, right, top } = _getDimensionsFromRef(target.ref);
+      const isMouseInsideX = e.clientX > left && e.clientX < right;
+      const isMouseInsideY = e.clientY > top && e.clientY < bottom;
+
+      if (isMouseInsideX && isMouseInsideY) {
+        draggedOverTarget = target.ref;
+      }
+    });
+
+    return draggedOverTarget;
+  };
+
+  getSnappedTarget = () => {
+    const { context } = this.props;
+    const { panels } = context;
+    const panel = panels.get(this.ref);
+
+    return panel.snappedTarget;
+  };
+
+  handleDrag = (e) => {
+    this.draggedOverTarget = this.getDraggedOverTarget(e);
+  };
+
+  handleDragStop = (e, data) => {
+    this.deltaX = data.x;
+    this.deltaY = data.y;
+    const { context } = this.props;
+    const { onDrop } = context;
+
+    onDrop(this.ref, this.draggedOverTarget);
+  };
+
+  render() {
+    const { children, styles, title } = this.props;
+    const { height, width, left, top } = this.state;
+    const handleStyle = styles.handle || {};
+    const rootStyle = styles.root || {};
+
+    const contents = (
+      <Draggable
+        handle=".handle"
+        onStart={this.handleDragStart}
+        onDrag={this.handleDrag}
+        onStop={this.handleDragStop}
+      >
+        <div
+          ref={this.ref}
+          style={{
+            background: 'white',
+            border: '1px solid black',
+            boxSizing: 'border-box',
+            height,
+            width,
+            position: 'fixed',
+            left,
+            top,
+            ...rootStyle,
+          }}
+        >
+          <div className="handle" style={{ background: '#ccc', ...handleStyle }}>
+            {title}
+          </div>
+
+          <div>{children}</div>
+        </div>
+      </Draggable>
+    );
+
+    return ReactDOM.createPortal(contents, this.el);
+  }
+}
+
+DockablePanel.propTypes = {
+  children: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
+  context: PropTypes.shape({
+    onDrop: PropTypes.func.isRequired,
+    panels: PropTypes.instanceOf(Map).isRequired,
+    registerPanel: PropTypes.func.isRequired,
+    registerTarget: PropTypes.func.isRequired,
+    targets: PropTypes.instanceOf(Map).isRequired,
+  }).isRequired,
+  styles: PropTypes.shape({
+    handle: PropTypes.object,
+    root: PropTypes.object,
+  }),
+  title: PropTypes.string,
+};
+
+DockablePanel.defaultProps = {
+  styles: {},
+  title: 'Panel',
+};
+
+export default DockablePanel;

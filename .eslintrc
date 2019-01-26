@@ -1,0 +1,28 @@
+{
+  "settings": {
+    "ecmascript": 6,
+    "jsx": true,
+    "react": {
+      "version": "16.6.3"
+    }
+  },
+  "env": {
+    "browser": true,
+    "jest": true
+  },
+  "parser": "babel-eslint",
+  "extends": ["airbnb", "prettier/react", "prettier"],
+  "plugins": ["react", "import"],
+  "rules": {
+    "arrow-body-style": "off",
+    "import/no-named-as-default": "off",
+    "max-params": "warn",
+    "no-param-reassign": "warn",
+    "no-underscore-dangle": "off",
+    "prefer-destructuring": "warn",
+    "react/destructuring-assignment": "warn",
+    "react/forbid-prop-types": "warn",
+    "react/jsx-filename-extension": "off",
+    "react/prefer-stateless-function": "off"
+  }
+}
