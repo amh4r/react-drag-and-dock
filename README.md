@@ -1,6 +1,6 @@
-# React Drag and Drop
+# React Drag and Dock
 
-Create free-floating panels that "snap" into designated targets.
+Create free-floating panels that "dock" into designated targets. Panel docking does not cause its children to remount.
 
 [CodePen Demo](https://codepen.io/goodoldneon/pen/WPraLE)
 
@@ -55,4 +55,4 @@ export default Foo;
 ## `<DragAndDock.Target>`
 
 -   Drop `Targets` for `Panels`.
--   `Panels` "snap" to `Targets`.
+-   `Panels` "dock" into `Targets`.
