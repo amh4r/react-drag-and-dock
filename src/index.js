@@ -1,19 +1,19 @@
-import { Component } from "react";
+import { Component } from 'react';
 
-import DockablePanel from "./DockablePanel";
-import DockableProvider from "./DockableProvider";
-import DockableTarget from "./DockableTarget";
+import DockablePanel from './DockablePanel';
+import DockableProvider from './DockableProvider';
+import DockableTarget from './DockableTarget';
 
 class Dockable extends Component {
-  static Panel = DockablePanel;
-
-  static Provider = DockableProvider;
-
-  static Target = DockableTarget;
-
   render() {
     return null;
   }
 }
+
+Dockable.Panel = DockablePanel;
+
+Dockable.Provider = DockableProvider;
+
+Dockable.Target = DockableTarget;
 
 export default Dockable;
