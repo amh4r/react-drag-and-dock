@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import Draggable from 'react-draggable';
 
+import withContext from './withContext';
 
 const _getDimensionsFromRef = (ref) => {
   if (!ref || !ref.current) return {};
@@ -31,9 +32,19 @@ class DockablePanel extends React.Component {
   componentDidMount() {
     document.body.appendChild(this.el);
 
-    const { context } = this.props;
-
+    const { context, initialDockTargetId } = this.props;
     context.registerPanel(this.ref);
+
+    if (initialDockTargetId) {
+      const { provider, snapToTarget } = context;
+      const { targets } = provider;
+
+      const initialDockTarget = [...targets.values()].find((target) => {
+        return target.id === initialDockTargetId;
+      });
+
+      snapToTarget(this.ref, initialDockTarget.ref);
+    }
   }
 
   componentDidUpdate() {
@@ -116,9 +127,9 @@ class DockablePanel extends React.Component {
     this.deltaX = data.x;
     this.deltaY = data.y;
     const { context } = this.props;
-    const { onDrop } = context;
+    const { snapToTarget } = context;
 
-    onDrop(this.ref, this.draggedOverTarget);
+    snapToTarget(this.ref, this.draggedOverTarget);
   };
 
   render() {
@@ -164,12 +175,13 @@ class DockablePanel extends React.Component {
 DockablePanel.propTypes = {
   children: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
   context: PropTypes.shape({
-    onDrop: PropTypes.func.isRequired,
     panels: PropTypes.instanceOf(Map).isRequired,
     registerPanel: PropTypes.func.isRequired,
     registerTarget: PropTypes.func.isRequired,
+    snapToTarget: PropTypes.func.isRequired,
     targets: PropTypes.instanceOf(Map).isRequired,
   }).isRequired,
+  initialDockTargetId: PropTypes.string,
   styles: PropTypes.shape({
     handle: PropTypes.object,
     root: PropTypes.object,
@@ -178,8 +190,9 @@ DockablePanel.propTypes = {
 };
 
 DockablePanel.defaultProps = {
+  initialDockTargetId: null,
   styles: {},
   title: 'Panel',
 };
 
-export default DockablePanel;
+export default withContext(DockablePanel);
