@@ -37,10 +37,13 @@ export class Provider extends Component {
   };
 
   updateDock = (dockRef, dockProps = {}) => {
+    // const parentNode = dockRef.current ? dockRef.current.parentNode : null;
+
     this.docks = upsertDock({
       dockProps,
       dockRef,
       docks: this.docks,
+      // parentNode,
     });
 
     this.setState({ docks: this.docks });

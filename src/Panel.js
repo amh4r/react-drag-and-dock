@@ -5,10 +5,16 @@ import Draggable from 'react-draggable';
 
 import withContext from './withContext';
 
-const _getDimensionsFromRef = (ref) => {
-  if (!ref || !ref.current) return {};
+// const _getDimensionsFromRef = (ref) => {
+//   if (!ref || !ref.current) return {};
 
-  return ref.current.getBoundingClientRect();
+//   return ref.current.getBoundingClientRect();
+// };
+
+const _getDimensionsFromDock = (dockRef) => {
+  if (!dockRef || !dockRef.current || !dockRef.current.parentNode) return {};
+
+  return dockRef.current.parentNode.getBoundingClientRect();
 };
 
 class Panel extends React.Component {
@@ -52,7 +58,7 @@ class Panel extends React.Component {
     const didSnappedDockChange = this.didSnappedDockChange();
 
     if (snappedDock && didSnappedDockChange) {
-      const { height, width, left, top } = _getDimensionsFromRef(snappedDock);
+      const { height, width, left, top } = _getDimensionsFromDock(snappedDock);
 
       this.setState({
         height,
@@ -69,7 +75,7 @@ class Panel extends React.Component {
 
   didSnappedDockChange = () => {
     const snappedDock = this.getSnappedDock();
-    const { height, width, left, top } = _getDimensionsFromRef(snappedDock);
+    const { height, width, left, top } = _getDimensionsFromDock(snappedDock);
 
     const {
       height: prevHeight,
@@ -99,7 +105,7 @@ class Panel extends React.Component {
     let draggedOverDock = null;
 
     docks.forEach((dock) => {
-      const { bottom, left, right, top } = _getDimensionsFromRef(dock.ref);
+      const { bottom, left, right, top } = _getDimensionsFromDock(dock.ref);
       const isMouseInsideX = e.clientX > left && e.clientX < right;
       const isMouseInsideY = e.clientY > top && e.clientY < bottom;
 

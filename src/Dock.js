@@ -7,6 +7,10 @@ class Dock extends Component {
   constructor() {
     super();
     this.ref = React.createRef();
+
+    this.state = {
+      panels: new Map(),
+    };
   }
 
   componentDidMount() {
@@ -14,29 +18,38 @@ class Dock extends Component {
 
     context.registerDock(this.ref, this.props);
 
-    const dockNode = this.ref.current;
+    const { parentNode } = this.ref.current;
 
     const resizeObserver = new ResizeObserver(() => {
       context.updateDock(this.ref, this.props);
     });
 
-    resizeObserver.observe(dockNode);
+    resizeObserver.observe(parentNode);
   }
 
+  getPanels = () => {
+    const { context } = this.props;
+    const dock = context.provider.docks.get(this.ref);
+
+    if (!dock) return new Map();
+
+    return dock.panels;
+  };
+
   render() {
-    const { children } = this.props;
+    // const panels = this.getPanels();
 
-    const childProps = {
-      ...children.props,
-      ref: this.ref,
-    };
+    // console.log(panels);
 
-    return React.cloneElement(children, childProps);
+    return (
+      <div ref={this.ref}>
+        <div>hi</div>
+      </div>
+    );
   }
 }
 
 Dock.propTypes = {
-  children: PropTypes.element.isRequired,
   context: PropTypes.shape({
     panels: PropTypes.instanceOf(Map).isRequired,
     registerPanel: PropTypes.func.isRequired,
