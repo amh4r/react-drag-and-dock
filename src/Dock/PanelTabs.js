@@ -6,6 +6,7 @@ import PanelTab from './PanelTab';
 
 const Wrap = styled.div`
   border: 1px solid black;
+  border-bottom: 0;
   display: flex;
 `;
 
