@@ -2,6 +2,10 @@
   "scripts": {
     "start": "react-scripts start"
   },
+  "peerDependencies": {
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0"
+  },
   "browserslist": [
     ">0.2%",
     "not dead",

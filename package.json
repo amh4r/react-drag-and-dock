@@ -43,7 +43,8 @@
     "webpack-cli": "^3.2.1"
   },
   "peerDependencies": {
-    "react": "^16.7.0"
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0"
   },
   "author": "Aaron Harper",
   "license": "MIT"

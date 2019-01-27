@@ -1,4 +1,4 @@
-import React, { Component } from 'react'; // eslint-disable-line import/no-extraneous-dependencies
+import React, { Component } from 'react';
 // import DragAndDock from 'react-drag-and-dock';
 
 import DragAndDock from './DragAndDock';
@@ -6,17 +6,13 @@ import DragAndDock from './DragAndDock';
 import { Wrap } from './styles';
 import Timer from './components/Timer';
 
-console.log(DragAndDock)
-
 class App extends Component {
   render() {
     return (
       <Wrap style={{ height: '80vh' }}>
         <DragAndDock.Provider>
           <DragAndDock.Target id="target-1">
-            <div style={{ background: '#ddd', flexGrow: 2 }}>
-              Left target
-            </div>
+            <div style={{ background: '#ddd', flexGrow: 2 }}>Left target</div>
           </DragAndDock.Target>
 
           <div style={{ flexGrow: 3 }} />
