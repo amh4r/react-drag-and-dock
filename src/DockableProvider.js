@@ -18,49 +18,40 @@ export class DockableProvider extends Component {
   }
 
   registerPanel = (ref, props = {}) => {
-    const { panels } = this;
-
-    if (!panels.has(ref)) {
-      const data = {
-        id: props.id,
-        ref,
-        snappedTarget: null,
-      };
-
-      const newPanels = new Map([...panels]);
-
-      newPanels.set(ref, data);
-      this.panels = newPanels;
-
-      this.setState({ panels: this.panels });
-    }
+    this.updatePanel(ref, props);
   };
 
   registerTarget = (ref, props = {}) => {
-    const { targets } = this;
-
-    if (!targets.has(ref)) {
-      const data = {
-        id: props.id,
-        ref,
-      };
-
-      const newTargets = new Map([...targets]);
-
-      newTargets.set(ref, data);
-      this.targets = newTargets;
-
-      this.setState({ targets: this.targets });
-    }
+    this.updateTarget(ref, props);
   };
 
-  updateTarget = (ref) => {
+  updatePanel = (ref, props = {}) => {
+    const { panels } = this;
+    const newPanels = new Map([...panels]);
+
+    const data = {
+      id: props.id,
+      ref,
+    };
+
+    newPanels.set(ref, data);
+    this.panels = newPanels;
+
+    this.setState({ panels: this.panels });
+  };
+
+  updateTarget = (ref, props = {}) => {
     const { targets } = this;
     const newTargets = new Map([...targets]);
-    const data = { ref };
+
+    const data = {
+      id: props.id,
+      ref,
+    };
 
     newTargets.set(ref, data);
     this.targets = newTargets;
+
     this.setState({ targets: this.targets });
   };
 
@@ -74,6 +65,7 @@ export class DockableProvider extends Component {
     };
 
     this.panels.set(panelRef, newPanel);
+
     this.setState({ panels: this.panels });
   };
 

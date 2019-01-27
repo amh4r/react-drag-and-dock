@@ -12,7 +12,7 @@
     "build": "webpack --mode production",
     "start": "concurrently \"npm run start:server\" \"npm run start:src-watch\"",
     "start:server": "cd sandbox && PORT=3010 react-scripts start",
-    "start:src-watch": "cpx \"src/**/*.{js}\" \"sandbox/src/DragAndDock\" --watch"
+    "start:src-watch": "cpx \"src/**/*.js\" \"sandbox/src/DragAndDock\" --watch"
   },
   "dependencies": {
     "prop-types": "^15.6.2",

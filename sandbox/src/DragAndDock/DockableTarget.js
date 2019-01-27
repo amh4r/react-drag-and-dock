@@ -17,7 +17,7 @@ class DockableTarget extends Component {
     const targetNode = this.ref.current;
 
     const resizeObserver = new ResizeObserver(() => {
-      context.updateTarget(this.ref);
+      context.updateTarget(this.ref, this.props);
     });
 
     resizeObserver.observe(targetNode);
