@@ -12,7 +12,6 @@ class Dock extends Component {
     this.dockableAreaRef = React.createRef();
 
     this.state = {
-      activePanelRef: null,
       height: null,
     };
   }
@@ -41,9 +40,15 @@ class Dock extends Component {
     resizeObserver.observe(dockableAreaNode);
   }
 
-  getPanels = () => {
+  getDock = () => {
     const { context } = this.props;
     const dock = context.provider.docks.get(this.ref);
+
+    return dock;
+  };
+
+  getPanels = () => {
+    const dock = this.getDock();
 
     if (!dock) return new Map();
 
@@ -55,15 +60,13 @@ class Dock extends Component {
     const { setDockActivePanel } = context;
 
     setDockActivePanel(this.ref, panel.ref);
-
-    this.setState({
-      activePanelRef: panel.ref,
-    });
   };
 
   render() {
-    const { activePanelRef, height } = this.state;
+    const { height } = this.state;
+    const dock = this.getDock();
     const panels = this.getPanels();
+    const activePanelRef = dock ? dock.activePanelRef : null;
 
     return (
       <div ref={this.ref} style={{ display: 'flex', flexDirection: 'column', height }}>

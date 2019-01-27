@@ -183,8 +183,6 @@ const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
     docks: newDocks,
   });
 
-  console.log(newDocks)
-
   return {
     newDocks,
     newPanels,
