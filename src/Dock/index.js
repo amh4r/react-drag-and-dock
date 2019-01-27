@@ -70,7 +70,7 @@ class Dock extends Component {
 
     return (
       <div ref={this.ref} style={{ display: 'flex', flexDirection: 'column', height }}>
-        {panels.size > 0 && (
+        {panels.size > 1 && (
           <PanelTabs
             activePanelRef={activePanelRef}
             panels={panels}

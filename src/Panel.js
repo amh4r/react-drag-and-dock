@@ -2,8 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import Draggable from 'react-draggable';
+import styled from 'styled-components';
 
 import withContext from './withContext';
+
+const Handle = styled.div`
+  background: #ccc;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+`;
+
+const Root = styled.div`
+  background: white;
+  border: 1px solid black;
+  box-sizing: border-box;
+  position: fixed;
+`;
 
 const _getDimensionsFromRef = (ref) => {
   if (!ref || !ref.current) return {};
@@ -162,27 +179,23 @@ class Panel extends React.Component {
         onDrag={this.handleDrag}
         onStop={this.handleDragStop}
       >
-        <div
+        <Root
           ref={this.ref}
           style={{
-            background: 'white',
-            border: '1px solid black',
-            boxSizing: 'border-box',
             height,
             width,
-            position: 'fixed',
             left,
             top,
             ...rootStyle,
             display: isVisible ? 'block' : 'none',
           }}
         >
-          <div className="handle" style={{ background: '#ccc', ...handleStyle }}>
+          <Handle className="handle" style={{ ...handleStyle }}>
             {title}
-          </div>
+          </Handle>
 
           <div>{children}</div>
-        </div>
+        </Root>
       </Draggable>
     );
 

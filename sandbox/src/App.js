@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 // import DragAndDock from 'react-drag-and-dock';
 import styled from 'styled-components';
 
+import './app.css';
 import DragAndDock from './DragAndDock';
 import Timer from './components/Timer';
 
