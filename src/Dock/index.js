@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import withContext from './withContext';
+import withContext from '../withContext';
+import PanelTabs from './PanelTabs';
 
 class Dock extends Component {
   constructor() {
@@ -48,20 +49,17 @@ class Dock extends Component {
     return dock.panels;
   };
 
-  renderTabs = () => {
-    const panels = this.getPanels();
-
-    if (panels.size < 2) return null;
-
-    return <div>{panels.size}</div>;
+  handleTabClick = (ref) => {
+    console.log(ref);
   };
 
   render() {
     const { height } = this.state;
+    const panels = this.getPanels();
 
     return (
       <div ref={this.ref} style={{ display: 'flex', flexDirection: 'column', height }}>
-        <div>{this.renderTabs()}</div>
+        {panels.size > 0 && <PanelTabs panels={panels} onTabClick={this.handleTabClick} />}
         <div ref={this.dockableAreaRef} style={{ flexGrow: 1 }} />
       </div>
     );

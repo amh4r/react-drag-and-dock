@@ -38,9 +38,17 @@ const removePanelFromDocks = ({ docks, panelRef }) => {
 const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
   const panel = panels.get(panelRef);
 
+  const snappedDock = (() => {
+    if (!dockRef) return null;
+
+    const dock = docks.get(dockRef);
+
+    return dock.dockableAreaRef;
+  })();
+
   const newPanel = {
     ...panel,
-    snappedDock: dockRef || null,
+    snappedDock,
   };
 
   const newPanels = new Map([...panels]).set(panelRef, newPanel);
@@ -62,12 +70,13 @@ const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
   };
 };
 
-const upsertDock = ({ dockProps, dockRef, docks }) => {
+const upsertDock = ({ dockableAreaRef, dockProps, dockRef, docks }) => {
   const oldDock = docks.get(dockRef);
 
   const newDock = {
     panels: new Map(),
     ...oldDock,
+    dockableAreaRef,
     props: dockProps,
     ref: dockRef,
   };

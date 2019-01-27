@@ -19,7 +19,11 @@ const withContext = (Component) => {
   };
 
   ContextConsumerWrapper.propTypes = {
-    children: PropTypes.element.isRequired,
+    children: PropTypes.element,
+  };
+
+  ContextConsumerWrapper.defaultProps = {
+    children: null,
   };
 
   return ContextConsumerWrapper;
