@@ -26,12 +26,9 @@ const updatePanel = ({ newData, ref, panels }) => {
   return newPanels;
 };
 
-const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
-  const dock = docks.get(dockRef);
-  const panel = panels.get(panelRef);
-
+const changeDockActivePanel = ({ dockRef, docks, activePanelRef, panels }) => {
   const newDockData = {
-    panels: new Map(dock.panels).set(panelRef, panel),
+    activePanelRef,
   };
 
   const newDocks = updateDock({
@@ -40,7 +37,54 @@ const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
     docks,
   });
 
-  return newDocks;
+  const dock = docks.get(dockRef);
+  let newPanels = new Map(panels);
+
+  dock.panels.forEach((panel) => {
+    const newPanelData = {
+      isVisible: panel.ref === activePanelRef,
+    };
+
+    newPanels = updatePanel({
+      newData: newPanelData,
+      ref: panel.ref,
+      panels: newPanels,
+    });
+  });
+
+  return {
+    newDocks,
+    newPanels,
+  };
+};
+
+const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
+  const dock = docks.get(dockRef);
+  const panel = panels.get(panelRef);
+
+  const newDockData = {
+    panels: new Map(dock.panels).set(panelRef, panel),
+  };
+
+  let newDocks = updateDock({
+    newData: newDockData,
+    ref: dockRef,
+    docks,
+  });
+
+  let newPanels = null;
+
+  ({ newDocks, newPanels } = changeDockActivePanel({
+    dockRef,
+    docks: newDocks,
+    activePanelRef: panelRef,
+    panels,
+  }));
+
+  return {
+    newDocks,
+    newPanels,
+  };
 };
 
 const removePanelFromDocks = ({ docks, panelRef }) => {
@@ -117,50 +161,29 @@ const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
     snappedDock,
   };
 
-  const newPanels = new Map(panels).set(panelRef, newPanel);
-
+  let newPanels = new Map(panels).set(panelRef, newPanel);
   let newDocks = removePanelFromDocks({ docks, panelRef });
 
   if (dockRef) {
-    newDocks = addPanelToDock({
+    ({ newDocks, newPanels } = addPanelToDock({
       docks: newDocks,
       dockRef,
       panels: newPanels,
       panelRef,
-    });
+    }));
   }
 
-  return {
-    newDocks,
-    newPanels,
-  };
-};
-
-const changeDockActivePanel = ({ dockRef, docks, activePanelRef, panels }) => {
   const newDockData = {
-    activePanelRef,
+    activePanelRef: panelRef,
   };
 
-  const newDocks = updateDock({
+  newDocks = updateDock({
     newData: newDockData,
     ref: dockRef,
-    docks,
+    docks: newDocks,
   });
 
-  const dock = docks.get(dockRef);
-  let newPanels = new Map(panels);
-
-  dock.panels.forEach((panel) => {
-    const newPanelData = {
-      isVisible: panel.ref === activePanelRef,
-    };
-
-    newPanels = updatePanel({
-      newData: newPanelData,
-      ref: panel.ref,
-      panels: newPanels,
-    });
-  });
+  console.log(newDocks)
 
   return {
     newDocks,
