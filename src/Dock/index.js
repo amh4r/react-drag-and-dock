@@ -20,9 +20,8 @@ class Dock extends Component {
   componentDidMount() {
     const { context } = this.props;
 
-    context.registerDock({
-      dockRef: this.ref,
-      dockProps: this.props,
+    context.registerDock(this.ref, {
+      props: this.props,
       dockableAreaRef: this.dockableAreaRef,
     });
 

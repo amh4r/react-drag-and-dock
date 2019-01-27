@@ -1,7 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { registerDock, registerPanel, snapPanelToDock, upsertDock, upsertPanel } from './utils';
+import {
+  changeDockActivePanel,
+  registerDock,
+  registerPanel,
+  snapPanelToDock,
+  updateDock,
+  updatePanel,
+} from './utils';
 import Context from '../Context';
 
 export class Provider extends Component {
@@ -18,64 +25,48 @@ export class Provider extends Component {
     };
   }
 
-  registerDock = ({ dockableAreaRef, dockProps = {}, dockRef }) => {
-    this.docks = registerDock({ dockableAreaRef, dockProps, dockRef, docks: this.docks });
+  registerDock = (ref, data) => {
+    this.docks = registerDock({ data, ref, docks: this.docks });
 
     this.setState({ docks: this.docks });
   };
 
-  registerPanel = ({ panelProps = {}, panelRef }) => {
-    this.panels = registerPanel({ panelProps, panelRef, panels: this.panels });
+  registerPanel = (ref, data) => {
+    this.panels = registerPanel({ data, ref, panels: this.panels });
 
     this.setState({ panels: this.panels });
   };
 
-  // registerPanel = (panelRef, panelProps = {}) => {
-  //   this.updatePanel(panelRef, panelProps);
-  // };
-
-  updatePanel = (panelRef, panelProps = {}) => {
-    this.panels = upsertPanel({
-      panelProps,
-      panelRef,
-      panels: this.panels,
-    });
-
-    this.setState({ panels: this.panels });
-  };
-
-  updateDock = ({ dockableAreaRef, dockProps = {}, dockRef }) => {
-    this.docks = upsertDock({
-      dockableAreaRef,
-      dockProps,
-      dockRef,
+  updateDock = (ref, newData) => {
+    this.docks = updateDock({
+      newData,
+      ref,
       docks: this.docks,
     });
 
     this.setState({ docks: this.docks });
   };
 
-  setDockActivePanel = (dockRef, panelRef) => {
-    const dock = this.docks.get(dockRef);
-    const newPanels = new Map(this.panels);
-
-    dock.panels.forEach((panel) => {
-      const newPanel = {
-        ...panel,
-        isVisible: panel.ref === panelRef,
-      };
-
-      newPanels.set(panel.ref, newPanel);
+  updatePanel = (ref, newData) => {
+    this.panels = updatePanel({
+      newData,
+      ref,
+      panels: this.panels,
     });
 
+    this.setState({ panels: this.panels });
+  };
+
+  setDockActivePanel = (dockRef, activePanelRef) => {
+    const { newDocks, newPanels } = changeDockActivePanel({
+      dockRef,
+      docks: this.docks,
+      activePanelRef,
+      panels: this.panels,
+    });
+
+    this.docks = newDocks;
     this.panels = newPanels;
-
-    const newDock = {
-      ...dock,
-      activePanelRef: panelRef,
-    };
-
-    this.docks = new Map(this.docks).set(dockRef, newDock);
 
     this.setState({
       docks: this.docks,

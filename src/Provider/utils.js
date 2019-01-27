@@ -1,46 +1,52 @@
-const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
-  const dock = docks.get(dockRef);
-  const panel = panels.get(panelRef);
+const updateDock = ({ newData, ref, docks }) => {
+  const oldData = docks.get(ref);
 
   const newDock = {
-    ...dock,
-    panels: new Map(dock.panels).set(panelRef, panel),
+    ...oldData,
+    ...newData,
+    ref,
   };
 
-  const newDocks = new Map([...docks]).set(dockRef, newDock);
+  const newDocks = new Map(docks).set(ref, newDock);
 
   return newDocks;
 };
 
-const registerDock = ({ dockableAreaRef, dockProps, dockRef, docks }) => {
-  const newDock = {
-    panels: new Map(),
-    dockableAreaRef,
-    props: dockProps,
-    ref: dockRef,
-  };
+const updatePanel = ({ newData, ref, panels }) => {
+  const oldPanel = panels.get(ref);
 
-  const newDocks = new Map(docks).set(dockRef, newDock);
-
-  return newDocks;
-};
-
-const registerPanel = ({ panelProps, panelRef, panels }) => {
   const newPanel = {
-    isVisible: true,
-    props: panelProps,
-    ref: panelRef,
+    ...oldPanel,
+    ...newData,
+    ref,
   };
 
-  const newPanels = new Map(panels).set(panelRef, newPanel);
+  const newPanels = new Map(panels).set(ref, newPanel);
 
   return newPanels;
 };
 
-const removePanelFromDocks = ({ docks, panelRef }) => {
-  const newDocks = new Map(docks);
+const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
+  const dock = docks.get(dockRef);
+  const panel = panels.get(panelRef);
 
-  new Map(docks).forEach((dock, key) => {
+  const newDockData = {
+    panels: new Map(dock.panels).set(panelRef, panel),
+  };
+
+  const newDocks = updateDock({
+    newData: newDockData,
+    ref: dockRef,
+    docks,
+  });
+
+  return newDocks;
+};
+
+const removePanelFromDocks = ({ docks, panelRef }) => {
+  let newDocks = new Map(docks);
+
+  new Map(docks).forEach((dock) => {
     const { panels } = dock;
 
     if (panels.has(panelRef)) {
@@ -48,16 +54,51 @@ const removePanelFromDocks = ({ docks, panelRef }) => {
 
       newPanels.delete(panelRef);
 
-      const newDock = {
-        ...dock,
+      const newDockData = {
         panels: newPanels,
       };
 
-      newDocks.set(key, newDock);
+      newDocks = updateDock({
+        newData: newDockData,
+        ref: dock.ref,
+        docks: newDocks,
+      });
     }
   });
 
   return newDocks;
+};
+
+const registerDock = ({ data, ref, docks }) => {
+  const defaults = {
+    panels: new Map(),
+  };
+
+  const newDock = {
+    ...defaults,
+    ...data,
+    ref,
+  };
+
+  const newDocks = new Map(docks).set(ref, newDock);
+
+  return newDocks;
+};
+
+const registerPanel = ({ data, ref, panels }) => {
+  const defaults = {
+    isVisible: true,
+  };
+
+  const newPanel = {
+    ...defaults,
+    ...data,
+    ref,
+  };
+
+  const newPanels = new Map(panels).set(ref, newPanel);
+
+  return newPanels;
 };
 
 const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
@@ -76,7 +117,7 @@ const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
     snappedDock,
   };
 
-  const newPanels = new Map([...panels]).set(panelRef, newPanel);
+  const newPanels = new Map(panels).set(panelRef, newPanel);
 
   let newDocks = removePanelFromDocks({ docks, panelRef });
 
@@ -95,43 +136,45 @@ const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
   };
 };
 
-const upsertDock = ({ dockableAreaRef, dockProps, dockRef, docks }) => {
-  const oldDock = docks.get(dockRef);
+const changeDockActivePanel = ({ dockRef, docks, activePanelRef, panels }) => {
+  const newDockData = {
+    activePanelRef,
+  };
 
-  const newDock = {
-    panels: new Map(),
-    ...oldDock,
-    dockableAreaRef,
-    props: dockProps,
+  const newDocks = updateDock({
+    newData: newDockData,
     ref: dockRef,
+    docks,
+  });
+
+  const dock = docks.get(dockRef);
+  let newPanels = new Map(panels);
+
+  dock.panels.forEach((panel) => {
+    const newPanelData = {
+      isVisible: panel.ref === activePanelRef,
+    };
+
+    newPanels = updatePanel({
+      newData: newPanelData,
+      ref: panel.ref,
+      panels: newPanels,
+    });
+  });
+
+  return {
+    newDocks,
+    newPanels,
   };
-
-  const newDocks = new Map([...docks]).set(dockRef, newDock);
-
-  return newDocks;
-};
-
-const upsertPanel = ({ panelProps, panelRef, panels }) => {
-  const oldPanel = panels.get(panelRef);
-
-  const newPanel = {
-    isVisible: true,
-    ...oldPanel,
-    props: panelProps,
-    ref: panelRef,
-  };
-
-  const newPanels = new Map([...panels]).set(panelRef, newPanel);
-
-  return newPanels;
 };
 
 export {
   addPanelToDock,
+  changeDockActivePanel,
   registerDock,
   registerPanel,
   removePanelFromDocks,
   snapPanelToDock,
-  upsertDock,
-  upsertPanel,
+  updateDock,
+  updatePanel,
 };
