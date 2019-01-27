@@ -12,6 +12,31 @@ const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
   return newDocks;
 };
 
+const registerDock = ({ dockableAreaRef, dockProps, dockRef, docks }) => {
+  const newDock = {
+    panels: new Map(),
+    dockableAreaRef,
+    props: dockProps,
+    ref: dockRef,
+  };
+
+  const newDocks = new Map(docks).set(dockRef, newDock);
+
+  return newDocks;
+};
+
+const registerPanel = ({ panelProps, panelRef, panels }) => {
+  const newPanel = {
+    isVisible: true,
+    props: panelProps,
+    ref: panelRef,
+  };
+
+  const newPanels = new Map(panels).set(panelRef, newPanel);
+
+  return newPanels;
+};
+
 const removePanelFromDocks = ({ docks, panelRef }) => {
   const newDocks = new Map(docks);
 
@@ -101,4 +126,12 @@ const upsertPanel = ({ panelProps, panelRef, panels }) => {
   return newPanels;
 };
 
-export { addPanelToDock, removePanelFromDocks, snapPanelToDock, upsertDock, upsertPanel };
+export {
+  addPanelToDock,
+  registerDock,
+  registerPanel,
+  removePanelFromDocks,
+  snapPanelToDock,
+  upsertDock,
+  upsertPanel,
+};

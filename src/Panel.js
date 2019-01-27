@@ -34,7 +34,8 @@ class Panel extends React.Component {
     document.body.appendChild(this.el);
 
     const { context, initialDockId } = this.props;
-    context.registerPanel(this.ref, this.props);
+
+    context.registerPanel({ panelRef: this.ref, panelProps: this.props });
 
     if (initialDockId) {
       const { provider, snapToDock } = context;

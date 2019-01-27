@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import { snapPanelToDock, upsertDock, upsertPanel } from './utils';
+import { registerDock, registerPanel, snapPanelToDock, upsertDock, upsertPanel } from './utils';
 import Context from '../Context';
 
 export class Provider extends Component {
@@ -18,13 +18,21 @@ export class Provider extends Component {
     };
   }
 
-  registerPanel = (panelRef, panelProps = {}) => {
-    this.updatePanel(panelRef, panelProps);
+  registerDock = ({ dockableAreaRef, dockProps = {}, dockRef }) => {
+    this.docks = registerDock({ dockableAreaRef, dockProps, dockRef, docks: this.docks });
+
+    this.setState({ docks: this.docks });
   };
 
-  registerDock = ({ dockableAreaRef, dockProps = {}, dockRef }) => {
-    this.updateDock({ dockableAreaRef, dockProps, dockRef });
+  registerPanel = ({ panelProps = {}, panelRef }) => {
+    this.panels = registerPanel({ panelProps, panelRef, panels: this.panels });
+
+    this.setState({ panels: this.panels });
   };
+
+  // registerPanel = (panelRef, panelProps = {}) => {
+  //   this.updatePanel(panelRef, panelProps);
+  // };
 
   updatePanel = (panelRef, panelProps = {}) => {
     this.panels = upsertPanel({
