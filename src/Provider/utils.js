@@ -87,30 +87,49 @@ const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
   };
 };
 
-const removePanelFromDocks = ({ docks, panelRef }) => {
+const removePanelFromDocks = ({ docks, panelRef, panels }) => {
   let newDocks = new Map(docks);
+  let newPanels = new Map(panels);
 
   new Map(docks).forEach((dock) => {
-    const { panels } = dock;
+    const isPanelInDock = dock.panels.has(panelRef);
 
-    if (panels.has(panelRef)) {
-      const newPanels = new Map(panels);
+    if (!isPanelInDock) return;
 
-      newPanels.delete(panelRef);
+    const newDockPanels = new Map(dock.panels);
 
-      const newDockData = {
-        panels: newPanels,
-      };
+    newDockPanels.delete(panelRef);
 
-      newDocks = updateDock({
-        newData: newDockData,
-        ref: dock.ref,
-        docks: newDocks,
-      });
-    }
+    const newDockData = {
+      panels: newDockPanels,
+    };
+
+    newDocks = updateDock({
+      newData: newDockData,
+      ref: dock.ref,
+      docks: newDocks,
+    });
+
+    const newActivePanelRef = (() => {
+      if (newPanels.size === 0) return null;
+
+      const firstDockPanel = dock.panels.values().next().value;
+
+      return firstDockPanel.ref;
+    })();
+
+    ({ newDocks, newPanels } = changeDockActivePanel({
+      dockRef: dock.ref,
+      docks: newDocks,
+      activePanelRef: newActivePanelRef,
+      panels: newPanels,
+    }));
   });
 
-  return newDocks;
+  return {
+    newDocks,
+    newPanels,
+  };
 };
 
 const registerDock = ({ data, ref, docks }) => {
@@ -161,8 +180,14 @@ const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
     snappedDock,
   };
 
+  let newDocks = new Map(docks);
   let newPanels = new Map(panels).set(panelRef, newPanel);
-  let newDocks = removePanelFromDocks({ docks, panelRef });
+
+  ({ newDocks, newPanels } = removePanelFromDocks({
+    docks: newDocks,
+    panelRef,
+    panels: newPanels,
+  }));
 
   if (dockRef) {
     ({ newDocks, newPanels } = addPanelToDock({
@@ -171,17 +196,17 @@ const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
       panels: newPanels,
       panelRef,
     }));
+
+    const newDockData = {
+      activePanelRef: panelRef,
+    };
+
+    newDocks = updateDock({
+      newData: newDockData,
+      ref: dockRef,
+      docks: newDocks,
+    });
   }
-
-  const newDockData = {
-    activePanelRef: panelRef,
-  };
-
-  newDocks = updateDock({
-    newData: newDockData,
-    ref: dockRef,
-    docks: newDocks,
-  });
 
   return {
     newDocks,
@@ -194,7 +219,6 @@ export {
   changeDockActivePanel,
   registerDock,
   registerPanel,
-  removePanelFromDocks,
   snapPanelToDock,
   updateDock,
   updatePanel,
