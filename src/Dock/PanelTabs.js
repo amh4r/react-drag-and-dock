@@ -11,14 +11,15 @@ const Wrap = styled.div`
 
 class PanelTabs extends Component {
   render() {
-    const { onTabClick, panels } = this.props;
+    const { activePanelRef, onTabClick, panels } = this.props;
     const tabs = [];
 
     panels.forEach((panel) => {
       const { props } = panel;
+      const isActive = panel.ref === activePanelRef;
 
       tabs.push(
-        <PanelTab key={props.title} onClick={() => onTabClick(panel)}>
+        <PanelTab key={props.title} isActive={isActive} onClick={() => onTabClick(panel)}>
           {props.title}
         </PanelTab>,
       );
@@ -29,11 +30,15 @@ class PanelTabs extends Component {
 }
 
 PanelTabs.propTypes = {
+  activePanelRef: PropTypes.shape({
+    current: PropTypes.oneOfType([PropTypes.element, PropTypes.object]),
+  }),
   onTabClick: PropTypes.func,
   panels: PropTypes.instanceOf(Map).isRequired,
 };
 
 PanelTabs.defaultProps = {
+  activePanelRef: null,
   onTabClick: () => {},
 };
 

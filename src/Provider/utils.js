@@ -90,6 +90,7 @@ const upsertPanel = ({ panelProps, panelRef, panels }) => {
   const oldPanel = panels.get(panelRef);
 
   const newPanel = {
+    isVisible: true,
     ...oldPanel,
     props: panelProps,
     ref: panelRef,

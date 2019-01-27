@@ -47,6 +47,34 @@ export class Provider extends Component {
     this.setState({ docks: this.docks });
   };
 
+  setDockActivePanel = (dockRef, panelRef) => {
+    const dock = this.docks.get(dockRef);
+    const newPanels = new Map(this.panels);
+
+    dock.panels.forEach((panel) => {
+      const newPanel = {
+        ...panel,
+        isVisible: panel.ref === panelRef,
+      };
+
+      newPanels.set(panel.ref, newPanel);
+    });
+
+    this.panels = newPanels;
+
+    const newDock = {
+      ...dock,
+      activePanelRef: panelRef,
+    };
+
+    this.docks = new Map(this.docks).set(dockRef, newDock);
+
+    this.setState({
+      docks: this.docks,
+      panels: this.panels,
+    });
+  };
+
   snapToDock = (panelRef, dockRef) => {
     const { newDocks, newPanels } = snapPanelToDock({
       docks: this.docks,
@@ -69,12 +97,13 @@ export class Provider extends Component {
     const { panels, docks } = this.state;
 
     const contextValue = {
+      docks,
       panels,
       provider: this,
       registerPanel: this.registerPanel,
       registerDock: this.registerDock,
+      setDockActivePanel: this.setDockActivePanel,
       snapToDock: this.snapToDock,
-      docks,
       updateDock: this.updateDock,
     };
 

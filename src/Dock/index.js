@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import ResizeObserver from 'resize-observer-polyfill';
 
 import withContext from '../withContext';
 import PanelTabs from './PanelTabs';
@@ -11,6 +12,7 @@ class Dock extends Component {
     this.dockableAreaRef = React.createRef();
 
     this.state = {
+      activePanelRef: null,
       height: null,
     };
   }
@@ -49,17 +51,31 @@ class Dock extends Component {
     return dock.panels;
   };
 
-  handleTabClick = (ref) => {
-    console.log(ref);
+  handleTabClick = (panel) => {
+    const { context } = this.props;
+    const { setDockActivePanel } = context;
+
+    setDockActivePanel(this.ref, panel.ref);
+
+    this.setState({
+      activePanelRef: panel.ref,
+    });
   };
 
   render() {
-    const { height } = this.state;
+    const { activePanelRef, height } = this.state;
     const panels = this.getPanels();
 
     return (
       <div ref={this.ref} style={{ display: 'flex', flexDirection: 'column', height }}>
-        {panels.size > 0 && <PanelTabs panels={panels} onTabClick={this.handleTabClick} />}
+        {panels.size > 0 && (
+          <PanelTabs
+            activePanelRef={activePanelRef}
+            panels={panels}
+            onTabClick={this.handleTabClick}
+          />
+        )}
+
         <div ref={this.dockableAreaRef} style={{ flexGrow: 1 }} />
       </div>
     );

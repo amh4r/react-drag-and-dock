@@ -26,6 +26,7 @@ class Panel extends React.Component {
       width: null,
       left: null,
       top: null,
+      isVisible: true,
     };
   }
 
@@ -61,11 +62,26 @@ class Panel extends React.Component {
         top: top - this.deltaY,
       });
     }
+
+    this.setVisibility();
   }
 
   componentWillUnmount() {
     document.body.removeChild(this.el);
   }
+
+  setVisibility = () => {
+    const { context } = this.props;
+    const { panels } = context.provider;
+    const panel = panels.get(this.ref);
+    const { isVisible } = this.state;
+
+    if (isVisible !== panel.isVisible) {
+      this.setState({
+        isVisible: panel.isVisible,
+      });
+    }
+  };
 
   didSnappedDockChange = () => {
     const snappedDock = this.getSnappedDock();
@@ -134,7 +150,7 @@ class Panel extends React.Component {
 
   render() {
     const { children, styles, title } = this.props;
-    const { height, width, left, top } = this.state;
+    const { height, isVisible, width, left, top } = this.state;
     const handleStyle = styles.handle || {};
     const rootStyle = styles.root || {};
 
@@ -157,6 +173,7 @@ class Panel extends React.Component {
             left,
             top,
             ...rootStyle,
+            display: isVisible ? 'block' : 'none',
           }}
         >
           <div className="handle" style={{ background: '#ccc', ...handleStyle }}>
