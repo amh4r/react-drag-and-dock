@@ -39,11 +39,11 @@ class Panel extends React.Component {
       const { provider, snapToDock } = context;
       const { docks } = provider;
 
-      const initialDockDock = [...docks.values()].find((dock) => {
-        return dock.id === initialDockId;
+      const initialDock = [...docks.values()].find((dock) => {
+        return dock.props.id === initialDockId;
       });
 
-      snapToDock(this.ref, initialDockDock.ref);
+      snapToDock(this.ref, initialDock.ref);
     }
   }
 
