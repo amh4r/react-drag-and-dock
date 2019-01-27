@@ -1,8 +1,8 @@
 import { Component } from 'react';
 
-import DockablePanel from './DockablePanel';
-import DockableProvider from './DockableProvider';
-import DockableTarget from './DockableTarget';
+import Dock from './Dock';
+import Panel from './Panel';
+import Provider from './Provider';
 
 class Dockable extends Component {
   render() {
@@ -10,10 +10,10 @@ class Dockable extends Component {
   }
 }
 
-Dockable.Panel = DockablePanel;
+Dockable.Dock = Dock;
 
-Dockable.Provider = DockableProvider;
+Dockable.Panel = Panel;
 
-Dockable.Target = DockableTarget;
+Dockable.Provider = Provider;
 
 export default Dockable;

@@ -1,6 +1,6 @@
 # React Drag and Dock
 
-Create free-floating panels that "dock" into designated targets. Panel docking does not cause its children to remount.
+Create free-floating panels that "dock" into designated docks. Panel docking does not cause its children to remount.
 
 [CodePen Demo](https://codepen.io/goodoldneon/pen/WPraLE)
 
@@ -10,7 +10,7 @@ Create free-floating panels that "dock" into designated targets. Panel docking d
 
 # Examples
 
-## Two targets and one panel
+## Two docks and one panel
 
 ```jsx
 import React from 'react';
@@ -20,18 +20,18 @@ const Foo = () => {
     return (
         <div style={{ display: 'flex', height: '80vh' }}>
             <DragAndDock.Provider>
-                <DragAndDock.Target>
-                    <div style={{ background: '#ddd', flexGrow: 2 }}>Left target</div>
-                </DragAndDock.Target>
+                <DragAndDock.Dock>
+                    <div style={{ background: '#ddd', flexGrow: 2 }}>Left dock</div>
+                </DragAndDock.Dock>
 
                 <div style={{ flexGrow: 3 }} />
 
-                <DragAndDock.Target>
-                    <div style={{ background: '#ddd', flexGrow: 1 }}>Right target</div>
-                </DragAndDock.Target>
+                <DragAndDock.Dock>
+                    <div style={{ background: '#ddd', flexGrow: 1 }}>Right dock</div>
+                </DragAndDock.Dock>
 
                 <DragAndDock.Panel title="Panel">
-                    <div>Drag me into a target.</div>
+                    <div>Drag me into a dock.</div>
                 </DragAndDock.Panel>
             </DragAndDock.Provider>
         </div>
@@ -41,9 +41,9 @@ const Foo = () => {
 export default Foo;
 ```
 
-## Start docked in target
+## Start docked in dock
 
-Give the `Target` an `id`, and then set `initialDockTargetId` on the `Panel` to the same value.
+Give the `Dock` an `id`, and then set `initialDockId` on the `Panel` to the same value.
 
 ```jsx
 import React from 'react';
@@ -53,13 +53,13 @@ const Foo = () => {
     return (
         <div>
             <DragAndDock.Provider>
-                <DragAndDock.Target id="target-1">
+                <DragAndDock.Dock id="dock-1">
                     <div style={{ background: '#ddd', height: '80vh' }}>
-                        Left target
+                        Left dock
                     </div>
-                </DragAndDock.Target>
+                </DragAndDock.Dock>
 
-                <DragAndDock.Panel initialDockTargetId="target-1" title="Panel">
+                <DragAndDock.Panel initialDockId="dock-1" title="Panel">
                     <div>yo</div>
                 </DragAndDock.Panel>
             </DragAndDock.Provider>
@@ -74,7 +74,7 @@ export default Foo;
 
 ## `<DragAndDock.Provider>`
 
--   `Targets` and `Panels` must be decendents of the `Provider`.
+-   `Docks` and `Panels` must be decendents of the `Provider`.
 -   But they don't need to be _direct_ descendents.
 
 ## `<DragAndDock.Panel>`
@@ -92,10 +92,10 @@ export default Foo;
     </thead>
     <tbody>
       <tr>
-          <td>initialDockTargetId</td>
+          <td>initialDockId</td>
           <td>string</td>
           <th><code>null</code></th>
-          <td>Dock to `Target` whose `id` matches.</td>
+          <td>Dock to `Dock` whose `id` matches.</td>
       </tr>
       <tr>
         <td>styles</td>
@@ -118,10 +118,10 @@ export default Foo;
     </tbody>
 </table>
 
-## `<DragAndDock.Target>`
+## `<DragAndDock.Dock>`
 
--   Drop `Targets` for `Panels`.
--   `Panels` "dock" into `Targets`.
+-   Drop `Docks` for `Panels`.
+-   `Panels` "dock" into `Docks`.
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -137,7 +137,7 @@ export default Foo;
           <td>id</td>
           <td>string</td>
           <th><code>null</code></th>
-          <td>Only used for <code>initialDockTargetId</code> prop in <code>Panel</code>.</td>
+          <td>Only used for <code>initialDockId</code> prop in <code>Panel</code>.</td>
       </tr>
     </tbody>
 </table>

@@ -11,13 +11,13 @@ const _getDimensionsFromRef = (ref) => {
   return ref.current.getBoundingClientRect();
 };
 
-class DockablePanel extends React.Component {
+class Panel extends React.Component {
   constructor(props) {
     super(props);
     this.deltaX = 0;
     this.deltaY = 0;
     this.el = document.createElement('div');
-    this.isDraggedOverTarget = false;
+    this.isDraggedOverDock = false;
     this.ref = React.createRef();
     this.prevSnappedTargeDimensions = {};
 
@@ -32,27 +32,27 @@ class DockablePanel extends React.Component {
   componentDidMount() {
     document.body.appendChild(this.el);
 
-    const { context, initialDockTargetId } = this.props;
+    const { context, initialDockId } = this.props;
     context.registerPanel(this.ref);
 
-    if (initialDockTargetId) {
-      const { provider, snapToTarget } = context;
-      const { targets } = provider;
+    if (initialDockId) {
+      const { provider, snapToDock } = context;
+      const { docks } = provider;
 
-      const initialDockTarget = [...targets.values()].find((target) => {
-        return target.id === initialDockTargetId;
+      const initialDockDock = [...docks.values()].find((dock) => {
+        return dock.id === initialDockId;
       });
 
-      snapToTarget(this.ref, initialDockTarget.ref);
+      snapToDock(this.ref, initialDockDock.ref);
     }
   }
 
   componentDidUpdate() {
-    const snappedTarget = this.getSnappedTarget();
-    const didSnappedTargetChange = this.didSnappedTargetChange();
+    const snappedDock = this.getSnappedDock();
+    const didSnappedDockChange = this.didSnappedDockChange();
 
-    if (snappedTarget && didSnappedTargetChange) {
-      const { height, width, left, top } = _getDimensionsFromRef(snappedTarget);
+    if (snappedDock && didSnappedDockChange) {
+      const { height, width, left, top } = _getDimensionsFromRef(snappedDock);
 
       this.setState({
         height,
@@ -67,9 +67,9 @@ class DockablePanel extends React.Component {
     document.body.removeChild(this.el);
   }
 
-  didSnappedTargetChange = () => {
-    const snappedTarget = this.getSnappedTarget();
-    const { height, width, left, top } = _getDimensionsFromRef(snappedTarget);
+  didSnappedDockChange = () => {
+    const snappedDock = this.getSnappedDock();
+    const { height, width, left, top } = _getDimensionsFromRef(snappedDock);
 
     const {
       height: prevHeight,
@@ -92,44 +92,44 @@ class DockablePanel extends React.Component {
     return false;
   };
 
-  getDraggedOverTarget = (e) => {
+  getDraggedOverDock = (e) => {
     const { context } = this.props;
-    const { targets } = context;
+    const { docks } = context;
 
-    let draggedOverTarget = null;
+    let draggedOverDock = null;
 
-    targets.forEach((target) => {
-      const { bottom, left, right, top } = _getDimensionsFromRef(target.ref);
+    docks.forEach((dock) => {
+      const { bottom, left, right, top } = _getDimensionsFromRef(dock.ref);
       const isMouseInsideX = e.clientX > left && e.clientX < right;
       const isMouseInsideY = e.clientY > top && e.clientY < bottom;
 
       if (isMouseInsideX && isMouseInsideY) {
-        draggedOverTarget = target.ref;
+        draggedOverDock = dock.ref;
       }
     });
 
-    return draggedOverTarget;
+    return draggedOverDock;
   };
 
-  getSnappedTarget = () => {
+  getSnappedDock = () => {
     const { context } = this.props;
     const { panels } = context;
     const panel = panels.get(this.ref);
 
-    return panel.snappedTarget;
+    return panel.snappedDock;
   };
 
   handleDrag = (e) => {
-    this.draggedOverTarget = this.getDraggedOverTarget(e);
+    this.draggedOverDock = this.getDraggedOverDock(e);
   };
 
   handleDragStop = (e, data) => {
     this.deltaX = data.x;
     this.deltaY = data.y;
     const { context } = this.props;
-    const { snapToTarget } = context;
+    const { snapToDock } = context;
 
-    snapToTarget(this.ref, this.draggedOverTarget);
+    snapToDock(this.ref, this.draggedOverDock);
   };
 
   render() {
@@ -172,16 +172,16 @@ class DockablePanel extends React.Component {
   }
 }
 
-DockablePanel.propTypes = {
+Panel.propTypes = {
   children: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
   context: PropTypes.shape({
     panels: PropTypes.instanceOf(Map).isRequired,
     registerPanel: PropTypes.func.isRequired,
-    registerTarget: PropTypes.func.isRequired,
-    snapToTarget: PropTypes.func.isRequired,
-    targets: PropTypes.instanceOf(Map).isRequired,
+    registerDock: PropTypes.func.isRequired,
+    snapToDock: PropTypes.func.isRequired,
+    docks: PropTypes.instanceOf(Map).isRequired,
   }).isRequired,
-  initialDockTargetId: PropTypes.string,
+  initialDockId: PropTypes.string,
   styles: PropTypes.shape({
     handle: PropTypes.object,
     root: PropTypes.object,
@@ -189,10 +189,10 @@ DockablePanel.propTypes = {
   title: PropTypes.string,
 };
 
-DockablePanel.defaultProps = {
-  initialDockTargetId: null,
+Panel.defaultProps = {
+  initialDockId: null,
   styles: {},
   title: 'Panel',
 };
 
-export default withContext(DockablePanel);
+export default withContext(Panel);

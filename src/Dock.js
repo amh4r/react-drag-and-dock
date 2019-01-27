@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import withContext from './withContext';
 
-class DockableTarget extends Component {
+class Dock extends Component {
   constructor() {
     super();
     this.ref = React.createRef();
@@ -12,15 +12,15 @@ class DockableTarget extends Component {
   componentDidMount() {
     const { context } = this.props;
 
-    context.registerTarget(this.ref, this.props);
+    context.registerDock(this.ref, this.props);
 
-    const targetNode = this.ref.current;
+    const dockNode = this.ref.current;
 
     const resizeObserver = new ResizeObserver(() => {
-      context.updateTarget(this.ref, this.props);
+      context.updateDock(this.ref, this.props);
     });
 
-    resizeObserver.observe(targetNode);
+    resizeObserver.observe(dockNode);
   }
 
   render() {
@@ -35,20 +35,20 @@ class DockableTarget extends Component {
   }
 }
 
-DockableTarget.propTypes = {
+Dock.propTypes = {
   children: PropTypes.element.isRequired,
   context: PropTypes.shape({
     panels: PropTypes.instanceOf(Map).isRequired,
     registerPanel: PropTypes.func.isRequired,
-    registerTarget: PropTypes.func.isRequired,
-    snapToTarget: PropTypes.func.isRequired,
-    targets: PropTypes.instanceOf(Map).isRequired,
+    registerDock: PropTypes.func.isRequired,
+    snapToDock: PropTypes.func.isRequired,
+    docks: PropTypes.instanceOf(Map).isRequired,
   }).isRequired,
   id: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
 };
 
-DockableTarget.defaultProps = {
+Dock.defaultProps = {
   id: null,
 };
 
-export default withContext(DockableTarget);
+export default withContext(Dock);

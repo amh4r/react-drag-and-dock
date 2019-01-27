@@ -3,17 +3,17 @@ import PropTypes from 'prop-types';
 
 import Context from './Context';
 
-export class DockableProvider extends Component {
+export class Provider extends Component {
   constructor() {
     super();
 
     /* Seems redundant, but necessary since setState() is async. */
     this.panels = new Map();
-    this.targets = new Map();
+    this.docks = new Map();
 
     this.state = {
       panels: this.panels,
-      targets: this.targets,
+      docks: this.docks,
     };
   }
 
@@ -21,8 +21,8 @@ export class DockableProvider extends Component {
     this.updatePanel(ref, props);
   };
 
-  registerTarget = (ref, props = {}) => {
-    this.updateTarget(ref, props);
+  registerDock = (ref, props = {}) => {
+    this.updateDock(ref, props);
   };
 
   updatePanel = (ref, props = {}) => {
@@ -40,28 +40,28 @@ export class DockableProvider extends Component {
     this.setState({ panels: this.panels });
   };
 
-  updateTarget = (ref, props = {}) => {
-    const { targets } = this;
-    const newTargets = new Map([...targets]);
+  updateDock = (ref, props = {}) => {
+    const { docks } = this;
+    const newDocks = new Map([...docks]);
 
     const data = {
       id: props.id,
       ref,
     };
 
-    newTargets.set(ref, data);
-    this.targets = newTargets;
+    newDocks.set(ref, data);
+    this.docks = newDocks;
 
-    this.setState({ targets: this.targets });
+    this.setState({ docks: this.docks });
   };
 
-  snapToTarget = (panelRef, targetRef) => {
+  snapToDock = (panelRef, dockRef) => {
     const panel = this.panels.get(panelRef);
-    const newSnappedTarget = targetRef || null;
+    const newSnappedDock = dockRef || null;
 
     const newPanel = {
       ...panel,
-      snappedTarget: newSnappedTarget,
+      snappedDock: newSnappedDock,
     };
 
     this.panels.set(panelRef, newPanel);
@@ -71,25 +71,25 @@ export class DockableProvider extends Component {
 
   render() {
     const { children } = this.props;
-    const { panels, targets } = this.state;
+    const { panels, docks } = this.state;
 
     const contextValue = {
       panels,
       provider: this,
       registerPanel: this.registerPanel,
-      registerTarget: this.registerTarget,
-      snapToTarget: this.snapToTarget,
-      targets,
-      updateTarget: this.updateTarget,
+      registerDock: this.registerDock,
+      snapToDock: this.snapToDock,
+      docks,
+      updateDock: this.updateDock,
     };
 
     return <Context.Provider value={contextValue}>{children}</Context.Provider>;
   }
 }
 
-DockableProvider.propTypes = {
+Provider.propTypes = {
   children: PropTypes.oneOfType([PropTypes.element, PropTypes.arrayOf(PropTypes.element)])
     .isRequired,
 };
 
-export default DockableProvider;
+export default Provider;
