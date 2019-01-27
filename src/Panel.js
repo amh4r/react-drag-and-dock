@@ -67,6 +67,15 @@ class Panel extends React.Component {
   }
 
   componentDidUpdate() {
+    this.handleSnappedDockChanges();
+    this.handleVisibilityChanges();
+  }
+
+  componentWillUnmount() {
+    document.body.removeChild(this.el);
+  }
+
+  handleSnappedDockChanges = () => {
     const snappedDock = this.getSnappedDock();
     const didSnappedDockChange = this.didSnappedDockChange();
 
@@ -80,15 +89,9 @@ class Panel extends React.Component {
         top: top - this.deltaY,
       });
     }
+  };
 
-    this.setVisibility();
-  }
-
-  componentWillUnmount() {
-    document.body.removeChild(this.el);
-  }
-
-  setVisibility = () => {
+  handleVisibilityChanges = () => {
     const { context } = this.props;
     const { panels } = context.provider;
     const panel = panels.get(this.ref);
