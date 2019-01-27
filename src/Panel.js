@@ -2,8 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import Draggable from 'react-draggable';
+import styled from 'styled-components';
 
 import withContext from './withContext';
+
+const Handle = styled.div`
+  background: #ccc;
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+`;
+
+const Root = styled.div`
+  background: white;
+  border: 1px solid black;
+  box-sizing: border-box;
+  position: fixed;
+`;
 
 const _getDimensionsFromRef = (ref) => {
   if (!ref || !ref.current) return {};
@@ -26,6 +43,7 @@ class Panel extends React.Component {
       width: null,
       left: null,
       top: null,
+      isVisible: true,
     };
   }
 
@@ -33,21 +51,31 @@ class Panel extends React.Component {
     document.body.appendChild(this.el);
 
     const { context, initialDockId } = this.props;
-    context.registerPanel(this.ref);
+
+    context.registerPanel(this.ref, { props: this.props });
 
     if (initialDockId) {
       const { provider, snapToDock } = context;
       const { docks } = provider;
 
-      const initialDockDock = [...docks.values()].find((dock) => {
-        return dock.id === initialDockId;
+      const initialDock = [...docks.values()].find((dock) => {
+        return dock.props.id === initialDockId;
       });
 
-      snapToDock(this.ref, initialDockDock.ref);
+      snapToDock(this.ref, initialDock.ref);
     }
   }
 
   componentDidUpdate() {
+    this.handleSnappedDockChanges();
+    this.handleVisibilityChanges();
+  }
+
+  componentWillUnmount() {
+    document.body.removeChild(this.el);
+  }
+
+  handleSnappedDockChanges = () => {
     const snappedDock = this.getSnappedDock();
     const didSnappedDockChange = this.didSnappedDockChange();
 
@@ -61,11 +89,20 @@ class Panel extends React.Component {
         top: top - this.deltaY,
       });
     }
-  }
+  };
 
-  componentWillUnmount() {
-    document.body.removeChild(this.el);
-  }
+  handleVisibilityChanges = () => {
+    const { context } = this.props;
+    const { panels } = context.provider;
+    const panel = panels.get(this.ref);
+    const { isVisible } = this.state;
+
+    if (isVisible !== panel.isVisible) {
+      this.setState({
+        isVisible: panel.isVisible,
+      });
+    }
+  };
 
   didSnappedDockChange = () => {
     const snappedDock = this.getSnappedDock();
@@ -134,7 +171,7 @@ class Panel extends React.Component {
 
   render() {
     const { children, styles, title } = this.props;
-    const { height, width, left, top } = this.state;
+    const { height, isVisible, width, left, top } = this.state;
     const handleStyle = styles.handle || {};
     const rootStyle = styles.root || {};
 
@@ -145,26 +182,23 @@ class Panel extends React.Component {
         onDrag={this.handleDrag}
         onStop={this.handleDragStop}
       >
-        <div
+        <Root
           ref={this.ref}
           style={{
-            background: 'white',
-            border: '1px solid black',
-            boxSizing: 'border-box',
             height,
             width,
-            position: 'fixed',
             left,
             top,
             ...rootStyle,
+            display: isVisible ? 'block' : 'none',
           }}
         >
-          <div className="handle" style={{ background: '#ccc', ...handleStyle }}>
+          <Handle className="handle" style={{ ...handleStyle }}>
             {title}
-          </div>
+          </Handle>
 
           <div>{children}</div>
-        </div>
+        </Root>
       </Draggable>
     );
 
