@@ -13,23 +13,25 @@ class App extends Component {
         <DragAndDock.Provider>
           <div style={{ background: '#ddd', flexGrow: 2 }}>
             <DragAndDock.Dock id="dock-1" />
-            <div>Left dock</div>
           </div>
 
           <div style={{ flexGrow: 3 }} />
 
           <div style={{ background: '#ddd', flexGrow: 1 }}>
             <DragAndDock.Dock />
-            <div>Right dock</div>
           </div>
 
           <DragAndDock.Panel title="Panel 1">
             <Timer />
           </DragAndDock.Panel>
 
+          <DragAndDock.Panel initialDockId="dock-1" title="Panel 2">
+            <Timer />
+          </DragAndDock.Panel>
+
           <DragAndDock.Panel
             initialDockId="dock-1"
-            title="Panel 2"
+            title="Panel 3"
             styles={{
               handle: {
                 background: '#CCE4FE',

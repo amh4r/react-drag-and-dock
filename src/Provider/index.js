@@ -22,8 +22,8 @@ export class Provider extends Component {
     this.updatePanel(panelRef, panelProps);
   };
 
-  registerDock = (dockRef, dockProps = {}) => {
-    this.updateDock(dockRef, dockProps);
+  registerDock = ({ dockableAreaRef, dockProps = {}, dockRef }) => {
+    this.updateDock({ dockableAreaRef, dockProps, dockRef });
   };
 
   updatePanel = (panelRef, panelProps = {}) => {
@@ -36,14 +36,12 @@ export class Provider extends Component {
     this.setState({ panels: this.panels });
   };
 
-  updateDock = (dockRef, dockProps = {}) => {
-    // const parentNode = dockRef.current ? dockRef.current.parentNode : null;
-
+  updateDock = ({ dockableAreaRef, dockProps = {}, dockRef }) => {
     this.docks = upsertDock({
+      dockableAreaRef,
       dockProps,
       dockRef,
       docks: this.docks,
-      // parentNode,
     });
 
     this.setState({ docks: this.docks });

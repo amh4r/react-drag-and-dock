@@ -7,24 +7,36 @@ class Dock extends Component {
   constructor() {
     super();
     this.ref = React.createRef();
+    this.dockableAreaRef = React.createRef();
 
     this.state = {
-      panels: new Map(),
+      height: null,
     };
   }
 
   componentDidMount() {
     const { context } = this.props;
 
-    context.registerDock(this.ref, this.props);
+    context.registerDock({
+      dockRef: this.ref,
+      dockProps: this.props,
+      dockableAreaRef: this.dockableAreaRef,
+    });
 
     const { parentNode } = this.ref.current;
+    const parentHeight = parentNode.getBoundingClientRect().height;
+
+    this.setState({
+      height: parentHeight,
+    });
 
     const resizeObserver = new ResizeObserver(() => {
       context.updateDock(this.ref, this.props);
     });
 
-    resizeObserver.observe(parentNode);
+    const dockableAreaNode = this.dockableAreaRef.current;
+
+    resizeObserver.observe(dockableAreaNode);
   }
 
   getPanels = () => {
@@ -36,14 +48,21 @@ class Dock extends Component {
     return dock.panels;
   };
 
-  render() {
-    // const panels = this.getPanels();
+  renderTabs = () => {
+    const panels = this.getPanels();
 
-    // console.log(panels);
+    if (panels.size < 2) return null;
+
+    return <div>{panels.size}</div>;
+  };
+
+  render() {
+    const { height } = this.state;
 
     return (
-      <div ref={this.ref}>
-        <div>hi</div>
+      <div ref={this.ref} style={{ display: 'flex', flexDirection: 'column', height }}>
+        <div>{this.renderTabs()}</div>
+        <div ref={this.dockableAreaRef} style={{ flexGrow: 1 }} />
       </div>
     );
   }
