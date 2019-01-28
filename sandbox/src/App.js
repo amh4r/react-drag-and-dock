@@ -21,15 +21,15 @@ class App extends Component {
     return (
       <Wrap style={{ height: '80vh' }}>
         <DragAndDock.Provider>
-          <div style={{ background: '#D0E4FB' }}>
-            <DragAndDock.Dock id="dock-1" />
-          </div>
+          <DragAndDock.Dock id="dock-1">
+            <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
+          </DragAndDock.Dock>
 
           <div />
 
-          <div style={{ background: '#D0E4FB' }}>
-            <DragAndDock.Dock />
-          </div>
+          <DragAndDock.Dock>
+            <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
+          </DragAndDock.Dock>
 
           <DragAndDock.Panel title="Panel 1">
             <Timer />

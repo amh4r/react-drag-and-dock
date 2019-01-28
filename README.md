@@ -20,15 +20,15 @@ const App = () => {
     return (
         <div style={{ display: 'grid', gridTemplateColumns: '3fr 4fr 2fr', height: '80vh' }}>
             <DragAndDock.Provider>
-                <div style={{ background: '#D0E4FB' }}>
-                    <DragAndDock.Dock />
-                </div>
+                <DragAndDock.Dock>
+                    <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
+                </DragAndDock.Dock>
 
                 <div />
 
-                <div style={{ background: '#D0E4FB' }}>
-                    <DragAndDock.Dock />
-                </div>
+                <DragAndDock.Dock>
+                    <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
+                </DragAndDock.Dock>
 
                 <DragAndDock.Panel title="Panel">
                     <div>Drag me into a dock.</div>
@@ -51,9 +51,11 @@ const App = () => {
     return (
         <div>
             <DragAndDock.Provider>
-                <div style={{ background: '#ddd', height: '80vh', width: '50vw' }}>
-                    <DragAndDock.Dock id="dock-1" />
-                </div>
+                <DragAndDock.Dock id="dock-1">
+                    <div style={{ background: '#ddd', height: '80vh', width: '50vw' }}>
+                        I am a dock
+                    </div>
+                </DragAndDock.Dock>
 
                 <DragAndDock.Panel initialDockId="dock-1" title="Panel">
                     <div>yo</div>
@@ -114,7 +116,6 @@ const App = () => {
 
 ## `<DragAndDock.Dock>`
 
--   Makes its parent element "dockable".
 -   `Panels` "dock" into `Docks`.
 
 <table class="table table-bordered table-striped">

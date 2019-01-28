@@ -10,10 +10,6 @@ class Dock extends Component {
     super();
     this.ref = React.createRef();
     this.dockableAreaRef = React.createRef();
-
-    this.state = {
-      height: null,
-    };
   }
 
   componentDidMount() {
@@ -25,19 +21,12 @@ class Dock extends Component {
     });
 
     const { parentNode } = this.ref.current;
-    const parentHeight = parentNode.getBoundingClientRect().height;
-
-    this.setState({
-      height: parentHeight,
-    });
 
     const resizeObserver = new ResizeObserver(() => {
       context.updateDock(this.ref, this.props);
     });
 
-    const dockableAreaNode = this.dockableAreaRef.current;
-
-    resizeObserver.observe(dockableAreaNode);
+    resizeObserver.observe(parentNode);
   }
 
   getDock = () => {
@@ -63,28 +52,37 @@ class Dock extends Component {
   };
 
   render() {
-    const { height } = this.state;
+    const { children } = this.props;
     const dock = this.getDock();
     const panels = this.getPanels();
     const activePanelRef = dock ? dock.activePanelRef : null;
+    const shouldShowPanelTabs = panels.size > 1;
 
-    return (
-      <div ref={this.ref} style={{ display: 'flex', flexDirection: 'column', height }}>
-        {panels.size > 1 && (
+    if (shouldShowPanelTabs) {
+      return (
+        <div ref={this.ref} style={{ display: 'flex', flexDirection: 'column' }}>
           <PanelTabs
             activePanelRef={activePanelRef}
             panels={panels}
             onTabClick={this.handleTabClick}
           />
-        )}
 
-        <div ref={this.dockableAreaRef} style={{ flexGrow: 1 }} />
-      </div>
-    );
+          <div ref={this.dockableAreaRef} style={{ flexGrow: 1 }} />
+        </div>
+      );
+    }
+
+    const childProps = {
+      ...children.props,
+      ref: this.dockableAreaRef,
+    };
+
+    return <div ref={this.ref}>{React.cloneElement(children, childProps)}</div>;
   }
 }
 
 Dock.propTypes = {
+  children: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
   context: PropTypes.shape({
     panels: PropTypes.instanceOf(Map).isRequired,
     registerPanel: PropTypes.func.isRequired,
