@@ -198,11 +198,11 @@ class Panel extends React.Component {
         <Root
           ref={this.ref}
           style={{
+            ...rootStyle,
             height,
             width,
             left,
             top,
-            ...rootStyle,
             display: isVisible ? 'block' : 'none',
             zIndex: isGrabbing ? 100000 : 'auto',
           }}
