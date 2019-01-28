@@ -21,13 +21,13 @@ class App extends Component {
     return (
       <Wrap style={{ height: '80vh' }}>
         <DragAndDock.Provider>
-          <div style={{ background: '#ddd', flexGrow: 2 }}>
+          <div style={{ background: '#D0E4FB' }}>
             <DragAndDock.Dock id="dock-1" />
           </div>
 
-          <div style={{ flexGrow: 3 }} />
+          <div />
 
-          <div style={{ background: '#ddd', flexGrow: 1 }}>
+          <div style={{ background: '#D0E4FB' }}>
             <DragAndDock.Dock />
           </div>
 
@@ -39,19 +39,7 @@ class App extends Component {
             <Timer />
           </DragAndDock.Panel>
 
-          <DragAndDock.Panel
-            initialDockId="dock-1"
-            title="Panel 3"
-            styles={{
-              handle: {
-                background: '#CCE4FE',
-              },
-              root: {
-                background: '#fcfcfc',
-                border: '1px solid #b8daff',
-              },
-            }}
-          >
+          <DragAndDock.Panel initialDockId="dock-1" title="Panel 3">
             <div>yo</div>
           </DragAndDock.Panel>
         </DragAndDock.Provider>

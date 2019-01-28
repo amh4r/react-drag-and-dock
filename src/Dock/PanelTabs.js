@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import PanelTab from './PanelTab';
 
 const Wrap = styled.div`
-  border: 1px solid black;
+  border: 1px solid #3a89ea;
   border-bottom: 0;
   display: flex;
 `;

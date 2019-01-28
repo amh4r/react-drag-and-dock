@@ -7,7 +7,7 @@ import styled from 'styled-components';
 import withContext from './withContext';
 
 const Handle = styled.div`
-  background: #ccc;
+  background: #d3e4f9;
   cursor: grab;
 
   &:active {
@@ -17,7 +17,7 @@ const Handle = styled.div`
 
 const Root = styled.div`
   background: white;
-  border: 1px solid black;
+  border: 1px solid #3a89ea;
   box-sizing: border-box;
   position: fixed;
 `;
@@ -43,6 +43,7 @@ class Panel extends React.Component {
       width: null,
       left: null,
       top: null,
+      isGrabbing: false,
       isVisible: true,
     };
   }
@@ -160,6 +161,10 @@ class Panel extends React.Component {
     this.draggedOverDock = this.getDraggedOverDock(e);
   };
 
+  handleDragStart = () => {
+    this.setState({ isGrabbing: true });
+  };
+
   handleDragStop = (e, data) => {
     this.deltaX = data.x;
     this.deltaY = data.y;
@@ -167,11 +172,13 @@ class Panel extends React.Component {
     const { snapToDock } = context;
 
     snapToDock(this.ref, this.draggedOverDock);
+
+    this.setState({ isGrabbing: false });
   };
 
   render() {
     const { children, styles, title } = this.props;
-    const { height, isVisible, width, left, top } = this.state;
+    const { height, isGrabbing, isVisible, width, left, top } = this.state;
     const handleStyle = styles.handle || {};
     const rootStyle = styles.root || {};
 
@@ -191,6 +198,7 @@ class Panel extends React.Component {
             top,
             ...rootStyle,
             display: isVisible ? 'block' : 'none',
+            zIndex: isGrabbing ? 100000 : 'auto',
           }}
         >
           <Handle className="handle" style={{ ...handleStyle }}>
