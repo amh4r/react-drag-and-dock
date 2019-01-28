@@ -16,19 +16,19 @@ Create free-floating panels that "dock" into designated docks. Panel docking doe
 import React from 'react';
 import DragAndDock from 'react-drag-and-dock';
 
-const Foo = () => {
+const App = () => {
     return (
-        <div style={{ display: 'flex', height: '80vh' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '3fr 4fr 2fr', height: '80vh' }}>
             <DragAndDock.Provider>
-                <DragAndDock.Dock>
-                    <div style={{ background: '#ddd', flexGrow: 2 }}>Left dock</div>
-                </DragAndDock.Dock>
+                <div style={{ background: '#D0E4FB' }}>
+                    <DragAndDock.Dock />
+                </div>
 
-                <div style={{ flexGrow: 3 }} />
+                <div />
 
-                <DragAndDock.Dock>
-                    <div style={{ background: '#ddd', flexGrow: 1 }}>Right dock</div>
-                </DragAndDock.Dock>
+                <div style={{ background: '#D0E4FB' }}>
+                    <DragAndDock.Dock />
+                </div>
 
                 <DragAndDock.Panel title="Panel">
                     <div>Drag me into a dock.</div>
@@ -37,8 +37,6 @@ const Foo = () => {
         </div>
     );
 };
-
-export default Foo;
 ```
 
 ## Start docked in dock
@@ -49,15 +47,13 @@ Give the `Dock` an `id`, and then set `initialDockId` on the `Panel` to the same
 import React from 'react';
 import DragAndDock from 'react-drag-and-dock';
 
-const Foo = () => {
+const App = () => {
     return (
         <div>
             <DragAndDock.Provider>
-                <DragAndDock.Dock id="dock-1">
-                    <div style={{ background: '#ddd', height: '80vh' }}>
-                        Left dock
-                    </div>
-                </DragAndDock.Dock>
+                <div style={{ background: '#ddd', height: '80vh', width: '50vw' }}>
+                    <DragAndDock.Dock id="dock-1" />
+                </div>
 
                 <DragAndDock.Panel initialDockId="dock-1" title="Panel">
                     <div>yo</div>
@@ -66,8 +62,6 @@ const Foo = () => {
         </div>
     );
 };
-
-export default Foo;
 ```
 
 # API
@@ -120,7 +114,7 @@ export default Foo;
 
 ## `<DragAndDock.Dock>`
 
--   Drop `Docks` for `Panels`.
+-   Makes its parent element "dockable".
 -   `Panels` "dock" into `Docks`.
 
 <table class="table table-bordered table-striped">
@@ -147,4 +141,4 @@ export default Foo;
 1. Run `npm start` to watch the `src` files and launch the sandbox server at http://localhost:3010.
 2. Change source code in `src` folder.
 3. Change sandbox code in `sandbox/src` folder.
-   - Don't edit the files in `sandbox/src/DragAndDock`. The `src` folder is copied into in on change.
+    - Don't edit the files in `sandbox/src/DragAndDock`. The `src` folder is copied into in on change.
