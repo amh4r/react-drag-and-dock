@@ -111,7 +111,7 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
     });
 
     const newActivePanelRef = (() => {
-      if (newPanels.size === 0) return null;
+      if (newDockPanels.size === 0) return null;
 
       const firstDockPanel = newDockPanels.values().next().value;
 
