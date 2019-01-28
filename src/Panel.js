@@ -162,6 +162,12 @@ class Panel extends React.Component {
   };
 
   handleDragStart = () => {
+    const { context } = this.props;
+    const { snapToDock } = context;
+    const dockRef = null;
+
+    snapToDock(this.ref, dockRef);
+
     this.setState({ isGrabbing: true });
   };
 
