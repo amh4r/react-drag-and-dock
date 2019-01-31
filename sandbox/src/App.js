@@ -19,8 +19,8 @@ const Wrap = styled.div`
 class App extends Component {
   render() {
     return (
-      <Wrap style={{ height: '80vh' }}>
-        <DragAndDock.Provider>
+      <DragAndDock.Provider>
+        <Wrap style={{ height: '80vh', position: 'relative' }}>
           <DragAndDock.Dock id="dock-1">
             <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
           </DragAndDock.Dock>
@@ -42,8 +42,8 @@ class App extends Component {
           <DragAndDock.Panel initialDockId="dock-1" title="Panel 3">
             <div>yo</div>
           </DragAndDock.Panel>
-        </DragAndDock.Provider>
-      </Wrap>
+        </Wrap>
+      </DragAndDock.Provider>
     );
   }
 }

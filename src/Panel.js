@@ -68,7 +68,7 @@ class Panel extends React.Component {
   }
 
   componentDidUpdate() {
-    this.handleSnappedDockChanges();
+    this.handlePositionChanges();
     this.handleVisibilityChanges();
   }
 
@@ -76,12 +76,21 @@ class Panel extends React.Component {
     document.body.removeChild(this.el);
   }
 
-  handleSnappedDockChanges = () => {
-    const snappedDock = this.getSnappedDock();
-    const didSnappedDockChange = this.didSnappedDockChange();
+  handlePositionChanges = () => {
+    const snappedDockRef = this.getSnappedDockRef();
+    const didDockPanelPositionChange = this.didDockPanelPositionChange();
 
-    if (snappedDock && didSnappedDockChange) {
-      const { height, width, left, top } = _getDimensionsFromRef(snappedDock);
+    if (snappedDockRef && didDockPanelPositionChange) {
+      const { width, left } = _getDimensionsFromRef(snappedDockRef);
+      let { height, top } = _getDimensionsFromRef(snappedDockRef);
+      const { context } = this.props;
+      const { docks } = context.provider;
+      const dockPanels = docks.get(snappedDockRef).panels;
+
+      if (dockPanels.size > 1) {
+        height -= 20;
+        top += 20;
+      }
 
       this.setState({
         height,
@@ -105,9 +114,9 @@ class Panel extends React.Component {
     }
   };
 
-  didSnappedDockChange = () => {
-    const snappedDock = this.getSnappedDock();
-    const { height, width, left, top } = _getDimensionsFromRef(snappedDock);
+  didDockPanelPositionChange = () => {
+    const snappedDockRef = this.getSnappedDockRef();
+    const { height, width, left, top } = this.getDockPanelPosition(snappedDockRef);
 
     const {
       height: prevHeight,
@@ -130,6 +139,35 @@ class Panel extends React.Component {
     return false;
   };
 
+  getDockPanelPosition = (dockRef) => {
+    if (!dockRef) {
+      return {
+        height: null,
+        width: null,
+        left: null,
+        top: null,
+      };
+    }
+
+    const { context } = this.props;
+    const { docks } = context.provider;
+    const { width, left } = _getDimensionsFromRef(dockRef);
+    let { height, top } = _getDimensionsFromRef(dockRef);
+    const dock = docks.get(dockRef);
+
+    if (dock.panels.size > 1) {
+      height -= 20;
+      top += 20;
+    }
+
+    return {
+      height,
+      width,
+      left,
+      top,
+    };
+  };
+
   getDraggedOverDock = (e) => {
     const { context } = this.props;
     const { docks } = context;
@@ -149,9 +187,9 @@ class Panel extends React.Component {
     return draggedOverDock;
   };
 
-  getSnappedDock = () => {
+  getSnappedDockRef = () => {
     const { context } = this.props;
-    const { panels } = context;
+    const { panels } = context.provider;
     const panel = panels.get(this.ref);
 
     return panel.snappedDock;

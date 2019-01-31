@@ -17,7 +17,7 @@ class Dock extends Component {
 
     context.registerDock(this.ref, {
       props: this.props,
-      dockableAreaRef: this.dockableAreaRef,
+      dockableAreaRef: this.ref,
     });
 
     const { parentNode } = this.ref.current;
@@ -58,31 +58,37 @@ class Dock extends Component {
     const activePanelRef = dock ? dock.activePanelRef : null;
     const shouldShowPanelTabs = panels.size > 1;
 
-    if (shouldShowPanelTabs) {
-      return (
-        <div ref={this.ref} style={{ display: 'flex', flexDirection: 'column' }}>
-          <PanelTabs
-            activePanelRef={activePanelRef}
-            panels={panels}
-            onTabClick={this.handleTabClick}
-          />
-
-          <div ref={this.dockableAreaRef} style={{ flexGrow: 1 }} />
-        </div>
-      );
-    }
-
     const childProps = {
       ...children.props,
-      ref: this.dockableAreaRef,
+      ref: this.ref,
+      style: {
+        ...children.props.style,
+        visibility: shouldShowPanelTabs ? 'hidden' : 'visible',
+      },
     };
 
-    return <div ref={this.ref}>{React.cloneElement(children, childProps)}</div>;
+    return (
+      <React.Fragment>
+        {shouldShowPanelTabs && (
+          <PanelTabs
+            activePanelRef={activePanelRef}
+            dockRef={this.ref}
+            panels={panels}
+            onTabClick={this.handleTabClick}
+            style={{
+              left: this.ref.current.getBoundingClientRect().left,
+            }}
+          />
+        )}
+
+        {React.cloneElement(children, childProps)}
+      </React.Fragment>
+    );
   }
 }
 
 Dock.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
+  children: PropTypes.element.isRequired,
   context: PropTypes.shape({
     panels: PropTypes.instanceOf(Map).isRequired,
     registerPanel: PropTypes.func.isRequired,
