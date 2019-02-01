@@ -19,7 +19,8 @@ const Root = styled.div`
   background: white;
   border: 1px solid #3a89ea;
   box-sizing: border-box;
-  position: fixed;
+  float: 'left';
+  position: absolute;
 `;
 
 const _getDimensionsFromRef = (ref) => {
@@ -28,12 +29,35 @@ const _getDimensionsFromRef = (ref) => {
   return ref.current.getBoundingClientRect();
 };
 
+const _pixelToNumber = (str) => {
+  if (!str.endsWith('px')) return null;
+
+  return Number.parseInt(str, 10);
+};
+
+const _getDimensions = (dockRef) => {
+  const {
+    height: dockHeight,
+    width: dockWidth,
+    x: dockX,
+  } = dockRef.current.getBoundingClientRect();
+
+  const bodyStyle = window.getComputedStyle(document.body);
+  const marginLeft = _pixelToNumber(bodyStyle.marginLeft);
+
+  return {
+    height: dockHeight,
+    width: dockWidth,
+    x: dockX - marginLeft + window.scrollX,
+    y: -1 * dockHeight,
+  };
+};
+
 class Panel extends React.Component {
   constructor(props) {
     super(props);
     this.deltaX = 0;
     this.deltaY = 0;
-    this.el = document.createElement('div');
     this.isDraggedOverDock = false;
     this.ref = React.createRef();
     this.prevSnappedTargeDimensions = {};
@@ -41,16 +65,45 @@ class Panel extends React.Component {
     this.state = {
       height: null,
       width: null,
-      left: null,
-      top: null,
       isGrabbing: false,
       isVisible: true,
+      position: null,
+      ref: this.ref,
+    };
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    const { ref } = state;
+
+    if (!ref.current) return null;
+
+    const { context } = props;
+    const panel = context.provider.panels.get(ref);
+    const snappedDockRef = panel.snappedDock;
+
+    if (!snappedDockRef) {
+      return {
+        position: null,
+      };
+    }
+
+    const { height, width, x, y } = _getDimensions(snappedDockRef);
+    const dock = context.provider.docks.get(snappedDockRef);
+    const { arePanelTabsVisible, panelTabsHeight } = dock;
+    const panelTabsOffset = arePanelTabsVisible ? panelTabsHeight : 0;
+
+    return {
+      height: height + panelTabsOffset,
+      width,
+      isVisible: panel.isVisible,
+      position: {
+        x,
+        y: y + panelTabsOffset,
+      },
     };
   }
 
   componentDidMount() {
-    document.body.appendChild(this.el);
-
     const { context, initialDockId } = this.props;
 
     context.registerPanel(this.ref, { props: this.props });
@@ -67,106 +120,9 @@ class Panel extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    this.handlePositionChanges();
-    this.handleVisibilityChanges();
-  }
-
   componentWillUnmount() {
     document.body.removeChild(this.el);
   }
-
-  handlePositionChanges = () => {
-    const snappedDockRef = this.getSnappedDockRef();
-    const didDockPanelPositionChange = this.didDockPanelPositionChange();
-
-    if (snappedDockRef && didDockPanelPositionChange) {
-      const { width, left } = _getDimensionsFromRef(snappedDockRef);
-      let { height, top } = _getDimensionsFromRef(snappedDockRef);
-      const { context } = this.props;
-      const { docks } = context.provider;
-      const dock = docks.get(snappedDockRef);
-
-      if (dock.panels.size > 1) {
-        height -= dock.panelTabsHeight;
-        top += dock.panelTabsHeight;
-      }
-
-      this.setState({
-        height,
-        width,
-        left: left - this.deltaX,
-        top: top - this.deltaY,
-      });
-    }
-  };
-
-  handleVisibilityChanges = () => {
-    const { context } = this.props;
-    const { panels } = context.provider;
-    const panel = panels.get(this.ref);
-    const { isVisible } = this.state;
-
-    if (isVisible !== panel.isVisible) {
-      this.setState({
-        isVisible: panel.isVisible,
-      });
-    }
-  };
-
-  didDockPanelPositionChange = () => {
-    const snappedDockRef = this.getSnappedDockRef();
-    const { height, width, left, top } = this.getDockPanelPosition(snappedDockRef);
-
-    const {
-      height: prevHeight,
-      width: prevWidth,
-      left: prevLeft,
-      top: prevTop,
-    } = this.prevSnappedTargeDimensions;
-
-    this.prevSnappedTargeDimensions = {
-      height,
-      width,
-      left,
-      top,
-    };
-
-    if (height !== prevHeight || width !== prevWidth || left !== prevLeft || top !== prevTop) {
-      return true;
-    }
-
-    return false;
-  };
-
-  getDockPanelPosition = (dockRef) => {
-    if (!dockRef) {
-      return {
-        height: null,
-        width: null,
-        left: null,
-        top: null,
-      };
-    }
-
-    const { context } = this.props;
-    const { docks } = context.provider;
-    const { width, left } = _getDimensionsFromRef(dockRef);
-    let { height, top } = _getDimensionsFromRef(dockRef);
-    const dock = docks.get(dockRef);
-
-    if (dock.panels.size > 1) {
-      height -= dock.panelTabsHeight;
-      top += dock.panelTabsHeight;
-    }
-
-    return {
-      height,
-      width,
-      left,
-      top,
-    };
-  };
 
   getDraggedOverDock = (e) => {
     const { context } = this.props;
@@ -185,14 +141,6 @@ class Panel extends React.Component {
     });
 
     return draggedOverDock;
-  };
-
-  getSnappedDockRef = () => {
-    const { context } = this.props;
-    const { panels } = context.provider;
-    const panel = panels.get(this.ref);
-
-    return panel.snappedDock;
   };
 
   handleDrag = (e) => {
@@ -222,13 +170,14 @@ class Panel extends React.Component {
 
   render() {
     const { children, styles, title } = this.props;
-    const { height, isGrabbing, isVisible, width, left, top } = this.state;
+    const { height, isGrabbing, isVisible, position, width } = this.state;
     const handleStyle = styles.handle || {};
     const rootStyle = styles.root || {};
 
     const contents = (
       <Draggable
         handle=".handle"
+        position={position}
         onStart={this.handleDragStart}
         onDrag={this.handleDrag}
         onStop={this.handleDragStop}
@@ -239,8 +188,6 @@ class Panel extends React.Component {
             ...rootStyle,
             height,
             width,
-            left,
-            top,
             display: isVisible ? 'block' : 'none',
             zIndex: isGrabbing ? 100000 : 'auto',
           }}
@@ -254,7 +201,7 @@ class Panel extends React.Component {
       </Draggable>
     );
 
-    return ReactDOM.createPortal(contents, this.el);
+    return ReactDOM.createPortal(contents, document.body);
   }
 }
 
