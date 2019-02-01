@@ -91,9 +91,9 @@ class Panel extends React.Component {
     const dock = context.provider.docks.get(snappedDockRef);
     const { arePanelTabsVisible, panelTabsHeight } = dock;
     const panelTabsOffset = arePanelTabsVisible ? panelTabsHeight : 0;
-
+ 
     return {
-      height: height + panelTabsOffset,
+      height: height - panelTabsOffset,
       width,
       isVisible: panel.isVisible,
       position: {
