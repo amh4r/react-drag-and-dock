@@ -2,56 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import Draggable from 'react-draggable';
-import styled from 'styled-components';
 
-import withContext from './withContext';
-
-const Handle = styled.div`
-  background: #d3e4f9;
-  cursor: grab;
-
-  &:active {
-    cursor: grabbing;
-  }
-`;
-
-const Root = styled.div`
-  background: white;
-  border: 1px solid #3a89ea;
-  box-sizing: border-box;
-  float: 'left';
-  position: absolute;
-`;
-
-const _getDimensionsFromRef = (ref) => {
-  if (!ref || !ref.current) return {};
-
-  return ref.current.getBoundingClientRect();
-};
-
-const _pixelToNumber = (str) => {
-  if (!str.endsWith('px')) return null;
-
-  return Number.parseInt(str, 10);
-};
-
-const _getDimensions = (dockRef) => {
-  const {
-    height: dockHeight,
-    width: dockWidth,
-    x: dockX,
-  } = dockRef.current.getBoundingClientRect();
-
-  const bodyStyle = window.getComputedStyle(document.body);
-  const marginLeft = _pixelToNumber(bodyStyle.marginLeft);
-
-  return {
-    height: dockHeight,
-    width: dockWidth,
-    x: dockX - marginLeft + window.scrollX,
-    y: -1 * dockHeight,
-  };
-};
+import { checkMouseEventIntersectsElement, getDimensions } from './utils';
+import withContext from '../withContext';
+import { Handle, Root } from './styles';
 
 class Panel extends React.Component {
   constructor(props) {
@@ -87,11 +41,11 @@ class Panel extends React.Component {
       };
     }
 
-    const { height, width, x, y } = _getDimensions(snappedDockRef);
+    const { height, width, x, y } = getDimensions(snappedDockRef);
     const dock = context.provider.docks.get(snappedDockRef);
     const { arePanelTabsVisible, panelTabsHeight } = dock;
     const panelTabsOffset = arePanelTabsVisible ? panelTabsHeight : 0;
- 
+
     return {
       height: height - panelTabsOffset,
       width,
@@ -131,11 +85,9 @@ class Panel extends React.Component {
     let draggedOverDock = null;
 
     docks.forEach((dock) => {
-      const { bottom, left, right, top } = _getDimensionsFromRef(dock.ref);
-      const isMouseInsideX = e.clientX > left && e.clientX < right;
-      const isMouseInsideY = e.clientY > top && e.clientY < bottom;
+      const isMouseInsideDock = checkMouseEventIntersectsElement(e, dock.ref.current);
 
-      if (isMouseInsideX && isMouseInsideY) {
+      if (isMouseInsideDock) {
         draggedOverDock = dock.ref;
       }
     });

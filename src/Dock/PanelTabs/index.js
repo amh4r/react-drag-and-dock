@@ -1,15 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import styled from 'styled-components';
 
 import PanelTab from './PanelTab';
-
-const Wrap = styled.div`
-  border: 1px solid #3a89ea;
-  border-bottom: 0;
-  display: flex;
-`;
+import { Wrap } from './styles';
 
 const _pixelToNumber = (str) => {
   if (!str.endsWith('px')) return null;
