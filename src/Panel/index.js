@@ -10,8 +10,6 @@ import { Handle, Root } from './styles';
 class Panel extends React.Component {
   constructor(props) {
     super(props);
-    this.deltaX = 0;
-    this.deltaY = 0;
     this.isDraggedOverDock = false;
     this.ref = React.createRef();
     this.prevSnappedTargeDimensions = {};
@@ -21,7 +19,7 @@ class Panel extends React.Component {
       width: null,
       isGrabbing: false,
       isVisible: true,
-      position: null,
+      initialPosition: {},
       ref: this.ref,
     };
   }
@@ -41,7 +39,8 @@ class Panel extends React.Component {
       };
     }
 
-    const { height, width, x, y } = getDimensions(snappedDockRef);
+    const { initialPosition } = state;
+    const { height, width, x, y } = getDimensions(initialPosition, snappedDockRef);
     const dock = context.provider.docks.get(snappedDockRef);
     const { arePanelTabsVisible, panelTabsHeight } = dock;
     const panelTabsOffset = arePanelTabsVisible ? panelTabsHeight : 0;
@@ -62,6 +61,8 @@ class Panel extends React.Component {
 
     context.registerPanel(this.ref, { props: this.props });
 
+    this.setInitialPosition();
+
     if (initialDockId) {
       const { provider, snapToDock } = context;
       const { docks } = provider;
@@ -77,6 +78,17 @@ class Panel extends React.Component {
   componentWillUnmount() {
     document.body.removeChild(this.el);
   }
+
+  setInitialPosition = () => {
+    const { x, y } = this.ref.current.getBoundingClientRect();
+
+    this.setState({
+      initialPosition: {
+        x: x + window.scrollX,
+        y: y + window.scrollY,
+      },
+    });
+  };
 
   getDraggedOverDock = (e) => {
     const { context } = this.props;
@@ -106,18 +118,20 @@ class Panel extends React.Component {
 
     snapToDock(this.ref, dockRef);
 
-    this.setState({ isGrabbing: true });
+    this.setState({
+      isGrabbing: true,
+    });
   };
 
-  handleDragStop = (e, data) => {
-    this.deltaX = data.x;
-    this.deltaY = data.y;
+  handleDragStop = () => {
     const { context } = this.props;
     const { snapToDock } = context;
 
     snapToDock(this.ref, this.draggedOverDock);
 
-    this.setState({ isGrabbing: false });
+    this.setState({
+      isGrabbing: false,
+    });
   };
 
   render() {

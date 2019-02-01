@@ -1,18 +1,16 @@
-const getDimensions = (dockRef) => {
+const getDimensions = (initialPosition, dockRef) => {
   const {
     height: dockHeight,
     width: dockWidth,
     x: dockX,
+    y: dockY,
   } = dockRef.current.getBoundingClientRect();
-
-  const bodyStyle = window.getComputedStyle(document.body);
-  const marginLeft = Number.parseInt(bodyStyle.marginLeft, 10);
 
   return {
     height: dockHeight,
     width: dockWidth,
-    x: dockX - marginLeft + window.scrollX,
-    y: -1 * dockHeight,
+    x: dockX - initialPosition.x + window.scrollX,
+    y: dockY - initialPosition.y + window.scrollY,
   };
 };
 
