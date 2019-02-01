@@ -57,22 +57,12 @@ class Panel extends React.Component {
   }
 
   componentDidMount() {
-    const { context, initialDockId } = this.props;
+    const { context } = this.props;
 
     context.registerPanel(this.ref, { props: this.props });
 
     this.setInitialPosition();
-
-    if (initialDockId) {
-      const { provider, snapToDock } = context;
-      const { docks } = provider;
-
-      const initialDock = [...docks.values()].find((dock) => {
-        return dock.props.id === initialDockId;
-      });
-
-      snapToDock(this.ref, initialDock.ref);
-    }
+    this.snapToInitialDock();
   }
 
   componentWillUnmount() {
@@ -88,6 +78,21 @@ class Panel extends React.Component {
         y: y + window.scrollY,
       },
     });
+  };
+
+  snapToInitialDock = () => {
+    const { context, initialDockId } = this.props;
+
+    if (initialDockId) {
+      const { provider, snapToDock } = context;
+      const { docks } = provider;
+
+      const initialDock = [...docks.values()].find((dock) => {
+        return dock.props.id === initialDockId;
+      });
+
+      snapToDock(this.ref, initialDock.ref);
+    }
   };
 
   getDraggedOverDock = (e) => {
