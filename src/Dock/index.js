@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import get from 'lodash/get';
 import PropTypes from 'prop-types';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -69,7 +69,7 @@ class Dock extends Component {
     };
 
     return (
-      <React.Fragment>
+      <Fragment>
         {arePanelTabsVisible && (
           <PanelTabs
             activePanelRef={activePanelRef}
@@ -81,7 +81,7 @@ class Dock extends Component {
         )}
 
         {React.cloneElement(children, childProps)}
-      </React.Fragment>
+      </Fragment>
     );
   }
 }
