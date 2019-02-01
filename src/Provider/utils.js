@@ -61,9 +61,11 @@ const changeDockActivePanel = ({ dockRef, docks, activePanelRef, panels }) => {
 const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
   const dock = docks.get(dockRef);
   const panel = panels.get(panelRef);
+  const newDockPanels = new Map(dock.panels).set(panelRef, panel);
 
   const newDockData = {
-    panels: new Map(dock.panels).set(panelRef, panel),
+    panels: newDockPanels,
+    arePanelTabsVisible: newDockPanels.size > 1,
   };
 
   let newDocks = updateDock({
@@ -102,6 +104,7 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
 
     const newDockData = {
       panels: newDockPanels,
+      arePanelTabsVisible: newDockPanels.size > 1,
     };
 
     newDocks = updateDock({
@@ -140,6 +143,8 @@ const registerDock = ({ data, ref, docks }) => {
   const newDock = {
     ...defaults,
     ...data,
+    arePanelTabsVisible: false,
+    panelTabsHeight: 20,
     ref,
   };
 

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import get from 'lodash/get';
 import PropTypes from 'prop-types';
 import ResizeObserver from 'resize-observer-polyfill';
 
@@ -56,28 +57,26 @@ class Dock extends Component {
     const dock = this.getDock();
     const panels = this.getPanels();
     const activePanelRef = dock ? dock.activePanelRef : null;
-    const shouldShowPanelTabs = panels.size > 1;
+    const arePanelTabsVisible = get(dock, 'arePanelTabsVisible') || false;
 
     const childProps = {
       ...children.props,
       ref: this.ref,
       style: {
         ...children.props.style,
-        visibility: shouldShowPanelTabs ? 'hidden' : 'visible',
+        visibility: arePanelTabsVisible ? 'hidden' : 'visible',
       },
     };
 
     return (
       <React.Fragment>
-        {shouldShowPanelTabs && (
+        {arePanelTabsVisible && (
           <PanelTabs
             activePanelRef={activePanelRef}
             dockRef={this.ref}
+            height={dock.panelTabsHeight}
             panels={panels}
             onTabClick={this.handleTabClick}
-            style={{
-              left: this.ref.current.getBoundingClientRect().left,
-            }}
           />
         )}
 

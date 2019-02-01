@@ -85,11 +85,11 @@ class Panel extends React.Component {
       let { height, top } = _getDimensionsFromRef(snappedDockRef);
       const { context } = this.props;
       const { docks } = context.provider;
-      const dockPanels = docks.get(snappedDockRef).panels;
+      const dock = docks.get(snappedDockRef);
 
-      if (dockPanels.size > 1) {
-        height -= 20;
-        top += 20;
+      if (dock.panels.size > 1) {
+        height -= dock.panelTabsHeight;
+        top += dock.panelTabsHeight;
       }
 
       this.setState({
@@ -156,8 +156,8 @@ class Panel extends React.Component {
     const dock = docks.get(dockRef);
 
     if (dock.panels.size > 1) {
-      height -= 20;
-      top += 20;
+      height -= dock.panelTabsHeight;
+      top += dock.panelTabsHeight;
     }
 
     return {

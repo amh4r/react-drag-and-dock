@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 
 import PanelTab from './PanelTab';
@@ -8,20 +9,50 @@ const Wrap = styled.div`
   border: 1px solid #3a89ea;
   border-bottom: 0;
   display: flex;
-  height: 20px;
 `;
+
+const _pixelToNumber = (str) => {
+  if (!str.endsWith('px')) return null;
+
+  return Number.parseInt(str, 10);
+};
+
+const _getPositionRelativeToBody = (dockRef) => {
+  const {
+    height: dockHeight,
+    width: dockWidth,
+    left: dockLeft,
+    top: dockTop,
+  } = dockRef.current.getBoundingClientRect();
+
+  const { left: bodyLeft, top: bodyTop } = document.body.getBoundingClientRect();
+  const bodyStyle = window.getComputedStyle(document.body);
+  const marginLeft = _pixelToNumber(bodyStyle.marginLeft);
+  const marginTop = _pixelToNumber(bodyStyle.marginTop);
+
+  return {
+    dockHeight,
+    width: dockWidth,
+    left: dockLeft - bodyLeft + marginLeft,
+    top: dockTop - bodyTop + marginTop,
+  };
+};
 
 class PanelTabs extends Component {
   render() {
-    const { activePanelRef, dockRef, onTabClick, panels } = this.props;
+    const { activePanelRef, dockRef, height, onTabClick, panels } = this.props;
+
+    if (!dockRef.current) return null;
+
     const tabs = [];
-    const { left, top, width } = dockRef.current.getBoundingClientRect();
+    const { left, top, width } = _getPositionRelativeToBody(dockRef);
 
     const style = {
       boxSizing: 'border-box',
+      float: 'left',
       left,
       top,
-      position: 'fixed',
+      position: 'absolute',
       width,
     };
 
@@ -36,7 +67,18 @@ class PanelTabs extends Component {
       );
     });
 
-    return <Wrap style={style}>{tabs}</Wrap>;
+    const component = (
+      <Wrap
+        style={{
+          ...style,
+          height,
+        }}
+      >
+        {tabs}
+      </Wrap>
+    );
+
+    return ReactDOM.createPortal(component, document.body);
   }
 }
 
@@ -47,6 +89,7 @@ PanelTabs.propTypes = {
   dockRef: PropTypes.shape({
     current: PropTypes.oneOfType([PropTypes.element, PropTypes.object]),
   }),
+  height: PropTypes.number.isRequired,
   onTabClick: PropTypes.func,
   panels: PropTypes.instanceOf(Map).isRequired,
 };

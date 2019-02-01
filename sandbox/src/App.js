@@ -20,7 +20,8 @@ class App extends Component {
   render() {
     return (
       <DragAndDock.Provider>
-        <Wrap style={{ height: '80vh', position: 'relative' }}>
+        {/* <Wrap style={{ height: '140vh', position: 'relative' }}> */}
+        <Wrap style={{ height: '140vh' }}>
           <DragAndDock.Dock id="dock-1">
             <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
           </DragAndDock.Dock>
