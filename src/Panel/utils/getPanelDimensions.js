@@ -1,4 +1,4 @@
-const getDimensions = (initialPosition, dockRef) => {
+const getPanelDimensions = (initialPosition, dockRef, panelTabsOffset) => {
   const {
     height: dockHeight,
     width: dockWidth,
@@ -7,11 +7,11 @@ const getDimensions = (initialPosition, dockRef) => {
   } = dockRef.current.getBoundingClientRect();
 
   return {
-    height: dockHeight,
+    height: dockHeight - panelTabsOffset,
     width: dockWidth,
     x: dockX - initialPosition.x + window.scrollX,
-    y: dockY - initialPosition.y + window.scrollY,
+    y: dockY - initialPosition.y + window.scrollY + panelTabsOffset,
   };
 };
 
-export default getDimensions;
+export default getPanelDimensions;

@@ -1,4 +1,5 @@
 import checkMouseEventIntersectsElement from './checkMouseEventIntersectsElement';
-import getDimensions from './getDimensions';
+import getNextState from './getNextState';
+import getPanelDimensions from './getPanelDimensions';
 
-export { checkMouseEventIntersectsElement, getDimensions };
+export { checkMouseEventIntersectsElement, getNextState, getPanelDimensions };

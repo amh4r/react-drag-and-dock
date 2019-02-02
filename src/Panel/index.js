@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import Draggable from 'react-draggable';
 
-import { checkMouseEventIntersectsElement, getDimensions } from './utils';
+import { checkMouseEventIntersectsElement, getNextState } from './utils';
 import withContext from '../withContext';
 import { Handle, Root } from './styles';
 
@@ -19,41 +19,13 @@ class Panel extends React.Component {
       width: null,
       isGrabbing: false,
       isVisible: true,
-      initialPosition: {},
-      ref: this.ref,
+      initialPosition: {}, // eslint-disable-line react/no-unused-state
+      ref: this.ref, // eslint-disable-line react/no-unused-state
     };
   }
 
   static getDerivedStateFromProps(props, state) {
-    const { ref } = state;
-
-    if (!ref.current) return null;
-
-    const { context } = props;
-    const panel = context.provider.panels.get(ref);
-    const snappedDockRef = panel.snappedDock;
-
-    if (!snappedDockRef) {
-      return {
-        position: null,
-      };
-    }
-
-    const { initialPosition } = state;
-    const { height, width, x, y } = getDimensions(initialPosition, snappedDockRef);
-    const dock = context.provider.docks.get(snappedDockRef);
-    const { arePanelTabsVisible, panelTabsHeight } = dock;
-    const panelTabsOffset = arePanelTabsVisible ? panelTabsHeight : 0;
-
-    return {
-      height: height - panelTabsOffset,
-      width,
-      isVisible: panel.isVisible,
-      position: {
-        x,
-        y: y + panelTabsOffset,
-      },
-    };
+    return getNextState(props, state);
   }
 
   componentDidMount() {
@@ -61,6 +33,7 @@ class Panel extends React.Component {
 
     context.registerPanel(this.ref, { props: this.props });
 
+    this.listenForPositionChange();
     this.setInitialPosition();
     this.snapToInitialDock();
   }
@@ -69,10 +42,27 @@ class Panel extends React.Component {
     document.body.removeChild(this.el);
   }
 
+  listenForPositionChange = () => {
+    let prevBoundingBox = this.ref.current.getBoundingClientRect();
+
+    setInterval(() => {
+      const boundingBox = this.ref.current.getBoundingClientRect();
+
+      if (boundingBox.x !== prevBoundingBox.x || boundingBox.y !== prevBoundingBox.y) {
+        const nextState = getNextState(this.props, this.state);
+
+        this.setState(nextState);
+
+        prevBoundingBox = boundingBox;
+      }
+    }, 500);
+  };
+
   setInitialPosition = () => {
     const { x, y } = this.ref.current.getBoundingClientRect();
 
     this.setState({
+      // eslint-disable-next-line react/no-unused-state
       initialPosition: {
         x: x + window.scrollX,
         y: y + window.scrollY,
