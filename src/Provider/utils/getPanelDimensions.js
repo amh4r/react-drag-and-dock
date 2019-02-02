@@ -1,10 +1,13 @@
-const getPanelDimensions = (initialPosition, dockRef, panelTabsOffset) => {
+const getPanelDimensions = (initialPosition, dock) => {
+  const { arePanelTabsVisible, panelTabsHeight } = dock;
+  const panelTabsOffset = arePanelTabsVisible ? panelTabsHeight : 0;
+
   const {
     height: dockHeight,
     width: dockWidth,
     x: dockX,
     y: dockY,
-  } = dockRef.current.getBoundingClientRect();
+  } = dock.ref.current.getBoundingClientRect();
 
   return {
     height: dockHeight - panelTabsOffset,

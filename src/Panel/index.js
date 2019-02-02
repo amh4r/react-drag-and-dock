@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import Draggable from 'react-draggable';
 
-import { checkMouseEventIntersectsElement, getNextState } from './utils';
+import { checkMouseEventIntersectsElement } from './utils';
 import withContext from '../withContext';
 import { Handle, Root } from './styles';
 
@@ -15,60 +15,20 @@ class Panel extends React.Component {
     this.prevSnappedTargeDimensions = {};
 
     this.state = {
-      height: null,
-      width: null,
       isGrabbing: false,
-      isVisible: true,
-      initialPosition: {}, // eslint-disable-line react/no-unused-state
-      ref: this.ref, // eslint-disable-line react/no-unused-state
     };
-  }
-
-  static getDerivedStateFromProps(props, state) {
-    return getNextState(props, state);
   }
 
   componentDidMount() {
     const { context } = this.props;
 
     context.registerPanel(this.ref, { props: this.props });
-
-    this.listenForPositionChange();
-    this.setInitialPosition();
     this.snapToInitialDock();
   }
 
   componentWillUnmount() {
     document.body.removeChild(this.el);
   }
-
-  listenForPositionChange = () => {
-    let prevBoundingBox = this.ref.current.getBoundingClientRect();
-
-    setInterval(() => {
-      const boundingBox = this.ref.current.getBoundingClientRect();
-
-      if (boundingBox.x !== prevBoundingBox.x || boundingBox.y !== prevBoundingBox.y) {
-        const nextState = getNextState(this.props, this.state);
-
-        this.setState(nextState);
-
-        prevBoundingBox = boundingBox;
-      }
-    }, 500);
-  };
-
-  setInitialPosition = () => {
-    const { x, y } = this.ref.current.getBoundingClientRect();
-
-    this.setState({
-      // eslint-disable-next-line react/no-unused-state
-      initialPosition: {
-        x: x + window.scrollX,
-        y: y + window.scrollY,
-      },
-    });
-  };
 
   snapToInitialDock = () => {
     const { context, initialDockId } = this.props;
@@ -88,7 +48,6 @@ class Panel extends React.Component {
   getDraggedOverDock = (e) => {
     const { context } = this.props;
     const { docks } = context;
-
     let draggedOverDock = null;
 
     docks.forEach((dock) => {
@@ -100,6 +59,13 @@ class Panel extends React.Component {
     });
 
     return draggedOverDock;
+  };
+
+  getPanel = () => {
+    const { context } = this.props;
+    const panel = context.panels.get(this.ref);
+
+    return panel;
   };
 
   handleDrag = (e) => {
@@ -131,9 +97,19 @@ class Panel extends React.Component {
 
   render() {
     const { children, styles, title } = this.props;
-    const { height, isGrabbing, isVisible, position, width } = this.state;
+    const { isGrabbing } = this.state;
+    const panel = this.getPanel();
     const handleStyle = styles.handle || {};
     const rootStyle = styles.root || {};
+
+    const position = (() => {
+      if (!panel || !panel.snappedDock) return null;
+
+      return {
+        x: panel.dimensions.x,
+        y: panel.dimensions.y,
+      };
+    })();
 
     const contents = (
       <Draggable
@@ -147,9 +123,9 @@ class Panel extends React.Component {
           ref={this.ref}
           style={{
             ...rootStyle,
-            height,
-            width,
-            display: isVisible ? 'block' : 'none',
+            height: panel ? panel.dimensions.height : null,
+            width: panel ? panel.dimensions.width : null,
+            display: !panel || panel.isVisible ? 'block' : 'none',
             zIndex: isGrabbing ? 100000 : 'auto',
           }}
         >
