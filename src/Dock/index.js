@@ -64,15 +64,21 @@ class Dock extends Component {
       ref: this.ref,
       style: {
         ...children.props.style,
-        position: 'relative',
       },
     };
 
-    const width = (() => {
-      if (!dock) return null;
+    const dockRect = dock ? dock.ref.current.getBoundingClientRect() : null;
 
-      return dock.ref.current.getBoundingClientRect().width;
+    const position = (() => {
+      if (!dockRect) return null;
+
+      return {
+        x: dockRect.x + window.scrollX,
+        y: dockRect.y + window.scrollY,
+      };
     })();
+
+    const width = dockRect ? dockRect.width : null;
 
     return (
       <Fragment>
@@ -82,6 +88,7 @@ class Dock extends Component {
             dockRef={this.ref}
             height={dock.panelTabsHeight}
             panels={panels}
+            position={position}
             width={width}
             onTabClick={this.handleTabClick}
           />

@@ -97,7 +97,7 @@ class Panel extends React.Component {
   };
 
   render() {
-    const { children, defaultPosition, defaultHeight, defaultWidth, styles, title } = this.props;
+    const { children, defaultHeight, defaultPosition, defaultWidth, styles, title } = this.props;
     const { isGrabbing } = this.state;
     const panel = this.getPanel();
     const handleStyle = styles.handle || {};
@@ -112,7 +112,17 @@ class Panel extends React.Component {
       };
     })();
 
-    console.log(defaultPosition);
+    const style = {
+      ...rootStyle,
+      display: !panel || panel.isVisible ? 'block' : 'none',
+      height: get(panel, 'dimensions.height') || defaultHeight,
+      width: get(panel, 'dimensions.width') || defaultWidth,
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      zIndex: isGrabbing ? 100000 : 'auto',
+    };
+
     const contents = (
       <Draggable
         handle=".handle"
@@ -122,19 +132,7 @@ class Panel extends React.Component {
         onDrag={this.handleDrag}
         onStop={this.handleDragStop}
       >
-        <Root
-          ref={this.ref}
-          style={{
-            ...rootStyle,
-            display: !panel || panel.isVisible ? 'block' : 'none',
-            height: get(panel, 'dimensions.height') || defaultHeight,
-            width: get(panel, 'dimensions.width') || defaultWidth,
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            zIndex: isGrabbing ? 100000 : 'auto',
-          }}
-        >
+        <Root ref={this.ref} style={style}>
           <Handle className="handle" style={{ ...handleStyle }}>
             {title}
           </Handle>
@@ -157,10 +155,12 @@ Panel.propTypes = {
     snapToDock: PropTypes.func.isRequired,
     docks: PropTypes.instanceOf(Map).isRequired,
   }).isRequired,
+  defaultHeight: PropTypes.number,
   defaultPosition: PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
   }),
+  defaultWidth: PropTypes.number,
   initialDockId: PropTypes.string,
   styles: PropTypes.shape({
     handle: PropTypes.object,
@@ -170,6 +170,8 @@ Panel.propTypes = {
 };
 
 Panel.defaultProps = {
+  defaultHeight: null,
+  defaultWidth: null,
   defaultPosition: undefined,
   initialDockId: null,
   styles: {},

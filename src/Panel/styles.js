@@ -13,7 +13,6 @@ const Root = styled.div`
   background: white;
   border: 1px solid #3a89ea;
   box-sizing: border-box;
-  float: 'left';
   position: absolute;
 `;
 
