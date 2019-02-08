@@ -1,4 +1,5 @@
 import React from 'react';
+import get from 'lodash/get';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
 import Draggable from 'react-draggable';
@@ -123,8 +124,8 @@ class Panel extends React.Component {
           ref={this.ref}
           style={{
             ...rootStyle,
-            height: panel ? panel.dimensions.height : null,
-            width: panel ? panel.dimensions.width : null,
+            height: get(panel, 'dimensions.height'),
+            width: get(panel, 'dimensions.width'),
             display: !panel || panel.isVisible ? 'block' : 'none',
             zIndex: isGrabbing ? 100000 : 'auto',
           }}
