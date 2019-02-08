@@ -19,31 +19,34 @@ const Wrap = styled.div`
 class App extends Component {
   render() {
     return (
-      <DragAndDock.Provider>
-        <Wrap style={{ height: '140vh', position: 'relative' }}>
-          <DragAndDock.Dock id="dock-1">
-            <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
-          </DragAndDock.Dock>
+      <div>
+        <div style={{ height: '10em' }}>yo</div>
+        <DragAndDock.Provider>
+          <Wrap style={{ height: '140vh', position: 'relative' }}>
+            <DragAndDock.Dock id="dock-1">
+              <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
+            </DragAndDock.Dock>
 
-          <div />
+            <div />
 
-          <DragAndDock.Dock>
-            <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
-          </DragAndDock.Dock>
+            <DragAndDock.Dock>
+              <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
+            </DragAndDock.Dock>
 
-          <DragAndDock.Panel title="Panel 1">
-            <Timer />
-          </DragAndDock.Panel>
+            <DragAndDock.Panel title="Panel 1">
+              <Timer />
+            </DragAndDock.Panel>
 
-          <DragAndDock.Panel initialDockId="dock-1" title="Panel 2">
-            <Timer />
-          </DragAndDock.Panel>
+            <DragAndDock.Panel initialDockId="dock-1" title="Panel 2">
+              <Timer />
+            </DragAndDock.Panel>
 
-          <DragAndDock.Panel initialDockId="dock-1" title="Panel 3">
-            <div>yo</div>
-          </DragAndDock.Panel>
-        </Wrap>
-      </DragAndDock.Provider>
+            <DragAndDock.Panel initialDockId="dock-1" title="Panel 3">
+              <div>yo</div>
+            </DragAndDock.Panel>
+          </Wrap>
+        </DragAndDock.Provider>
+      </div>
     );
   }
 }

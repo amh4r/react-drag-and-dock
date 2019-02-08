@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import isEqual from 'lodash/isEqual';
 import PropTypes from 'prop-types';
 
 import {
   changeDockActivePanel,
+  getPanelDimensions,
   registerDock,
   registerPanel,
   snapPanelToDock,
@@ -12,6 +14,8 @@ import {
 import Context from '../Context';
 
 export class Provider extends Component {
+  positionObserverInterval = null;
+
   constructor() {
     super();
 
@@ -19,11 +23,48 @@ export class Provider extends Component {
     this.panels = new Map();
     this.docks = new Map();
 
+    this.dockPositions = new Map();
+
     this.state = {
       panels: this.panels,
       docks: this.docks,
     };
   }
+
+  componentDidMount() {
+    this.positionObserverInterval = setInterval(() => {
+      // this.handleDockPositionChanges();
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.positionObserverInterval);
+  }
+
+  handleDockPositionChanges = () => {
+    this.docks.forEach((dock) => {
+      const prevDockPosition = this.dockPositions.get(dock.ref);
+
+      const { x, y } = dock.ref.current.getBoundingClientRect();
+      const newDockPosition = { x, y };
+
+      if (!prevDockPosition || !isEqual(newDockPosition, prevDockPosition)) {
+        this.dockPositions.set(dock.ref, newDockPosition);
+
+        dock.panels.forEach((dockPanel) => {
+          const newPanelDimensions = getPanelDimensions(dockPanel.initialDimensions, dock);
+
+          const newPanelData = {
+            dimensions: newPanelDimensions,
+          };
+
+          this.updatePanel(dockPanel.ref, newPanelData);
+
+          // console.log(dockPanel.ref)
+        });
+      }
+    });
+  };
 
   registerDock = (ref, data) => {
     this.docks = registerDock({ data, ref, docks: this.docks });
