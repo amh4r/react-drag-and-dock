@@ -36,7 +36,18 @@ const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
 
   const dock = newDocks.get(dockRef) || null;
   const panel = newPanels.get(panelRef);
-  const newPanelDimensions = dock ? getPanelDimensions(panel.initialDimensions, dock) : {};
+
+  const newPanelDimensions = (() => {
+    if (!dock) {
+      return {};
+    }
+
+    return getPanelDimensions({
+      initialDimensions: panel.initialDimensions,
+      dock,
+      panel,
+    });
+  })();
 
   const newPanelData = {
     ...panel,

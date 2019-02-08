@@ -9,7 +9,16 @@ const handleDockPanelDimensions = ({ docks, dockRef, panels }) => {
     if (panel.snappedDock !== dockRef) return;
 
     const dock = docks.get(panel.snappedDock);
-    const newPanelDimensions = dock ? getPanelDimensions(panel.initialDimensions, dock) : {};
+
+    const newPanelDimensions = (() => {
+      if (!dock) return {};
+
+      return getPanelDimensions({
+        initialDimensions: panel.initialDimensions,
+        dock,
+        panel,
+      });
+    })();
 
     const newPanelData = {
       ...panel,

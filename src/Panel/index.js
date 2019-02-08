@@ -104,7 +104,7 @@ class Panel extends React.Component {
     const rootStyle = styles.root || {};
 
     const position = (() => {
-      if (!panel || !panel.snappedDock) return null;
+      if (!panel || !panel.snappedDock || isGrabbing) return null;
 
       return {
         x: panel.dimensions.x,
@@ -124,9 +124,12 @@ class Panel extends React.Component {
           ref={this.ref}
           style={{
             ...rootStyle,
+            display: !panel || panel.isVisible ? 'block' : 'none',
             height: get(panel, 'dimensions.height'),
             width: get(panel, 'dimensions.width'),
-            display: !panel || panel.isVisible ? 'block' : 'none',
+            position: 'absolute',
+            left: 0,
+            top: 0,
             zIndex: isGrabbing ? 100000 : 'auto',
           }}
         >

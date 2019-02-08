@@ -6,7 +6,7 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
   let newDocks = new Map(docks);
   let newPanels = new Map(panels);
 
-  new Map(docks).forEach((dock) => {
+  docks.forEach((dock) => {
     const isPanelInDock = dock.panels.has(panelRef);
 
     if (!isPanelInDock) return;

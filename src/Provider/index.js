@@ -33,8 +33,8 @@ export class Provider extends Component {
 
   componentDidMount() {
     this.positionObserverInterval = setInterval(() => {
-      // this.handleDockPositionChanges();
-    }, 1000);
+      this.handleDockPositionChanges();
+    }, 500);
   }
 
   componentWillUnmount() {
@@ -52,7 +52,11 @@ export class Provider extends Component {
         this.dockPositions.set(dock.ref, newDockPosition);
 
         dock.panels.forEach((dockPanel) => {
-          const newPanelDimensions = getPanelDimensions(dockPanel.initialDimensions, dock);
+          const newPanelDimensions = getPanelDimensions({
+            initialDimensions: dockPanel.initialDimensions,
+            dock,
+            panel: dockPanel,
+          });
 
           const newPanelData = {
             dimensions: newPanelDimensions,
