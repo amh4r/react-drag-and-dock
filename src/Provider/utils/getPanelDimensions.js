@@ -6,7 +6,7 @@ const getPanelDimensions = ({ dock }) => {
   return {
     height: dockRect.height - panelTabsOffset,
     width: dockRect.width,
-    x: dockRect.x,
+    x: dockRect.x + window.scrollX,
     y: dockRect.y + panelTabsOffset + window.scrollY,
   };
 };

@@ -97,7 +97,7 @@ class Panel extends React.Component {
   };
 
   render() {
-    const { children, styles, title } = this.props;
+    const { children, defaultPosition, defaultHeight, defaultWidth, styles, title } = this.props;
     const { isGrabbing } = this.state;
     const panel = this.getPanel();
     const handleStyle = styles.handle || {};
@@ -112,9 +112,11 @@ class Panel extends React.Component {
       };
     })();
 
+    console.log(defaultPosition);
     const contents = (
       <Draggable
         handle=".handle"
+        defaultPosition={defaultPosition}
         position={position}
         onStart={this.handleDragStart}
         onDrag={this.handleDrag}
@@ -125,8 +127,8 @@ class Panel extends React.Component {
           style={{
             ...rootStyle,
             display: !panel || panel.isVisible ? 'block' : 'none',
-            height: get(panel, 'dimensions.height'),
-            width: get(panel, 'dimensions.width'),
+            height: get(panel, 'dimensions.height') || defaultHeight,
+            width: get(panel, 'dimensions.width') || defaultWidth,
             position: 'absolute',
             left: 0,
             top: 0,
@@ -155,6 +157,10 @@ Panel.propTypes = {
     snapToDock: PropTypes.func.isRequired,
     docks: PropTypes.instanceOf(Map).isRequired,
   }).isRequired,
+  defaultPosition: PropTypes.shape({
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+  }),
   initialDockId: PropTypes.string,
   styles: PropTypes.shape({
     handle: PropTypes.object,
@@ -164,6 +170,7 @@ Panel.propTypes = {
 };
 
 Panel.defaultProps = {
+  defaultPosition: undefined,
   initialDockId: null,
   styles: {},
   title: 'Panel',

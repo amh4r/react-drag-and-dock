@@ -33,7 +33,12 @@ class App extends Component {
               <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
             </DragAndDock.Dock>
 
-            <DragAndDock.Panel title="Panel 1">
+            <DragAndDock.Panel
+              title="Panel 1"
+              defaultHeight={100}
+              defaultWidth={300}
+              defaultPosition={{ x: 300, y: 100 }}
+            >
               <Timer />
             </DragAndDock.Panel>
 
