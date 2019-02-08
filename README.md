@@ -8,6 +8,12 @@ Create free-floating panels that "dock" into designated docks. Panel docking doe
 
 `npm i react-drag-and-dock`
 
+# How It Works
+
+When a `Panel` docked, the position of the `Dock` is determined using [`Element.getBoundingClientRect()`](https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect). Then the `Panel` height, width, and position are changed. All positions are relative to `document.body`.
+
+To the user, the `Panel` appears to be inside the `Dock`. In reality, the `Panel` is actually on top of the `Dock`.
+
 # Examples
 
 ## Two docks and one panel
