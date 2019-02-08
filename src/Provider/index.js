@@ -59,8 +59,6 @@ export class Provider extends Component {
           };
 
           this.updatePanel(dockPanel.ref, newPanelData);
-
-          // console.log(dockPanel.ref)
         });
       }
     });

@@ -1,5 +1,6 @@
 import addPanelToDock from './addPanelToDock';
 import getPanelDimensions from './getPanelDimensions';
+import handleDockPanelDimensions from './handleDockPanelDimensions';
 import removePanelFromDocks from './removePanelFromDocks';
 import updateDock from './updateDock';
 import updatePanel from './updatePanel';
@@ -38,6 +39,7 @@ const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
   const newPanelDimensions = dock ? getPanelDimensions(panel.initialDimensions, dock) : {};
 
   const newPanelData = {
+    ...panel,
     dimensions: {
       ...panel.dimensions,
       ...newPanelDimensions,
@@ -50,6 +52,14 @@ const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
     ref: panelRef,
     panels: newPanels,
   });
+
+  if (dock) {
+    ({ newDocks, newPanels } = handleDockPanelDimensions({
+      docks: newDocks,
+      dockRef,
+      panels: newPanels,
+    }));
+  }
 
   return {
     newDocks,

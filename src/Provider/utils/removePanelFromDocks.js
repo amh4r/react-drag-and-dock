@@ -1,4 +1,5 @@
 import changeDockActivePanel from './changeDockActivePanel';
+import handleDockPanelDimensions from './handleDockPanelDimensions';
 import updateDock from './updateDock';
 
 const removePanelFromDocks = ({ docks, panelRef, panels }) => {
@@ -24,6 +25,12 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
       ref: dock.ref,
       docks: newDocks,
     });
+
+    ({ newDocks, newPanels } = handleDockPanelDimensions({
+      docks: newDocks,
+      dockRef: dock.ref,
+      panels: newPanels,
+    }));
 
     const newActivePanelRef = (() => {
       if (newDockPanels.size === 0) return null;

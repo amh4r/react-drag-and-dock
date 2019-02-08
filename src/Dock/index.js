@@ -64,9 +64,14 @@ class Dock extends Component {
       ref: this.ref,
       style: {
         ...children.props.style,
-        visibility: arePanelTabsVisible ? 'hidden' : 'visible',
       },
     };
+
+    const width = (() => {
+      if (!dock) return null;
+
+      return dock.ref.current.getBoundingClientRect().width;
+    })();
 
     return (
       <Fragment>
@@ -76,6 +81,7 @@ class Dock extends Component {
             dockRef={this.ref}
             height={dock.panelTabsHeight}
             panels={panels}
+            width={width}
             onTabClick={this.handleTabClick}
           />
         )}
