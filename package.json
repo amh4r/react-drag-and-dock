@@ -15,6 +15,7 @@
     "start:src-watch": "cpx \"src/**/*.js\" \"sandbox/src/DragAndDock\" --watch"
   },
   "dependencies": {
+    "lodash": "^4.17.11",
     "prop-types": "^15.6.2",
     "react-draggable": "^3.1.1",
     "resize-observer-polyfill": "^1.5.1",

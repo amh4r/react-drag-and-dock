@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import get from 'lodash/get';
 import PropTypes from 'prop-types';
 import ResizeObserver from 'resize-observer-polyfill';
 
@@ -17,7 +18,7 @@ class Dock extends Component {
 
     context.registerDock(this.ref, {
       props: this.props,
-      dockableAreaRef: this.dockableAreaRef,
+      dockableAreaRef: this.ref,
     });
 
     const { parentNode } = this.ref.current;
@@ -56,33 +57,44 @@ class Dock extends Component {
     const dock = this.getDock();
     const panels = this.getPanels();
     const activePanelRef = dock ? dock.activePanelRef : null;
-    const shouldShowPanelTabs = panels.size > 1;
-
-    if (shouldShowPanelTabs) {
-      return (
-        <div ref={this.ref} style={{ display: 'flex', flexDirection: 'column' }}>
-          <PanelTabs
-            activePanelRef={activePanelRef}
-            panels={panels}
-            onTabClick={this.handleTabClick}
-          />
-
-          <div ref={this.dockableAreaRef} style={{ flexGrow: 1 }} />
-        </div>
-      );
-    }
+    const arePanelTabsVisible = get(dock, 'arePanelTabsVisible') || false;
 
     const childProps = {
       ...children.props,
-      ref: this.dockableAreaRef,
+      ref: this.ref,
+      style: {
+        ...children.props.style,
+        position: 'relative',
+      },
     };
 
-    return <div ref={this.ref}>{React.cloneElement(children, childProps)}</div>;
+    const width = (() => {
+      if (!dock) return null;
+
+      return dock.ref.current.getBoundingClientRect().width;
+    })();
+
+    return (
+      <Fragment>
+        {arePanelTabsVisible && (
+          <PanelTabs
+            activePanelRef={activePanelRef}
+            dockRef={this.ref}
+            height={dock.panelTabsHeight}
+            panels={panels}
+            width={width}
+            onTabClick={this.handleTabClick}
+          />
+        )}
+
+        {React.cloneElement(children, childProps)}
+      </Fragment>
+    );
   }
 }
 
 Dock.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
+  children: PropTypes.element.isRequired,
   context: PropTypes.shape({
     panels: PropTypes.instanceOf(Map).isRequired,
     registerPanel: PropTypes.func.isRequired,

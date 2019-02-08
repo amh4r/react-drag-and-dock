@@ -1,19 +1,26 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import ReactDOM from 'react-dom';
 
 import PanelTab from './PanelTab';
-
-const Wrap = styled.div`
-  border: 1px solid #3a89ea;
-  border-bottom: 0;
-  display: flex;
-`;
+import { Wrap } from './styles';
 
 class PanelTabs extends Component {
   render() {
-    const { activePanelRef, onTabClick, panels } = this.props;
+    const { activePanelRef, dockRef, height, onTabClick, panels, width } = this.props;
+
+    if (!dockRef.current) return null;
+
     const tabs = [];
+
+    const style = {
+      background: 'white',
+      boxSizing: 'border-box',
+      left: 0,
+      top: 0,
+      position: 'absolute',
+      width,
+    };
 
     panels.forEach((panel) => {
       const { props } = panel;
@@ -26,7 +33,18 @@ class PanelTabs extends Component {
       );
     });
 
-    return <Wrap>{tabs}</Wrap>;
+    const component = (
+      <Wrap
+        style={{
+          ...style,
+          height,
+        }}
+      >
+        {tabs}
+      </Wrap>
+    );
+
+    return ReactDOM.createPortal(component, dockRef.current);
   }
 }
 
@@ -34,12 +52,18 @@ PanelTabs.propTypes = {
   activePanelRef: PropTypes.shape({
     current: PropTypes.oneOfType([PropTypes.element, PropTypes.object]),
   }),
+  dockRef: PropTypes.shape({
+    current: PropTypes.oneOfType([PropTypes.element, PropTypes.object]),
+  }),
+  height: PropTypes.number.isRequired,
   onTabClick: PropTypes.func,
   panels: PropTypes.instanceOf(Map).isRequired,
+  width: PropTypes.number.isRequired,
 };
 
 PanelTabs.defaultProps = {
   activePanelRef: null,
+  dockRef: null,
   onTabClick: () => {},
 };
 
