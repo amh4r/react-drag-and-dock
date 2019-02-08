@@ -104,7 +104,7 @@ class Panel extends React.Component {
     const rootStyle = styles.root || {};
 
     const position = (() => {
-      if (!panel || !panel.snappedDock || isGrabbing) return null;
+      if (!panel || !panel.snappedDock) return null;
 
       return {
         x: panel.dimensions.x,

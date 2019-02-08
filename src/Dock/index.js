@@ -64,6 +64,7 @@ class Dock extends Component {
       ref: this.ref,
       style: {
         ...children.props.style,
+        position: 'relative',
       },
     };
 

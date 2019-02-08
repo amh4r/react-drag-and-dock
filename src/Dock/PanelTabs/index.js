@@ -16,6 +16,7 @@ class PanelTabs extends Component {
     const style = {
       background: 'white',
       boxSizing: 'border-box',
+      left: 0,
       top: 0,
       position: 'absolute',
       width,
