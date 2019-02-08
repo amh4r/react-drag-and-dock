@@ -81,22 +81,44 @@ const App = () => {
     <thead>
     <tr>
         <th style="width: 50px;">name</th>
-        <th style="width: 50px;">type</th>
+        <th>type</th>
         <th>default</th>
         <th>description</th>
     </tr>
     </thead>
     <tbody>
       <tr>
+          <td>defaultHeight</td>
+          <td>number</td>
+          <td><code>null</code></td>
+          <td>Panel height on initial load. Does nothing after the <code>Panel</code> is docked.</td>
+      </tr>
+      <tr>
+          <td>defaultPosition</td>
+          <td>
+            object
+            <br />
+            <code>{x:number,y:number}</code>
+          </td>
+          <td><code>undefined</code></td>
+          <td>Position (x and y, relative to <code>body</code>) on initial load. Does nothing after the <code>Panel</code> is docked.</td>
+      </tr>
+      <tr>
+          <td>defaultWidth</td>
+          <td>number</td>
+          <td><code>null</code></td>
+          <td>Panel width on initial load. Does nothing after the <code>Panel</code> is docked.</td>
+      </tr>
+      <tr>
           <td>initialDockId</td>
           <td>string</td>
-          <th><code>null</code></th>
-          <td>Dock to `Dock` whose `id` matches.</td>
+          <td><code>null</code></td>
+          <td>On initial load, which <code>Dock</code> to snap to. Must correspond to the <code>id</code> of an existing <code>Dock</code>.</td>
       </tr>
       <tr>
         <td>styles</td>
         <td>object</td>
-        <th><code>{}</code></th>
+        <td><code>{}</code></td>
         <td>
             Each property is the JSX <code>style</code> prop for a different "part" of the <code>Panel</code>.
             <ul>
@@ -108,7 +130,7 @@ const App = () => {
       <tr>
           <td>title</td>
           <td>string</td>
-          <th><code>"Panel"</code></th>
+          <td><code>"Panel"</code></td>
           <td>Text which appears in the handle at the top.</td>
       </tr>
     </tbody>
