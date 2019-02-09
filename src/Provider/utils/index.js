@@ -1,6 +1,7 @@
 import addPanelToDock from './addPanelToDock';
 import changeDockActivePanel from './changeDockActivePanel';
 import getPanelDimensions from './getPanelDimensions';
+import movePanelToTopOfStack from './movePanelToTopOfStack';
 import registerDock from './registerDock';
 import registerPanel from './registerPanel';
 import snapPanelToDock from './snapPanelToDock';
@@ -11,6 +12,7 @@ export {
   addPanelToDock,
   changeDockActivePanel,
   getPanelDimensions,
+  movePanelToTopOfStack,
   registerDock,
   registerPanel,
   snapPanelToDock,

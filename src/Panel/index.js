@@ -13,7 +13,7 @@ class Panel extends React.Component {
     super(props);
     this.isDraggedOverDock = false;
     this.ref = React.createRef();
-    this.uid = null;
+    this.uid = props.uid || null;
 
     this.state = {
       isGrabbing: false,
@@ -21,18 +21,7 @@ class Panel extends React.Component {
   }
 
   componentDidMount() {
-    const { context, uid } = this.props;
-
-    this.uid = context.registerPanel(uid, {
-      props: this.props,
-      ref: this.ref,
-    });
-
     this.snapToInitialDock();
-  }
-
-  componentWillUnmount() {
-    document.body.removeChild(this.el);
   }
 
   snapToInitialDock = () => {
@@ -74,7 +63,10 @@ class Panel extends React.Component {
 
   handleDragStart = () => {
     const { context } = this.props;
-    const { snapPanelToDock } = context;
+    const { movePanelToTopOfStack, snapPanelToDock } = context;
+
+    movePanelToTopOfStack(this.uid);
+
     const dockUid = null;
 
     snapPanelToDock(this.uid, dockUid);
@@ -97,7 +89,21 @@ class Panel extends React.Component {
   };
 
   render() {
-    const { children, defaultHeight, defaultPosition, defaultWidth, styles, title } = this.props;
+    const {
+      children,
+      context,
+      defaultHeight,
+      defaultPosition,
+      defaultWidth,
+      styles,
+      title,
+      zIndex,
+    } = this.props;
+
+    const { panelsContainerRef } = context;
+
+    if (!panelsContainerRef.current) return null;
+
     const { isGrabbing } = this.state;
     const panel = this.getPanel();
     const handleStyle = styles.handle || {};
@@ -120,7 +126,7 @@ class Panel extends React.Component {
       position: 'absolute',
       left: 0,
       top: 0,
-      zIndex: isGrabbing ? 100000 : 'auto',
+      zIndex: isGrabbing ? 100000 : zIndex,
     };
 
     const contents = (
@@ -142,7 +148,7 @@ class Panel extends React.Component {
       </Draggable>
     );
 
-    return ReactDOM.createPortal(contents, document.body);
+    return ReactDOM.createPortal(contents, panelsContainerRef.current);
   }
 }
 
@@ -168,6 +174,7 @@ Panel.propTypes = {
   }),
   title: PropTypes.string,
   uid: PropTypes.string,
+  zIndex: PropTypes.number,
 };
 
 Panel.defaultProps = {
@@ -178,6 +185,7 @@ Panel.defaultProps = {
   styles: {},
   title: 'Panel',
   uid: null,
+  zIndex: null,
 };
 
 export default withContext(Panel);

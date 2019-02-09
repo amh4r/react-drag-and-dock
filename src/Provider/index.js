@@ -7,6 +7,7 @@ import uuidv4 from 'uuid/v4';
 import {
   changeDockActivePanel,
   getPanelDimensions,
+  movePanelToTopOfStack,
   registerDock,
   registerPanel,
   snapPanelToDock,
@@ -14,6 +15,7 @@ import {
   updatePanel,
 } from './utils';
 import Context from '../Context';
+import PanelContainer from './PanelContainer';
 
 export class Provider extends Component {
   positionObserverInterval = null;
@@ -143,12 +145,26 @@ export class Provider extends Component {
     });
   };
 
+  movePanelToTopOfStack = (panelUid) => {
+    const { newPanels } = movePanelToTopOfStack({
+      panels: this.panels,
+      panelUid,
+    });
+
+    this.panels = newPanels;
+
+    this.setState({
+      panels: this.panels,
+    });
+  };
+
   render() {
     const { children } = this.props;
     const { panels, docks } = this.state;
 
     const contextValue = {
       docks,
+      movePanelToTopOfStack: this.movePanelToTopOfStack,
       panels,
       panelsContainerRef: this.panelsContainerRef,
       panelTabsContainerRef: this.panelTabsContainerRef,
@@ -162,10 +178,18 @@ export class Provider extends Component {
 
     return (
       <Context.Provider value={contextValue}>
+        {ReactDOM.createPortal(<div ref={this.panelTabsContainerRef} />, document.body)}
+        {/* {ReactDOM.createPortal(<div ref={this.panelsContainerRef} />, document.body)} */}
+        {ReactDOM.createPortal(
+          <PanelContainer ref={this.panelsContainerRef} panels={panels} />,
+          document.body,
+        )}
         {children}
 
-        {ReactDOM.createPortal(<div ref={this.panelTabsContainerRef} />, document.body)}
-        {ReactDOM.createPortal(<div ref={this.panelsContainerRef} />, document.body)}
+        {/* {panels.forEach((panel) => {
+
+          return React.cloneElement(panel, panel.props);
+        })} */}
       </Context.Provider>
     );
   }
