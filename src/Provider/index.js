@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import isEqual from 'lodash/isEqual';
 import PropTypes from 'prop-types';
+import uuidv4 from 'uuid/v4';
 
 import {
   changeDockActivePanel,
@@ -24,6 +26,8 @@ export class Provider extends Component {
     this.docks = new Map();
 
     this.dockPositions = new Map();
+    this.panelsContainerRef = React.createRef();
+    this.panelTabsContainerRef = React.createRef();
 
     this.state = {
       panels: this.panels,
@@ -32,8 +36,10 @@ export class Provider extends Component {
   }
 
   componentDidMount() {
+    this.createPanelTabsContainer();
+
     this.positionObserverInterval = setInterval(() => {
-      this.handleDockPositionChanges();
+      // this.handleDockPositionChanges();
     }, 500);
   }
 
@@ -41,8 +47,16 @@ export class Provider extends Component {
     clearInterval(this.positionObserverInterval);
   }
 
+  createPanelTabsContainer = () => {
+    // this.panelTabsContainer = document.createElement('div');
+    // this.panelTabsContainer = React.createElement(<div>hi</div>)
+    // document.body.appendChild(this.panelTabsContainer);
+    // ReactDOM.render(<div>hi</div>, document.body);
+    // ReactDOM.createPortal(<div ref={this.panelTabsContainerRef}>hi</div>, document.body);
+  };
+
   handleDockPositionChanges = () => {
-    this.docks.forEach((dock) => {
+    this.docks.forEach((dock, dockUid) => {
       const prevDockPosition = this.dockPositions.get(dock.ref);
 
       const { x, y } = dock.ref.current.getBoundingClientRect();
@@ -68,23 +82,29 @@ export class Provider extends Component {
     });
   };
 
-  registerDock = (ref, data) => {
-    this.docks = registerDock({ data, ref, docks: this.docks });
+  registerDock = (uid, data) => {
+    uid = uid || uuidv4();
+    this.docks = registerDock({ data, docks: this.docks, uid });
 
     this.setState({ docks: this.docks });
+
+    return uid;
   };
 
-  registerPanel = (ref, data) => {
-    this.panels = registerPanel({ data, ref, panels: this.panels });
+  registerPanel = (panelUid, data) => {
+    panelUid = panelUid || uuidv4();
+    this.panels = registerPanel({ data, panels: this.panels, panelUid });
 
     this.setState({ panels: this.panels });
+
+    return panelUid;
   };
 
-  updateDock = (ref, newData) => {
+  updateDock = (dockUid, newData) => {
     this.docks = updateDock({
-      newData,
-      ref,
       docks: this.docks,
+      dockUid,
+      newData,
     });
 
     this.setState({ docks: this.docks });
@@ -100,11 +120,11 @@ export class Provider extends Component {
     this.setState({ panels: this.panels });
   };
 
-  setDockActivePanel = (dockRef, activePanelRef) => {
+  setDockActivePanel = (dockUid, activePanelUid) => {
     const { newDocks, newPanels } = changeDockActivePanel({
-      dockRef,
+      activePanelUid,
       docks: this.docks,
-      activePanelRef,
+      dockUid,
       panels: this.panels,
     });
 
@@ -117,12 +137,12 @@ export class Provider extends Component {
     });
   };
 
-  snapToDock = (panelRef, dockRef) => {
+  snapPanelToDock = (panelUid, dockUid) => {
     const { newDocks, newPanels } = snapPanelToDock({
       docks: this.docks,
-      dockRef,
+      dockUid,
       panels: this.panels,
-      panelRef,
+      panelUid,
     });
 
     this.docks = newDocks;
@@ -141,15 +161,23 @@ export class Provider extends Component {
     const contextValue = {
       docks,
       panels,
+      panelsContainerRef: this.panelsContainerRef,
+      panelTabsContainerRef: this.panelTabsContainerRef,
       provider: this,
       registerPanel: this.registerPanel,
       registerDock: this.registerDock,
       setDockActivePanel: this.setDockActivePanel,
-      snapToDock: this.snapToDock,
+      snapPanelToDock: this.snapPanelToDock,
       updateDock: this.updateDock,
     };
 
-    return <Context.Provider value={contextValue}>{children}</Context.Provider>;
+    return (
+      <Context.Provider value={contextValue}>
+        {children}
+        {ReactDOM.createPortal(<div ref={this.panelTabsContainerRef} />, document.body)}
+        {ReactDOM.createPortal(<div ref={this.panelsContainerRef} />, document.body)}
+      </Context.Provider>
+    );
   }
 }
 

@@ -1,23 +1,19 @@
 import getPanelDimensions from './getPanelDimensions';
 import updatePanel from './updatePanel';
 
-const handleDockPanelDimensions = ({ docks, dockRef, panels }) => {
+const handleDockPanelDimensions = ({ docks, dockUid, panels }) => {
   const newDocks = new Map(docks);
   let newPanels = new Map(panels);
 
-  panels.forEach((panel) => {
-    if (panel.snappedDock !== dockRef) return;
+  panels.forEach((panel, panelUid) => {
+    if (panel.snappedDockUid !== dockUid) return;
 
-    const dock = docks.get(panel.snappedDock);
+    const dock = docks.get(panel.snappedDockUid);
 
     const newPanelDimensions = (() => {
       if (!dock) return {};
 
-      return getPanelDimensions({
-        initialDimensions: panel.initialDimensions,
-        dock,
-        panel,
-      });
+      return getPanelDimensions({ dock });
     })();
 
     const newPanelData = {
@@ -30,8 +26,8 @@ const handleDockPanelDimensions = ({ docks, dockRef, panels }) => {
 
     newPanels = updatePanel({
       newData: newPanelData,
-      ref: panel.ref,
       panels: newPanels,
+      panelUid,
     });
   });
 

@@ -5,48 +5,44 @@ import removePanelFromDocks from './removePanelFromDocks';
 import updateDock from './updateDock';
 import updatePanel from './updatePanel';
 
-const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
+const snapPanelToDock = ({ docks, dockUid, panels, panelUid }) => {
   let newDocks = new Map(docks);
   let newPanels = new Map(panels);
 
   ({ newDocks, newPanels } = removePanelFromDocks({
     docks: newDocks,
-    panelRef,
     panels: newPanels,
+    panelUid,
   }));
 
-  if (dockRef) {
+  if (dockUid) {
     ({ newDocks, newPanels } = addPanelToDock({
       docks: newDocks,
-      dockRef,
+      dockUid,
       panels: newPanels,
-      panelRef,
+      panelUid,
     }));
 
     const newDockData = {
-      activePanelRef: panelRef,
+      activePanelUid: panelUid,
     };
 
     newDocks = updateDock({
-      newData: newDockData,
-      ref: dockRef,
       docks: newDocks,
+      dockUid,
+      newData: newDockData,
     });
   }
 
-  const dock = newDocks.get(dockRef) || null;
-  const panel = newPanels.get(panelRef);
+  const dock = newDocks.get(dockUid) || null;
+  const panel = newPanels.get(panelUid);
 
   const newPanelDimensions = (() => {
     if (!dock) {
       return {};
     }
 
-    return getPanelDimensions({
-      initialDimensions: panel.initialDimensions,
-      dock,
-      panel,
-    });
+    return getPanelDimensions({ dock });
   })();
 
   const newPanelData = {
@@ -55,19 +51,19 @@ const snapPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
       ...panel.dimensions,
       ...newPanelDimensions,
     },
-    snappedDock: dock ? dock.ref : null,
+    snappedDockUid: dockUid || null,
   };
 
   newPanels = updatePanel({
     newData: newPanelData,
-    ref: panelRef,
     panels: newPanels,
+    panelUid,
   });
 
   if (dock) {
     ({ newDocks, newPanels } = handleDockPanelDimensions({
       docks: newDocks,
-      dockRef,
+      dockUid,
       panels: newPanels,
     }));
   }

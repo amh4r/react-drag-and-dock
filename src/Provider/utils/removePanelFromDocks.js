@@ -2,18 +2,18 @@ import changeDockActivePanel from './changeDockActivePanel';
 import handleDockPanelDimensions from './handleDockPanelDimensions';
 import updateDock from './updateDock';
 
-const removePanelFromDocks = ({ docks, panelRef, panels }) => {
+const removePanelFromDocks = ({ docks, panels, panelUid }) => {
   let newDocks = new Map(docks);
   let newPanels = new Map(panels);
 
-  docks.forEach((dock) => {
-    const isPanelInDock = dock.panels.has(panelRef);
+  docks.forEach((dock, dockUid) => {
+    const isPanelInDock = dock.panels.has(panelUid);
 
     if (!isPanelInDock) return;
 
     const newDockPanels = new Map(dock.panels);
 
-    newDockPanels.delete(panelRef);
+    newDockPanels.delete(panelUid);
 
     const newDockData = {
       panels: newDockPanels,
@@ -21,29 +21,29 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
     };
 
     newDocks = updateDock({
-      newData: newDockData,
-      ref: dock.ref,
       docks: newDocks,
+      dockUid,
+      newData: newDockData,
     });
 
     ({ newDocks, newPanels } = handleDockPanelDimensions({
       docks: newDocks,
-      dockRef: dock.ref,
+      dockUid,
       panels: newPanels,
     }));
 
-    const newActivePanelRef = (() => {
+    const newActivePanelUid = (() => {
       if (newDockPanels.size === 0) return null;
 
-      const firstDockPanel = newDockPanels.values().next().value;
+      const firstDockPanelUid = newDockPanels.keys().next().value;
 
-      return firstDockPanel.ref;
+      return firstDockPanelUid;
     })();
 
     ({ newDocks, newPanels } = changeDockActivePanel({
-      dockRef: dock.ref,
+      activePanelUid: newActivePanelUid,
       docks: newDocks,
-      activePanelRef: newActivePanelRef,
+      dockUid,
       panels: newPanels,
     }));
   });

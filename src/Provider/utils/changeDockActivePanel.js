@@ -1,29 +1,29 @@
 import updateDock from './updateDock';
 import updatePanel from './updatePanel';
 
-const changeDockActivePanel = ({ dockRef, docks, activePanelRef, panels }) => {
+const changeDockActivePanel = ({ activePanelUid, docks, dockUid, panels }) => {
   const newDockData = {
-    activePanelRef,
+    activePanelUid,
   };
 
   const newDocks = updateDock({
-    newData: newDockData,
-    ref: dockRef,
     docks,
+    dockUid,
+    newData: newDockData,
   });
 
-  const dock = docks.get(dockRef);
+  const dock = docks.get(dockUid);
   let newPanels = new Map(panels);
 
-  dock.panels.forEach((panel) => {
+  dock.panels.forEach((panel, panelUid) => {
     const newPanelData = {
-      isVisible: panel.ref === activePanelRef,
+      isVisible: panelUid === activePanelUid,
     };
 
     newPanels = updatePanel({
       newData: newPanelData,
-      ref: panel.ref,
       panels: newPanels,
+      panelUid,
     });
   });
 

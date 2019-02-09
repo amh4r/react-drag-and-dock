@@ -1,10 +1,10 @@
 import changeDockActivePanel from './changeDockActivePanel';
 import updateDock from './updateDock';
 
-const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
-  const dock = docks.get(dockRef);
-  const panel = panels.get(panelRef);
-  const newDockPanels = new Map(dock.panels).set(panelRef, panel);
+const addPanelToDock = ({ docks, dockUid, panels, panelUid }) => {
+  const dock = docks.get(dockUid);
+  const panel = panels.get(panelUid);
+  const newDockPanels = new Map(dock.panels).set(panelUid, panel);
 
   const newDockData = {
     panels: newDockPanels,
@@ -12,17 +12,17 @@ const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
   };
 
   let newDocks = updateDock({
-    newData: newDockData,
-    ref: dockRef,
     docks,
+    dockUid,
+    newData: newDockData,
   });
 
   let newPanels = null;
 
   ({ newDocks, newPanels } = changeDockActivePanel({
-    dockRef,
     docks: newDocks,
-    activePanelRef: panelRef,
+    dockUid,
+    activePanelUid: panelUid,
     panels,
   }));
 

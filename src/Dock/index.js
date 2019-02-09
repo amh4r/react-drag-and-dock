@@ -9,22 +9,24 @@ import PanelTabs from './PanelTabs';
 class Dock extends Component {
   constructor() {
     super();
-    this.ref = React.createRef();
     this.dockableAreaRef = React.createRef();
+    this.ref = React.createRef();
+    this.uid = null;
   }
 
   componentDidMount() {
-    const { context } = this.props;
+    const { context, uid } = this.props;
 
-    context.registerDock(this.ref, {
-      props: this.props,
+    this.uid = context.registerDock(uid, {
       dockableAreaRef: this.ref,
+      props: this.props,
+      ref: this.ref,
     });
 
     const { parentNode } = this.ref.current;
 
     const resizeObserver = new ResizeObserver(() => {
-      context.updateDock(this.ref, this.props);
+      context.updateDock(this.uid, this.props);
     });
 
     resizeObserver.observe(parentNode);
@@ -32,7 +34,7 @@ class Dock extends Component {
 
   getDock = () => {
     const { context } = this.props;
-    const dock = context.provider.docks.get(this.ref);
+    const dock = context.provider.docks.get(this.uid);
 
     return dock;
   };
@@ -45,18 +47,18 @@ class Dock extends Component {
     return dock.panels;
   };
 
-  handleTabClick = (panel) => {
+  handleTabClick = (panelUid) => {
     const { context } = this.props;
     const { setDockActivePanel } = context;
 
-    setDockActivePanel(this.ref, panel.ref);
+    setDockActivePanel(this.uid, panelUid);
   };
 
   render() {
     const { children } = this.props;
     const dock = this.getDock();
     const panels = this.getPanels();
-    const activePanelRef = dock ? dock.activePanelRef : null;
+    const activePanelUid = dock ? dock.activePanelUid : null;
     const arePanelTabsVisible = get(dock, 'arePanelTabsVisible') || false;
 
     const childProps = {
@@ -64,24 +66,31 @@ class Dock extends Component {
       ref: this.ref,
       style: {
         ...children.props.style,
-        position: 'relative',
       },
     };
 
-    const width = (() => {
-      if (!dock) return null;
+    const dockRect = dock ? dock.ref.current.getBoundingClientRect() : null;
 
-      return dock.ref.current.getBoundingClientRect().width;
+    const position = (() => {
+      if (!dockRect) return null;
+
+      return {
+        x: dockRect.x + window.scrollX,
+        y: dockRect.y + window.scrollY,
+      };
     })();
+
+    const width = dockRect ? dockRect.width : null;
 
     return (
       <Fragment>
         {arePanelTabsVisible && (
           <PanelTabs
-            activePanelRef={activePanelRef}
+            activePanelUid={activePanelUid}
             dockRef={this.ref}
             height={dock.panelTabsHeight}
             panels={panels}
+            position={position}
             width={width}
             onTabClick={this.handleTabClick}
           />
@@ -96,17 +105,17 @@ class Dock extends Component {
 Dock.propTypes = {
   children: PropTypes.element.isRequired,
   context: PropTypes.shape({
-    panels: PropTypes.instanceOf(Map).isRequired,
-    registerPanel: PropTypes.func.isRequired,
-    registerDock: PropTypes.func.isRequired,
-    snapToDock: PropTypes.func.isRequired,
     docks: PropTypes.instanceOf(Map).isRequired,
+    panels: PropTypes.instanceOf(Map).isRequired,
+    registerDock: PropTypes.func.isRequired,
+    registerPanel: PropTypes.func.isRequired,
+    snapPanelToDock: PropTypes.func.isRequired,
   }).isRequired,
-  id: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+  uid: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
 };
 
 Dock.defaultProps = {
-  id: null,
+  uid: null,
 };
 
 export default withContext(Dock);

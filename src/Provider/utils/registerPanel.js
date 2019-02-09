@@ -1,5 +1,5 @@
-const registerPanel = ({ data, ref, panels }) => {
-  const { height, width, x, y } = ref.current.getBoundingClientRect();
+const registerPanel = ({ data, panels, panelUid }) => {
+  const { height, width, x, y } = data.ref.current.getBoundingClientRect();
 
   const dimensions = {
     height,
@@ -14,16 +14,15 @@ const registerPanel = ({ data, ref, panels }) => {
       ...dimensions,
     },
     isVisible: true,
-    snappedDock: null,
+    snappedDockUid: null,
   };
 
   const newPanel = {
     ...defaults,
     ...data,
-    ref,
   };
 
-  const newPanels = new Map(panels).set(ref, newPanel);
+  const newPanels = new Map(panels).set(panelUid, newPanel);
 
   return newPanels;
 };
