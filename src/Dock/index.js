@@ -47,11 +47,11 @@ class Dock extends Component {
     return dock.panels;
   };
 
-  handleTabClick = (panel) => {
+  handleTabClick = (panelUid) => {
     const { context } = this.props;
     const { setDockActivePanel } = context;
 
-    setDockActivePanel(this.ref, panel.ref);
+    setDockActivePanel(this.uid, panelUid);
   };
 
   render() {

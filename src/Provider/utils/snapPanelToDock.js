@@ -10,9 +10,9 @@ const snapPanelToDock = ({ docks, dockUid, panels, panelUid }) => {
   let newPanels = new Map(panels);
 
   ({ newDocks, newPanels } = removePanelFromDocks({
-    panelUid,
     docks: newDocks,
     panels: newPanels,
+    panelUid,
   }));
 
   if (dockUid) {
@@ -44,9 +44,6 @@ const snapPanelToDock = ({ docks, dockUid, panels, panelUid }) => {
 
     return getPanelDimensions({ dock });
   })();
-
-  console.log(panel.props.title)
-  console.log(newPanelDimensions)
 
   const newPanelData = {
     ...panel,

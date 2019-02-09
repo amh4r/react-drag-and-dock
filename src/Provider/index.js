@@ -120,11 +120,11 @@ export class Provider extends Component {
     this.setState({ panels: this.panels });
   };
 
-  setDockActivePanel = (dockRef, activePanelUid) => {
+  setDockActivePanel = (dockUid, activePanelUid) => {
     const { newDocks, newPanels } = changeDockActivePanel({
       activePanelUid,
-      dockRef,
       docks: this.docks,
+      dockUid,
       panels: this.panels,
     });
 

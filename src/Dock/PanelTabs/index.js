@@ -26,7 +26,7 @@ const PanelTabs = (props) => {
     const isActive = panelUid === activePanelUid;
 
     tabs.push(
-      <PanelTab key={title} isActive={isActive} onClick={() => onTabClick(panel)}>
+      <PanelTab key={title} isActive={isActive} onClick={() => onTabClick(panelUid)}>
         {title}
       </PanelTab>,
     );
