@@ -9,7 +9,6 @@ import PanelTabs from './PanelTabs';
 class Dock extends Component {
   constructor() {
     super();
-    this.dockableAreaRef = React.createRef();
     this.ref = React.createRef();
     this.uid = null;
   }
@@ -18,7 +17,6 @@ class Dock extends Component {
     const { context, uid } = this.props;
 
     this.uid = context.registerDock(uid, {
-      dockableAreaRef: this.ref,
       props: this.props,
       ref: this.ref,
     });
