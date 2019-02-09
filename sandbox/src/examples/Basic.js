@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 
 import DragAndDock from '../DragAndDock';
-// import Timer from '../components/Timer';
+import Timer from '../components/Timer';
 
 const Wrap = styled.div`
   display: grid;
@@ -38,13 +38,11 @@ class Example extends Component {
               defaultWidth={300}
               defaultPosition={{ x: 300, y: 100 }}
             >
-              {/* <Timer /> */}
-              <div>Panel 1</div>
+              <Timer />
             </DragAndDock.Panel>
 
             <DragAndDock.Panel initialDockId="dock-1" title="Panel 2">
-              {/* <Timer /> */}
-              <div>Panel 2</div>
+              <Timer />
             </DragAndDock.Panel>
 
             <DragAndDock.Panel initialDockId="dock-1" title="Panel 3">
