@@ -24,10 +24,6 @@ class Panel extends React.Component {
     this.snapToInitialDock();
   }
 
-  componentWillUnmount() {
-    document.body.removeChild(this.el);
-  }
-
   snapToInitialDock = () => {
     const { context, initialDockUid } = this.props;
 
@@ -67,7 +63,10 @@ class Panel extends React.Component {
 
   handleDragStart = () => {
     const { context } = this.props;
-    const { snapPanelToDock } = context;
+    const { movePanelToTopOfStack, snapPanelToDock } = context;
+
+    movePanelToTopOfStack(this.uid);
+
     const dockUid = null;
 
     snapPanelToDock(this.uid, dockUid);
@@ -98,6 +97,7 @@ class Panel extends React.Component {
       defaultWidth,
       styles,
       title,
+      zIndex,
     } = this.props;
 
     const { panelsContainerRef } = context;
@@ -126,7 +126,7 @@ class Panel extends React.Component {
       position: 'absolute',
       left: 0,
       top: 0,
-      zIndex: isGrabbing ? 100000 : 'auto',
+      zIndex: isGrabbing ? 100000 : zIndex,
     };
 
     const contents = (
@@ -174,6 +174,7 @@ Panel.propTypes = {
   }),
   title: PropTypes.string,
   uid: PropTypes.string,
+  zIndex: PropTypes.number,
 };
 
 Panel.defaultProps = {
@@ -184,6 +185,7 @@ Panel.defaultProps = {
   styles: {},
   title: 'Panel',
   uid: null,
+  zIndex: null,
 };
 
 export default withContext(Panel);

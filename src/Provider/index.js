@@ -7,6 +7,7 @@ import uuidv4 from 'uuid/v4';
 import {
   changeDockActivePanel,
   getPanelDimensions,
+  movePanelToTopOfStack,
   registerDock,
   registerPanel,
   snapPanelToDock,
@@ -144,12 +145,26 @@ export class Provider extends Component {
     });
   };
 
+  movePanelToTopOfStack = (panelUid) => {
+    const { newPanels } = movePanelToTopOfStack({
+      panels: this.panels,
+      panelUid,
+    });
+
+    this.panels = newPanels;
+
+    this.setState({
+      panels: this.panels,
+    });
+  };
+
   render() {
     const { children } = this.props;
     const { panels, docks } = this.state;
 
     const contextValue = {
       docks,
+      movePanelToTopOfStack: this.movePanelToTopOfStack,
       panels,
       panelsContainerRef: this.panelsContainerRef,
       panelTabsContainerRef: this.panelTabsContainerRef,

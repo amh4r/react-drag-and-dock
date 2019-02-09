@@ -6,14 +6,19 @@ const PanelContainer = React.forwardRef((props, ref) => {
   const { panels } = props;
   const panelElems = [];
 
+  let zIndex = 0;
+
   panels.forEach((panel, panelUid) => {
     if (!panelUid) return;
+
+    zIndex += 1;
 
     const elem = (
       <Panel
         key={panelUid} // eslint-disable-line react/no-array-index-key
         {...panel.props}
         uid={panelUid}
+        zIndex={zIndex}
       />
     );
 
