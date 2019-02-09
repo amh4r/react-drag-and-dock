@@ -36,10 +36,8 @@ export class Provider extends Component {
   }
 
   componentDidMount() {
-    this.createPanelTabsContainer();
-
     this.positionObserverInterval = setInterval(() => {
-      // this.handleDockPositionChanges();
+      this.handleDockPositionChanges();
     }, 500);
   }
 
@@ -47,36 +45,27 @@ export class Provider extends Component {
     clearInterval(this.positionObserverInterval);
   }
 
-  createPanelTabsContainer = () => {
-    // this.panelTabsContainer = document.createElement('div');
-    // this.panelTabsContainer = React.createElement(<div>hi</div>)
-    // document.body.appendChild(this.panelTabsContainer);
-    // ReactDOM.render(<div>hi</div>, document.body);
-    // ReactDOM.createPortal(<div ref={this.panelTabsContainerRef}>hi</div>, document.body);
-  };
-
   handleDockPositionChanges = () => {
     this.docks.forEach((dock, dockUid) => {
-      const prevDockPosition = this.dockPositions.get(dock.ref);
-
+      const prevDockPosition = this.dockPositions.get(dockUid);
       const { x, y } = dock.ref.current.getBoundingClientRect();
-      const newDockPosition = { x, y };
+
+      const newDockPosition = {
+        x: x + window.scrollX,
+        y: y + window.scrollY,
+      };
 
       if (!prevDockPosition || !isEqual(newDockPosition, prevDockPosition)) {
-        this.dockPositions.set(dock.ref, newDockPosition);
+        this.dockPositions.set(dockUid, newDockPosition);
 
-        dock.panels.forEach((dockPanel) => {
-          const newPanelDimensions = getPanelDimensions({
-            initialDimensions: dockPanel.initialDimensions,
-            dock,
-            panel: dockPanel,
-          });
+        dock.panels.forEach((dockPanel, dockPanelUid) => {
+          const newPanelDimensions = getPanelDimensions({ dock });
 
           const newPanelData = {
             dimensions: newPanelDimensions,
           };
 
-          this.updatePanel(dockPanel.ref, newPanelData);
+          this.updatePanel(dockPanelUid, newPanelData);
         });
       }
     });
@@ -110,11 +99,11 @@ export class Provider extends Component {
     this.setState({ docks: this.docks });
   };
 
-  updatePanel = (ref, newData) => {
+  updatePanel = (panelUid, newData) => {
     this.panels = updatePanel({
       newData,
-      ref,
       panels: this.panels,
+      panelUid,
     });
 
     this.setState({ panels: this.panels });
