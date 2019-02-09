@@ -97,7 +97,20 @@ class Panel extends React.Component {
   };
 
   render() {
-    const { children, defaultHeight, defaultPosition, defaultWidth, styles, title } = this.props;
+    const {
+      children,
+      context,
+      defaultHeight,
+      defaultPosition,
+      defaultWidth,
+      styles,
+      title,
+    } = this.props;
+
+    const { panelsContainerRef } = context;
+
+    if (!panelsContainerRef.current) return null;
+
     const { isGrabbing } = this.state;
     const panel = this.getPanel();
     const handleStyle = styles.handle || {};
@@ -142,7 +155,7 @@ class Panel extends React.Component {
       </Draggable>
     );
 
-    return ReactDOM.createPortal(contents, document.body);
+    return ReactDOM.createPortal(contents, panelsContainerRef.current);
   }
 }
 

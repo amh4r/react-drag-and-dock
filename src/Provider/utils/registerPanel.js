@@ -1,5 +1,11 @@
 const registerPanel = ({ data, panels, panelUid }) => {
-  const { height, width, x, y } = data.ref.current.getBoundingClientRect();
+  const { height, width, x, y } = (() => {
+    if (!data.ref.current) {
+      return {};
+    }
+
+    return data.ref.current.getBoundingClientRect();
+  })();
 
   const dimensions = {
     height,
