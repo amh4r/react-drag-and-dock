@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import isEqual from 'lodash/isEqual';
 import PropTypes from 'prop-types';
 
@@ -24,6 +25,8 @@ export class Provider extends Component {
     this.docks = new Map();
 
     this.dockPositions = new Map();
+    this.panelsContainerRef = React.createRef();
+    this.panelTabsContainerRef = React.createRef();
 
     this.state = {
       panels: this.panels,
@@ -32,6 +35,8 @@ export class Provider extends Component {
   }
 
   componentDidMount() {
+    this.createPanelTabsContainer();
+
     this.positionObserverInterval = setInterval(() => {
       this.handleDockPositionChanges();
     }, 500);
@@ -40,6 +45,14 @@ export class Provider extends Component {
   componentWillUnmount() {
     clearInterval(this.positionObserverInterval);
   }
+
+  createPanelTabsContainer = () => {
+    // this.panelTabsContainer = document.createElement('div');
+    // this.panelTabsContainer = React.createElement(<div>hi</div>)
+    // document.body.appendChild(this.panelTabsContainer);
+    // ReactDOM.render(<div>hi</div>, document.body);
+    // ReactDOM.createPortal(<div ref={this.panelTabsContainerRef}>hi</div>, document.body);
+  };
 
   handleDockPositionChanges = () => {
     this.docks.forEach((dock) => {
@@ -141,6 +154,8 @@ export class Provider extends Component {
     const contextValue = {
       docks,
       panels,
+      panelsContainerRef: this.panelsContainerRef,
+      panelTabsContainerRef: this.panelTabsContainerRef,
       provider: this,
       registerPanel: this.registerPanel,
       registerDock: this.registerDock,
@@ -149,7 +164,13 @@ export class Provider extends Component {
       updateDock: this.updateDock,
     };
 
-    return <Context.Provider value={contextValue}>{children}</Context.Provider>;
+    return (
+      <Context.Provider value={contextValue}>
+        {children}
+        {ReactDOM.createPortal(<div ref={this.panelTabsContainerRef} />, document.body)}
+        {ReactDOM.createPortal(<div ref={this.panelsContainerRef} />, document.body)}
+      </Context.Provider>
+    );
   }
 }
 
