@@ -1,4 +1,4 @@
-const validateArguments = ({ data, docks, uid }) => {
+const validateArguments = ({ data, docks, dockUid }) => {
   if (!data) {
     throw new Error('data is falsy');
   }
@@ -7,13 +7,13 @@ const validateArguments = ({ data, docks, uid }) => {
     throw new Error('docks is falsy');
   }
 
-  if (!uid) {
+  if (!dockUid) {
     throw new Error('uid is falsy');
   }
 };
 
-const registerDock = ({ data, docks, uid }) => {
-  validateArguments({ data, docks, uid });
+const registerDock = ({ data, docks, dockUid }) => {
+  validateArguments({ data, docks, dockUid });
 
   const defaults = {
     panels: new Map(),
@@ -26,7 +26,7 @@ const registerDock = ({ data, docks, uid }) => {
     panelTabsHeight: 20,
   };
 
-  const newDocks = new Map(docks).set(uid, newDock);
+  const newDocks = new Map(docks).set(dockUid, newDock);
 
   return newDocks;
 };

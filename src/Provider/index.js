@@ -4,7 +4,7 @@ import isEqual from 'lodash/isEqual';
 import PropTypes from 'prop-types';
 import uuidv4 from 'uuid/v4';
 
-import {
+import utils, {
   changeDockActivePanel,
   getPanelDimensions,
   movePanelToTopOfStack,
@@ -72,13 +72,13 @@ export class Provider extends Component {
     });
   };
 
-  registerDock = (uid, data) => {
-    uid = uid || uuidv4();
-    this.docks = registerDock({ data, docks: this.docks, uid });
+  registerDock = (dockUid, data) => {
+    dockUid = dockUid || uuidv4();
+    this.docks = registerDock({ data, docks: this.docks, dockUid });
 
     this.setState({ docks: this.docks });
 
-    return uid;
+    return dockUid;
   };
 
   registerPanel = (panelUid, data) => {
@@ -188,5 +188,7 @@ Provider.propTypes = {
   children: PropTypes.oneOfType([PropTypes.element, PropTypes.arrayOf(PropTypes.element)])
     .isRequired,
 };
+
+Provider.__utils = utils;
 
 export default Provider;
