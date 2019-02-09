@@ -7,7 +7,7 @@ class RightDock extends Component {
     const { width } = this.props;
 
     return (
-      <Dock uid="left">
+      <Dock uid="right">
         <div
           style={{
             background: 'rgba(0, 0, 255, 0.3)',

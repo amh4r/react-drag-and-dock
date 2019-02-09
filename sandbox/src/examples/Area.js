@@ -28,6 +28,11 @@ class Example extends Component {
             </DragAndDock.Area.Center>
 
             <DragAndDock.Area.RightDock width={300} />
+
+            <DragAndDock.Area.Panels>
+              <div>Panel 1</div>
+              <div>Panel 2</div>
+            </DragAndDock.Area.Panels>
           </DragAndDock.Area>
         </div>
       </div>
