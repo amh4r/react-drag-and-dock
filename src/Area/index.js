@@ -1,35 +1,38 @@
 import React, { Component } from 'react';
-import get from 'lodash/get';
+import PropTypes from 'prop-types';
 
+import AreaDock from './AreaDock';
 import Center from './Center';
-import LeftDock from './LeftDock';
-import Panels from './Panels';
+import Panel from '../Panel';
 import Provider from '../Provider';
-import RightDock from './RightDock';
 
 class Area extends Component {
   getChildren = () => {
     const { children } = this.props;
     let center = null;
     let left = null;
-    let panels = null;
+    const panels = [];
     let right = null;
 
     React.Children.toArray(children).forEach((child) => {
+      if (child.type === AreaDock) {
+        const { location } = child.props;
+
+        if (location === 'left') {
+          left = child;
+        }
+
+        if (location === 'right') {
+          right = child;
+        }
+      }
+
       if (child.type === Center) {
         center = child;
       }
 
-      if (child.type === LeftDock) {
-        left = child;
-      }
-
-      if (child.type === Panels) {
-        panels = child;
-      }
-
-      if (child.type === RightDock) {
-        right = child;
+      if (child.type === Panel) {
+        panels.push(child);
       }
     });
 
@@ -40,8 +43,6 @@ class Area extends Component {
       right,
     };
   };
-
-  renderLeft = () => {};
 
   render() {
     const { center, left, panels, right } = this.getChildren();
@@ -57,11 +58,8 @@ class Area extends Component {
           }}
         >
           {left}
-
-          <div style={{ flexGrow: 1 }}>{center}</div>
-
+          {center}
           {right}
-
           {panels}
         </div>
       </Provider>
@@ -70,8 +68,12 @@ class Area extends Component {
 }
 
 Area.Center = Center;
-Area.LeftDock = LeftDock;
-Area.Panels = Panels;
-Area.RightDock = RightDock;
+Area.Dock = AreaDock;
+Area.Panel = Panel;
+
+Area.propTypes = {
+  children: PropTypes.oneOfType([PropTypes.element, PropTypes.arrayOf(PropTypes.element)])
+    .isRequired,
+};
 
 export default Area;

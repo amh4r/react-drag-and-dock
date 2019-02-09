@@ -5,8 +5,12 @@ class Center extends Component {
   render() {
     const { children } = this.props;
 
-    return children;
+    return <div style={{ flexGrow: 1 }}>{children}</div>;
   }
 }
+
+Center.propTypes = {
+  children: PropTypes.element.isRequired,
+};
 
 export default Center;

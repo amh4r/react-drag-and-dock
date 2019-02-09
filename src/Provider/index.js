@@ -163,6 +163,7 @@ export class Provider extends Component {
     return (
       <Context.Provider value={contextValue}>
         {children}
+
         {ReactDOM.createPortal(<div ref={this.panelTabsContainerRef} />, document.body)}
         {ReactDOM.createPortal(<div ref={this.panelsContainerRef} />, document.body)}
       </Context.Provider>
