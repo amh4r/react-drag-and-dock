@@ -63,7 +63,7 @@ class Panel extends React.Component {
 
   getPanel = () => {
     const { context } = this.props;
-    const panel = context.panels.get(this.ref);
+    const panel = context.panels.get(this.uid);
 
     return panel;
   };
