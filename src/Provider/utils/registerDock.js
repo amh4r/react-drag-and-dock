@@ -28,10 +28,7 @@ const registerDock = ({ data, docks, uid }) => {
 
   const newDocks = new Map(docks).set(uid, newDock);
 
-  return {
-    newDocks,
-    uid,
-  };
+  return newDocks;
 };
 
 export default registerDock;

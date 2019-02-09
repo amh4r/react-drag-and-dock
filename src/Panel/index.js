@@ -13,7 +13,7 @@ class Panel extends React.Component {
     super(props);
     this.isDraggedOverDock = false;
     this.ref = React.createRef();
-    this.prevSnappedTargeDimensions = {};
+    this.uid = null;
 
     this.state = {
       isGrabbing: false,
@@ -21,9 +21,13 @@ class Panel extends React.Component {
   }
 
   componentDidMount() {
-    const { context } = this.props;
+    const { context, uid } = this.props;
 
-    context.registerPanel(this.ref, { props: this.props });
+    this.uid = context.registerPanel(uid, {
+      props: this.props,
+      ref: this.ref,
+    });
+
     this.snapToInitialDock();
   }
 
@@ -35,9 +39,9 @@ class Panel extends React.Component {
     const { context, initialDockId } = this.props;
 
     if (initialDockId) {
-      const { snapToDock } = context;
+      const { snapPanelToDock } = context;
 
-      snapToDock(this.ref, initialDockId);
+      snapPanelToDock(this.uid, initialDockId);
     }
   };
 
@@ -70,10 +74,10 @@ class Panel extends React.Component {
 
   handleDragStart = () => {
     const { context } = this.props;
-    const { snapToDock } = context;
+    const { snapPanelToDock } = context;
     const dockUid = null;
 
-    snapToDock(this.ref, dockUid);
+    snapPanelToDock(this.uid, dockUid);
 
     this.setState({
       isGrabbing: true,
@@ -82,10 +86,10 @@ class Panel extends React.Component {
 
   handleDragStop = () => {
     const { context } = this.props;
-    const { snapToDock } = context;
+    const { snapPanelToDock } = context;
     const dockUid = get(this, 'draggedOverDock.uid') || null;
 
-    snapToDock(this.ref, dockUid);
+    snapPanelToDock(this.uid, dockUid);
 
     this.setState({
       isGrabbing: false,
@@ -145,11 +149,11 @@ class Panel extends React.Component {
 Panel.propTypes = {
   children: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
   context: PropTypes.shape({
-    panels: PropTypes.instanceOf(Map).isRequired,
-    registerPanel: PropTypes.func.isRequired,
-    registerDock: PropTypes.func.isRequired,
-    snapToDock: PropTypes.func.isRequired,
     docks: PropTypes.instanceOf(Map).isRequired,
+    panels: PropTypes.instanceOf(Map).isRequired,
+    registerDock: PropTypes.func.isRequired,
+    registerPanel: PropTypes.func.isRequired,
+    snapPanelToDock: PropTypes.func.isRequired,
   }).isRequired,
   defaultHeight: PropTypes.number,
   defaultPosition: PropTypes.shape({
@@ -163,6 +167,7 @@ Panel.propTypes = {
     root: PropTypes.object,
   }),
   title: PropTypes.string,
+  uid: PropTypes.string,
 };
 
 Panel.defaultProps = {
@@ -172,6 +177,7 @@ Panel.defaultProps = {
   initialDockId: null,
   styles: {},
   title: 'Panel',
+  uid: null,
 };
 
 export default withContext(Panel);

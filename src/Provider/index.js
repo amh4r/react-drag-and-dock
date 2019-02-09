@@ -84,20 +84,20 @@ export class Provider extends Component {
 
   registerDock = (uid, data) => {
     uid = uid || uuidv4();
-
-    const { newDocks } = registerDock({ data, docks: this.docks, uid });
-
-    this.docks = newDocks;
+    this.docks = registerDock({ data, docks: this.docks, uid });
 
     this.setState({ docks: this.docks });
 
     return uid;
   };
 
-  registerPanel = (ref, data) => {
-    this.panels = registerPanel({ data, ref, panels: this.panels });
+  registerPanel = (panelUid, data) => {
+    panelUid = panelUid || uuidv4();
+    this.panels = registerPanel({ data, panels: this.panels, panelUid });
 
     this.setState({ panels: this.panels });
+
+    return panelUid;
   };
 
   updateDock = (dockUid, newData) => {
@@ -120,11 +120,11 @@ export class Provider extends Component {
     this.setState({ panels: this.panels });
   };
 
-  setDockActivePanel = (dockRef, activePanelRef) => {
+  setDockActivePanel = (dockRef, activePanelUid) => {
     const { newDocks, newPanels } = changeDockActivePanel({
+      activePanelUid,
       dockRef,
       docks: this.docks,
-      activePanelRef,
       panels: this.panels,
     });
 
@@ -137,12 +137,12 @@ export class Provider extends Component {
     });
   };
 
-  snapToDock = (panelRef, dockUid) => {
+  snapPanelToDock = (panelUid, dockUid) => {
     const { newDocks, newPanels } = snapPanelToDock({
       docks: this.docks,
       dockUid,
       panels: this.panels,
-      panelRef,
+      panelUid,
     });
 
     this.docks = newDocks;
@@ -167,7 +167,7 @@ export class Provider extends Component {
       registerPanel: this.registerPanel,
       registerDock: this.registerDock,
       setDockActivePanel: this.setDockActivePanel,
-      snapToDock: this.snapToDock,
+      snapPanelToDock: this.snapPanelToDock,
       updateDock: this.updateDock,
     };
 

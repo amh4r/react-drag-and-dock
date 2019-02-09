@@ -32,7 +32,8 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
       panels: newPanels,
     }));
 
-    const newActivePanelRef = (() => {
+    /* TODO */
+    const newActivePanelUid = (() => {
       if (newDockPanels.size === 0) return null;
 
       const firstDockPanel = newDockPanels.values().next().value;
@@ -41,9 +42,9 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
     })();
 
     ({ newDocks, newPanels } = changeDockActivePanel({
+      activePanelUid: newActivePanelUid,
       docks: newDocks,
       dockUid,
-      activePanelRef: newActivePanelRef,
       panels: newPanels,
     }));
   });

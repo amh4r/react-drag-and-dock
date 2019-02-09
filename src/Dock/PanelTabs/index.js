@@ -6,7 +6,7 @@ import PanelTab from './PanelTab';
 import { Wrap } from './styles';
 
 const PanelTabs = (props) => {
-  const { activePanelRef, dockRef, height, onTabClick, panels, position, width } = props;
+  const { activePanelUid, dockRef, height, onTabClick, panels, position, width } = props;
 
   if (!dockRef.current) return null;
 
@@ -21,9 +21,9 @@ const PanelTabs = (props) => {
     width,
   };
 
-  panels.forEach((panel) => {
+  panels.forEach((panel, panelUid) => {
     const { title } = panel.props;
-    const isActive = panel.ref === activePanelRef;
+    const isActive = panelUid === activePanelUid;
 
     tabs.push(
       <PanelTab key={title} isActive={isActive} onClick={() => onTabClick(panel)}>
@@ -47,9 +47,7 @@ const PanelTabs = (props) => {
 };
 
 PanelTabs.propTypes = {
-  activePanelRef: PropTypes.shape({
-    current: PropTypes.oneOfType([PropTypes.element, PropTypes.object]),
-  }),
+  activePanelUid: PropTypes.string,
   dockRef: PropTypes.shape({
     current: PropTypes.oneOfType([PropTypes.element, PropTypes.object]),
   }),
@@ -64,7 +62,7 @@ PanelTabs.propTypes = {
 };
 
 PanelTabs.defaultProps = {
-  activePanelRef: null,
+  activePanelUid: null,
   dockRef: null,
   onTabClick: () => {},
   position: null,

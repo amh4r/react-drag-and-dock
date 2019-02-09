@@ -58,7 +58,7 @@ class Dock extends Component {
     const { children } = this.props;
     const dock = this.getDock();
     const panels = this.getPanels();
-    const activePanelRef = dock ? dock.activePanelRef : null;
+    const activePanelUid = dock ? dock.activePanelUid : null;
     const arePanelTabsVisible = get(dock, 'arePanelTabsVisible') || false;
 
     const childProps = {
@@ -86,7 +86,7 @@ class Dock extends Component {
       <Fragment>
         {arePanelTabsVisible && (
           <PanelTabs
-            activePanelRef={activePanelRef}
+            activePanelUid={activePanelUid}
             dockRef={this.ref}
             height={dock.panelTabsHeight}
             panels={panels}
@@ -105,11 +105,11 @@ class Dock extends Component {
 Dock.propTypes = {
   children: PropTypes.element.isRequired,
   context: PropTypes.shape({
-    panels: PropTypes.instanceOf(Map).isRequired,
-    registerPanel: PropTypes.func.isRequired,
-    registerDock: PropTypes.func.isRequired,
-    snapToDock: PropTypes.func.isRequired,
     docks: PropTypes.instanceOf(Map).isRequired,
+    panels: PropTypes.instanceOf(Map).isRequired,
+    registerDock: PropTypes.func.isRequired,
+    registerPanel: PropTypes.func.isRequired,
+    snapPanelToDock: PropTypes.func.isRequired,
   }).isRequired,
   uid: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
 };
