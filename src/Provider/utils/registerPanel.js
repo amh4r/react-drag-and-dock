@@ -1,24 +1,37 @@
+const validateArguments = ({ data, panels, panelUid }) => {
+  if (!data) {
+    throw new Error('data is falsy');
+  }
+
+  if (!panels) {
+    throw new Error('panels is falsy');
+  }
+
+  if (!panelUid) {
+    throw new Error('panelUid is falsy');
+  }
+};
+
 const registerPanel = ({ data, panels, panelUid }) => {
-  const { height, width, x, y } = (() => {
-    if (!data.ref.current) {
-      return {};
+  validateArguments({ data, panels, panelUid });
+
+  const dimensions = (() => {
+    let rect = {};
+
+    if (data.ref && data.ref.current) {
+      rect = data.ref.current.getBoundingClientRect();
     }
 
-    return data.ref.current.getBoundingClientRect();
+    return {
+      height: rect.height || null,
+      width: rect.width || null,
+      x: rect.x + window.scrollX || null,
+      y: rect.y + window.scrollY || null,
+    };
   })();
-
-  const dimensions = {
-    height,
-    width,
-    x: x + window.scrollX,
-    y: y + window.scrollY,
-  };
 
   const defaults = {
     dimensions,
-    initialDimensions: {
-      ...dimensions,
-    },
     isVisible: true,
     snappedDockUid: null,
   };

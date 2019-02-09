@@ -8,7 +8,7 @@ const validateArguments = ({ data, docks, dockUid }) => {
   }
 
   if (!dockUid) {
-    throw new Error('uid is falsy');
+    throw new Error('dockUid is falsy');
   }
 };
 

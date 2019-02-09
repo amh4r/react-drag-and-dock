@@ -1,6 +1,6 @@
 import { registerDock } from '../../../src/Provider/utils';
 
-describe('Success', () => {
+it('Success', () => {
   const data = {};
   const docks = new Map();
   const dockUid = 'dock-1';
@@ -11,8 +11,8 @@ describe('Success', () => {
   const dock = newDocks.get(dockUid);
 
   expect(dock).toEqual({
-    panels: new Map(),
     arePanelTabsVisible: false,
+    panels: new Map(),
     panelTabsHeight: 20,
   });
 });
