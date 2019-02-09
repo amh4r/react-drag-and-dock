@@ -61,6 +61,7 @@ class Dock extends Component {
 
     const childProps = {
       ...children.props,
+      dock,
       ref: this.ref,
       style: {
         ...children.props.style,
