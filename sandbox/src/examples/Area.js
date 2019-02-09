@@ -17,7 +17,7 @@ class Example extends Component {
             <DragAndDock.Area.Dock location="left" width={300} />
             <DragAndDock.Area.Dock location="right" width={300} />
 
-            <DragAndDock.Area.Panel title="Panel 1">
+            <DragAndDock.Area.Panel title="Panel 1" initialDockUid="left">
               <div>I am panel 1</div>
             </DragAndDock.Area.Panel>
 

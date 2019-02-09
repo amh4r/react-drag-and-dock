@@ -36,12 +36,12 @@ class Panel extends React.Component {
   }
 
   snapToInitialDock = () => {
-    const { context, initialDockId } = this.props;
+    const { context, initialDockUid } = this.props;
 
-    if (initialDockId) {
+    if (initialDockUid) {
       const { snapPanelToDock } = context;
 
-      snapPanelToDock(this.uid, initialDockId);
+      snapPanelToDock(this.uid, initialDockUid);
     }
   };
 
@@ -161,7 +161,7 @@ Panel.propTypes = {
     y: PropTypes.number.isRequired,
   }),
   defaultWidth: PropTypes.number,
-  initialDockId: PropTypes.string,
+  initialDockUid: PropTypes.string,
   styles: PropTypes.shape({
     handle: PropTypes.object,
     root: PropTypes.object,
@@ -174,7 +174,7 @@ Panel.defaultProps = {
   defaultHeight: null,
   defaultWidth: null,
   defaultPosition: undefined,
-  initialDockId: null,
+  initialDockUid: null,
   styles: {},
   title: 'Panel',
   uid: null,
