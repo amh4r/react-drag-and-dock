@@ -51,4 +51,15 @@ describe('Throw error', () => {
       registerPanel({ data, panels, panelUid });
     }).toThrow();
   });
+
+  it('on registering same panelUid twice', () => {
+    const data = {};
+    const panelUid = 'panel-1';
+
+    panels = registerPanel({ data, panels, panelUid });
+
+    expect(() => {
+      registerPanel({ data, panels, panelUid });
+    }).toThrow();
+  });
 });

@@ -15,6 +15,11 @@ const validateArguments = ({ data, docks, dockUid }) => {
 const registerDock = ({ data, docks, dockUid }) => {
   validateArguments({ data, docks, dockUid });
 
+  if (docks.has(dockUid)) {
+    throw new Error(`Panel already registered with uid "${dockUid}"`)
+  }
+
+
   const defaults = {
     panels: new Map(),
   };

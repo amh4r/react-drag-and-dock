@@ -51,4 +51,15 @@ describe('Throw error', () => {
       registerDock({ data, docks, dockUid });
     }).toThrow();
   });
+
+  it('on registering same dockUid twice', () => {
+    const data = {};
+    const dockUid = 'dock-1';
+
+    docks = registerDock({ data, docks, dockUid });
+
+    expect(() => {
+      registerDock({ data, docks, dockUid });
+    }).toThrow();
+  });
 });

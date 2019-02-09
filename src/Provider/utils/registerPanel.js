@@ -15,6 +15,10 @@ const validateArguments = ({ data, panels, panelUid }) => {
 const registerPanel = ({ data, panels, panelUid }) => {
   validateArguments({ data, panels, panelUid });
 
+  if (panels.has(panelUid)) {
+    throw new Error(`Panel already registered with uid "${panelUid}"`)
+  }
+
   const dimensions = (() => {
     let rect = {};
 
