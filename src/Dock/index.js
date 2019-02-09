@@ -34,7 +34,7 @@ class Dock extends Component {
 
   getDock = () => {
     const { context } = this.props;
-    const dock = context.provider.docks.get(this.ref);
+    const dock = context.provider.docks.get(this.uid);
 
     return dock;
   };

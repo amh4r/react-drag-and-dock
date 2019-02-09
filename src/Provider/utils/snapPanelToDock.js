@@ -55,7 +55,7 @@ const snapPanelToDock = ({ docks, dockUid, panels, panelRef }) => {
       ...panel.dimensions,
       ...newPanelDimensions,
     },
-    snappedDock: dock ? dock.ref : null,
+    snappedDockUid: dockUid || null,
   };
 
   newPanels = updatePanel({

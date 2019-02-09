@@ -28,7 +28,7 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
 
     ({ newDocks, newPanels } = handleDockPanelDimensions({
       docks: newDocks,
-      dockRef: dock.ref,
+      dockUid,
       panels: newPanels,
     }));
 

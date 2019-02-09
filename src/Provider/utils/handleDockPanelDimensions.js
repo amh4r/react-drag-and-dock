@@ -6,18 +6,14 @@ const handleDockPanelDimensions = ({ docks, dockUid, panels }) => {
   let newPanels = new Map(panels);
 
   panels.forEach((panel) => {
-    if (panel.snappedDock !== dockUid) return;
+    if (panel.snappedDockUid !== dockUid) return;
 
-    const dock = docks.get(panel.snappedDock);
+    const dock = docks.get(panel.snappedDockUid);
 
     const newPanelDimensions = (() => {
       if (!dock) return {};
 
-      return getPanelDimensions({
-        initialDimensions: panel.initialDimensions,
-        dock,
-        panel,
-      });
+      return getPanelDimensions({ dock });
     })();
 
     const newPanelData = {

@@ -100,7 +100,7 @@ class Panel extends React.Component {
     const rootStyle = styles.root || {};
 
     const position = (() => {
-      if (!panel || !panel.snappedDock) return null;
+      if (!panel || !panel.snappedDockUid) return null;
 
       return {
         x: panel.dimensions.x,
