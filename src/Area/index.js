@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import AreaDock from './AreaDock';
@@ -6,9 +6,10 @@ import Center from './Center';
 import Panel from '../Panel';
 import Provider from '../Provider';
 
-class Area extends Component {
-  getChildren = () => {
-    const { children } = this.props;
+const Area = (props) => {
+  const { children } = props;
+
+  const getChildren = () => {
     let center = null;
     let left = null;
     const panels = [];
@@ -44,28 +45,26 @@ class Area extends Component {
     };
   };
 
-  render() {
-    const { center, left, panels, right } = this.getChildren();
+  const { center, left, panels, right } = getChildren();
 
-    return (
-      <Provider>
-        <div
-          style={{
-            alignItems: 'stretch',
-            display: 'flex',
-            height: '100%',
-            position: 'relative',
-          }}
-        >
-          {left}
-          {center}
-          {right}
-          {panels}
-        </div>
-      </Provider>
-    );
-  }
-}
+  return (
+    <Provider>
+      <div
+        style={{
+          alignItems: 'stretch',
+          display: 'flex',
+          height: '100%',
+          position: 'relative',
+        }}
+      >
+        {left}
+        {center}
+        {right}
+        {panels}
+      </div>
+    </Provider>
+  );
+};
 
 Area.Center = Center;
 Area.Dock = AreaDock;

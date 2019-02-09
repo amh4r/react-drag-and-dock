@@ -1,13 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
-class Center extends Component {
-  render() {
-    const { children } = this.props;
+const Center = (props) => {
+  const { children } = props;
 
-    return <div style={{ flexGrow: 1 }}>{children}</div>;
-  }
-}
+  return <div style={{ flexGrow: 1 }}>{children}</div>;
+};
 
 Center.propTypes = {
   children: PropTypes.element.isRequired,
