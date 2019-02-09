@@ -1,4 +1,5 @@
 const updatePanel = ({ newData, panels, panelUid }) => {
+  if (!panelUid) throw new Error()
   const oldPanel = panels.get(panelUid);
 
   const newPanel = {

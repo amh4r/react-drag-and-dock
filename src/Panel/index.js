@@ -13,7 +13,7 @@ class Panel extends React.Component {
     super(props);
     this.isDraggedOverDock = false;
     this.ref = React.createRef();
-    this.uid = null;
+    this.uid = props.uid || null;
 
     this.state = {
       isGrabbing: false,
@@ -21,13 +21,6 @@ class Panel extends React.Component {
   }
 
   componentDidMount() {
-    const { context, uid } = this.props;
-
-    this.uid = context.registerPanel(uid, {
-      props: this.props,
-      ref: this.ref,
-    });
-
     this.snapToInitialDock();
   }
 

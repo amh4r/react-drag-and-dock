@@ -14,6 +14,7 @@ import {
   updatePanel,
 } from './utils';
 import Context from '../Context';
+import PanelContainer from './PanelContainer';
 
 export class Provider extends Component {
   positionObserverInterval = null;
@@ -163,8 +164,17 @@ export class Provider extends Component {
     return (
       <Context.Provider value={contextValue}>
         {ReactDOM.createPortal(<div ref={this.panelTabsContainerRef} />, document.body)}
-        {ReactDOM.createPortal(<div ref={this.panelsContainerRef} />, document.body)}
+        {/* {ReactDOM.createPortal(<div ref={this.panelsContainerRef} />, document.body)} */}
+        {ReactDOM.createPortal(
+          <PanelContainer ref={this.panelsContainerRef} panels={panels} />,
+          document.body,
+        )}
         {children}
+
+        {/* {panels.forEach((panel) => {
+
+          return React.cloneElement(panel, panel.props);
+        })} */}
       </Context.Provider>
     );
   }
