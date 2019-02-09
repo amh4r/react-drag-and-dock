@@ -9,22 +9,24 @@ import PanelTabs from './PanelTabs';
 class Dock extends Component {
   constructor() {
     super();
-    this.ref = React.createRef();
     this.dockableAreaRef = React.createRef();
+    this.ref = React.createRef();
+    this.uid = null;
   }
 
   componentDidMount() {
-    const { context } = this.props;
+    const { context, uid } = this.props;
 
-    context.registerDock(this.ref, {
-      props: this.props,
+    this.uid = context.registerDock(uid, {
       dockableAreaRef: this.ref,
+      props: this.props,
+      ref: this.ref,
     });
 
     const { parentNode } = this.ref.current;
 
     const resizeObserver = new ResizeObserver(() => {
-      context.updateDock(this.ref, this.props);
+      context.updateDock(this.uid, this.props);
     });
 
     resizeObserver.observe(parentNode);
@@ -109,11 +111,11 @@ Dock.propTypes = {
     snapToDock: PropTypes.func.isRequired,
     docks: PropTypes.instanceOf(Map).isRequired,
   }).isRequired,
-  id: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+  uid: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
 };
 
 Dock.defaultProps = {
-  id: null,
+  uid: null,
 };
 
 export default withContext(Dock);

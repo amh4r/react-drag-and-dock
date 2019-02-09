@@ -1,12 +1,12 @@
 import getPanelDimensions from './getPanelDimensions';
 import updatePanel from './updatePanel';
 
-const handleDockPanelDimensions = ({ docks, dockRef, panels }) => {
+const handleDockPanelDimensions = ({ docks, dockUid, panels }) => {
   const newDocks = new Map(docks);
   let newPanels = new Map(panels);
 
   panels.forEach((panel) => {
-    if (panel.snappedDock !== dockRef) return;
+    if (panel.snappedDock !== dockUid) return;
 
     const dock = docks.get(panel.snappedDock);
 

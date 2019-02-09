@@ -23,7 +23,7 @@ class App extends Component {
         <div style={{ height: '10em' }}>yo</div>
         <DragAndDock.Provider>
           <Wrap style={{ height: '140vh', position: 'relative' }}>
-            <DragAndDock.Dock id="dock-1">
+            <DragAndDock.Dock uid="dock-1">
               <div style={{ background: '#D0E4FB', height: '100%' }}>I am a dock</div>
             </DragAndDock.Dock>
 
@@ -39,15 +39,17 @@ class App extends Component {
               defaultWidth={300}
               defaultPosition={{ x: 300, y: 100 }}
             >
-              <Timer />
+              {/* <Timer /> */}
+              <div>Panel 1</div>
             </DragAndDock.Panel>
 
             <DragAndDock.Panel initialDockId="dock-1" title="Panel 2">
-              <Timer />
+              {/* <Timer /> */}
+              <div>Panel 2</div>
             </DragAndDock.Panel>
 
             <DragAndDock.Panel initialDockId="dock-1" title="Panel 3">
-              <div>yo</div>
+              <div>Panel 3</div>
             </DragAndDock.Panel>
           </Wrap>
         </DragAndDock.Provider>

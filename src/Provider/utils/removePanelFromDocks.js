@@ -6,7 +6,7 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
   let newDocks = new Map(docks);
   let newPanels = new Map(panels);
 
-  docks.forEach((dock) => {
+  docks.forEach((dock, dockUid) => {
     const isPanelInDock = dock.panels.has(panelRef);
 
     if (!isPanelInDock) return;
@@ -21,9 +21,9 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
     };
 
     newDocks = updateDock({
-      newData: newDockData,
-      ref: dock.ref,
       docks: newDocks,
+      newData: newDockData,
+      uid: dockUid,
     });
 
     ({ newDocks, newPanels } = handleDockPanelDimensions({
@@ -41,8 +41,8 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
     })();
 
     ({ newDocks, newPanels } = changeDockActivePanel({
-      dockRef: dock.ref,
       docks: newDocks,
+      dockUid,
       activePanelRef: newActivePanelRef,
       panels: newPanels,
     }));

@@ -35,14 +35,9 @@ class Panel extends React.Component {
     const { context, initialDockId } = this.props;
 
     if (initialDockId) {
-      const { provider, snapToDock } = context;
-      const { docks } = provider;
+      const { snapToDock } = context;
 
-      const initialDock = [...docks.values()].find((dock) => {
-        return dock.props.id === initialDockId;
-      });
-
-      snapToDock(this.ref, initialDock.ref);
+      snapToDock(this.ref, initialDockId);
     }
   };
 
@@ -55,7 +50,7 @@ class Panel extends React.Component {
       const isMouseInsideDock = checkMouseEventIntersectsElement(e, dock.ref.current);
 
       if (isMouseInsideDock) {
-        draggedOverDock = dock.ref;
+        draggedOverDock = dock;
       }
     });
 
@@ -76,9 +71,9 @@ class Panel extends React.Component {
   handleDragStart = () => {
     const { context } = this.props;
     const { snapToDock } = context;
-    const dockRef = null;
+    const dockUid = null;
 
-    snapToDock(this.ref, dockRef);
+    snapToDock(this.ref, dockUid);
 
     this.setState({
       isGrabbing: true,
@@ -88,8 +83,9 @@ class Panel extends React.Component {
   handleDragStop = () => {
     const { context } = this.props;
     const { snapToDock } = context;
+    const dockUid = get(this, 'draggedOverDock.uid') || null;
 
-    snapToDock(this.ref, this.draggedOverDock);
+    snapToDock(this.ref, dockUid);
 
     this.setState({
       isGrabbing: false,

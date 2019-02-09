@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import isEqual from 'lodash/isEqual';
 import PropTypes from 'prop-types';
+import uuidv4 from 'uuid/v4';
 
 import {
   changeDockActivePanel,
@@ -38,7 +39,7 @@ export class Provider extends Component {
     this.createPanelTabsContainer();
 
     this.positionObserverInterval = setInterval(() => {
-      this.handleDockPositionChanges();
+      // this.handleDockPositionChanges();
     }, 500);
   }
 
@@ -55,7 +56,7 @@ export class Provider extends Component {
   };
 
   handleDockPositionChanges = () => {
-    this.docks.forEach((dock) => {
+    this.docks.forEach((dock, dockUid) => {
       const prevDockPosition = this.dockPositions.get(dock.ref);
 
       const { x, y } = dock.ref.current.getBoundingClientRect();
@@ -81,10 +82,16 @@ export class Provider extends Component {
     });
   };
 
-  registerDock = (ref, data) => {
-    this.docks = registerDock({ data, ref, docks: this.docks });
+  registerDock = (uid, data) => {
+    uid = uid || uuidv4();
+
+    const { newDocks } = registerDock({ data, docks: this.docks, uid });
+
+    this.docks = newDocks;
 
     this.setState({ docks: this.docks });
+
+    return uid;
   };
 
   registerPanel = (ref, data) => {
@@ -93,11 +100,11 @@ export class Provider extends Component {
     this.setState({ panels: this.panels });
   };
 
-  updateDock = (ref, newData) => {
+  updateDock = (uid, newData) => {
     this.docks = updateDock({
-      newData,
-      ref,
       docks: this.docks,
+      newData,
+      uid,
     });
 
     this.setState({ docks: this.docks });
@@ -130,10 +137,10 @@ export class Provider extends Component {
     });
   };
 
-  snapToDock = (panelRef, dockRef) => {
+  snapToDock = (panelRef, dockUid) => {
     const { newDocks, newPanels } = snapPanelToDock({
       docks: this.docks,
-      dockRef,
+      dockUid,
       panels: this.panels,
       panelRef,
     });
