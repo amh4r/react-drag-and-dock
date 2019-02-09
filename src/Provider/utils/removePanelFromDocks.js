@@ -22,8 +22,8 @@ const removePanelFromDocks = ({ docks, panelRef, panels }) => {
 
     newDocks = updateDock({
       docks: newDocks,
+      dockUid,
       newData: newDockData,
-      uid: dockUid,
     });
 
     ({ newDocks, newPanels } = handleDockPanelDimensions({

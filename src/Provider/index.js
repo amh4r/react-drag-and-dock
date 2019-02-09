@@ -100,11 +100,11 @@ export class Provider extends Component {
     this.setState({ panels: this.panels });
   };
 
-  updateDock = (uid, newData) => {
+  updateDock = (dockUid, newData) => {
     this.docks = updateDock({
       docks: this.docks,
+      dockUid,
       newData,
-      uid,
     });
 
     this.setState({ docks: this.docks });

@@ -13,7 +13,7 @@ const addPanelToDock = ({ docks, dockUid, panels, panelRef }) => {
 
   let newDocks = updateDock({
     docks,
-    uid: dockUid,
+    dockUid,
     newData: newDockData,
   });
 

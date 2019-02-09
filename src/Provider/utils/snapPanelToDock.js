@@ -29,8 +29,8 @@ const snapPanelToDock = ({ docks, dockUid, panels, panelRef }) => {
 
     newDocks = updateDock({
       docks: newDocks,
+      dockUid,
       newData: newDockData,
-      uid: dockUid,
     });
   }
 

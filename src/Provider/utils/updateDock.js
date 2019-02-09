@@ -1,14 +1,14 @@
-const updateDock = ({ newData, uid, docks }) => {
-  const oldData = docks.get(uid);
+const updateDock = ({ newData, docks, dockUid }) => {
+  const oldData = docks.get(dockUid);
 
-  if (!uid) throw new Error();
+  if (!dockUid) throw new Error();
   const newDock = {
     ...oldData,
     ...newData,
-    uid,
+    uid: dockUid,
   };
 
-  const newDocks = new Map(docks).set(uid, newDock);
+  const newDocks = new Map(docks).set(dockUid, newDock);
 
   return newDocks;
 };

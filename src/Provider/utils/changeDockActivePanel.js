@@ -8,8 +8,8 @@ const changeDockActivePanel = ({ docks, dockUid, activePanelRef, panels }) => {
 
   const newDocks = updateDock({
     docks,
+    dockUid,
     newData: newDockData,
-    uid: dockUid,
   });
 
   const dock = docks.get(dockUid);
