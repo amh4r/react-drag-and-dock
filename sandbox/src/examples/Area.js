@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import DragAndDock from '../DragAndDock';
+import Timer from '../components/Timer';
 
 class Example extends Component {
   render() {
@@ -22,7 +23,7 @@ class Example extends Component {
             </DragAndDock.Area.Panel>
 
             <DragAndDock.Area.Panel title="Panel 2">
-              <div>I am panel 2</div>
+              <Timer />
             </DragAndDock.Area.Panel>
           </DragAndDock.Area>
         </div>

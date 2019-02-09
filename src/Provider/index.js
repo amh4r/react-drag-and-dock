@@ -28,7 +28,6 @@ export class Provider extends Component {
     this.docks = new Map();
 
     this.dockPositions = new Map();
-    this.panelsContainerRef = React.createRef();
     this.panelTabsContainerRef = React.createRef();
 
     this.state = {
@@ -166,7 +165,6 @@ export class Provider extends Component {
       docks,
       movePanelToTopOfStack: this.movePanelToTopOfStack,
       panels,
-      panelsContainerRef: this.panelsContainerRef,
       panelTabsContainerRef: this.panelTabsContainerRef,
       provider: this,
       registerPanel: this.registerPanel,
@@ -179,17 +177,8 @@ export class Provider extends Component {
     return (
       <Context.Provider value={contextValue}>
         {ReactDOM.createPortal(<div ref={this.panelTabsContainerRef} />, document.body)}
-        {/* {ReactDOM.createPortal(<div ref={this.panelsContainerRef} />, document.body)} */}
-        {ReactDOM.createPortal(
-          <PanelContainer ref={this.panelsContainerRef} panels={panels} />,
-          document.body,
-        )}
+        <PanelContainer panels={panels} />
         {children}
-
-        {/* {panels.forEach((panel) => {
-
-          return React.cloneElement(panel, panel.props);
-        })} */}
       </Context.Provider>
     );
   }

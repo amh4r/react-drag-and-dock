@@ -91,7 +91,6 @@ class Panel extends React.Component {
   render() {
     const {
       children,
-      context,
       defaultHeight,
       defaultPosition,
       defaultWidth,
@@ -99,10 +98,6 @@ class Panel extends React.Component {
       title,
       zIndex,
     } = this.props;
-
-    const { panelsContainerRef } = context;
-
-    if (!panelsContainerRef.current) return null;
 
     const { isGrabbing } = this.state;
     const panel = this.getPanel();
@@ -148,7 +143,7 @@ class Panel extends React.Component {
       </Draggable>
     );
 
-    return ReactDOM.createPortal(contents, panelsContainerRef.current);
+    return ReactDOM.createPortal(contents, document.body);
   }
 }
 

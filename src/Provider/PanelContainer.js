@@ -1,11 +1,11 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import Panel from '../Panel';
 
 const PanelContainer = React.forwardRef((props, ref) => {
   const { panels } = props;
   const panelElems = [];
-
   let zIndex = 0;
 
   panels.forEach((panel, panelUid) => {
@@ -27,5 +27,9 @@ const PanelContainer = React.forwardRef((props, ref) => {
 
   return <div ref={ref}>{panelElems}</div>;
 });
+
+PanelContainer.propTypes = {
+  panels: PropTypes.instanceOf(Map).isRequired,
+};
 
 export default PanelContainer;
