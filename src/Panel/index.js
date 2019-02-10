@@ -9,18 +9,21 @@ import withContext from '../withContext';
 import { Handle, Root } from './styles';
 
 class Panel extends React.Component {
-  constructor(props) {
-    super(props);
-    this.isDraggedOverDock = false;
-    this.ref = React.createRef();
-    this.uid = props.uid || null;
+  isDraggedOverDock = false;
 
-    this.state = {
-      isGrabbing: false,
-    };
-  }
+  ref = React.createRef();
+
+  uid = null;
 
   componentDidMount() {
+    const { context, uid } = this.props;
+
+    this.uid = context.registerPanel(uid, {
+      props: this.props,
+      ref: this.ref,
+      renderContents: this.renderContents,
+    });
+
     this.snapToInitialDock();
   }
 
@@ -57,23 +60,23 @@ class Panel extends React.Component {
     return panel;
   };
 
+  handleClick = () => {
+    const { context } = this.props;
+    const { movePanelToTopOfStack } = context;
+
+    movePanelToTopOfStack(this.uid);
+  };
+
   handleDrag = (e) => {
     this.draggedOverDock = this.getDraggedOverDock(e);
   };
 
   handleDragStart = () => {
     const { context } = this.props;
-    const { movePanelToTopOfStack, snapPanelToDock } = context;
-
-    movePanelToTopOfStack(this.uid);
-
+    const { snapPanelToDock } = context;
     const dockUid = null;
 
     snapPanelToDock(this.uid, dockUid);
-
-    this.setState({
-      isGrabbing: true,
-    });
   };
 
   handleDragStop = () => {
@@ -82,24 +85,23 @@ class Panel extends React.Component {
     const dockUid = get(this, 'draggedOverDock.uid') || null;
 
     snapPanelToDock(this.uid, dockUid);
-
-    this.setState({
-      isGrabbing: false,
-    });
   };
 
   render() {
     const {
       children,
+      context,
       defaultHeight,
       defaultPosition,
       defaultWidth,
       styles,
       title,
-      zIndex,
     } = this.props;
 
-    const { isGrabbing } = this.state;
+    const portalTargetRef = context.panelsContainerRef;
+
+    if (!portalTargetRef.current) return null;
+
     const panel = this.getPanel();
     const handleStyle = styles.handle || {};
     const rootStyle = styles.root || {};
@@ -121,7 +123,7 @@ class Panel extends React.Component {
       position: 'absolute',
       left: 0,
       top: 0,
-      zIndex: isGrabbing ? 100000 : zIndex,
+      zIndex: panel.zIndex,
     };
 
     const contents = (
@@ -133,7 +135,7 @@ class Panel extends React.Component {
         onDrag={this.handleDrag}
         onStop={this.handleDragStop}
       >
-        <Root ref={this.ref} style={style}>
+        <Root ref={this.ref} onClick={this.handleClick} style={style}>
           <Handle className="handle" style={{ ...handleStyle }}>
             {title}
           </Handle>
@@ -143,7 +145,7 @@ class Panel extends React.Component {
       </Draggable>
     );
 
-    return ReactDOM.createPortal(contents, document.body);
+    return ReactDOM.createPortal(contents, portalTargetRef.current);
   }
 }
 
@@ -169,7 +171,6 @@ Panel.propTypes = {
   }),
   title: PropTypes.string,
   uid: PropTypes.string,
-  zIndex: PropTypes.number,
 };
 
 Panel.defaultProps = {
@@ -180,7 +181,6 @@ Panel.defaultProps = {
   styles: {},
   title: 'Panel',
   uid: null,
-  zIndex: null,
 };
 
 export default withContext(Panel);

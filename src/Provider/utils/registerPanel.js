@@ -32,6 +32,7 @@ const registerPanel = ({ data, panels, panelUid }) => {
     dimensions,
     isVisible: true,
     snappedDockUid: null,
+    zIndex: panels.size + 1,
   };
 
   const newPanel = {

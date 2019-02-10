@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import AreaDock from './AreaDock';
 import Center from './Center';
-import PanelSurrogate from '../Panel/Surrogate';
+import Panel from '../Panel';
 import Provider from '../Provider';
 
 const Area = (props) => {
@@ -32,7 +32,7 @@ const Area = (props) => {
         center = child;
       }
 
-      if (child.type === PanelSurrogate) {
+      if (child.type === Panel) {
         panels.push(child);
       }
     });
@@ -68,7 +68,7 @@ const Area = (props) => {
 
 Area.Center = Center;
 Area.Dock = AreaDock;
-Area.Panel = PanelSurrogate;
+Area.Panel = Panel;
 
 Area.propTypes = {
   children: PropTypes.oneOfType([PropTypes.element, PropTypes.arrayOf(PropTypes.element)])

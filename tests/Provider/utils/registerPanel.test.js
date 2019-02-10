@@ -1,19 +1,52 @@
 import { registerPanel } from '../../../src/Provider/utils';
 
-it('Success', () => {
-  const panels = new Map();
-  const panelUid = 'panel-1';
-  const newPanels = registerPanel({ data: {}, panels, panelUid });
+it('Register 1 panel', () => {
+  let panels = new Map();
 
-  expect(newPanels.size).toEqual(1);
+  panels = registerPanel({ data: {}, panels, panelUid: 'panel-1' });
+  expect(panels.size).toEqual(1);
 
-  const panel = newPanels.get(panelUid);
+  const panel = panels.get('panel-1');
 
   expect(panel).toEqual({
     dimensions: { height: null, width: null, x: null, y: null },
     isVisible: true,
     snappedDockUid: null,
+    zIndex: 1,
   });
+});
+
+it('Register 2 panels', () => {
+  let panels = new Map();
+
+  panels = registerPanel({ data: {}, panels, panelUid: 'panel-1' });
+  panels = registerPanel({ data: {}, panels, panelUid: 'panel-2' });
+  expect(panels.size).toEqual(2);
+
+  let panel = panels.get('panel-1');
+
+  expect(panel).toEqual({
+    dimensions: { height: null, width: null, x: null, y: null },
+    isVisible: true,
+    snappedDockUid: null,
+    zIndex: 1,
+  });
+
+  panel = panels.get('panel-2');
+
+  expect(panel).toEqual({
+    dimensions: { height: null, width: null, x: null, y: null },
+    isVisible: true,
+    snappedDockUid: null,
+    zIndex: 2,
+  });
+});
+
+it('Does not mutate arguments', () => {
+  const panels = new Map();
+
+  registerPanel({ data: {}, panels, panelUid: 'panel-1' });
+  expect(panels.size).toEqual(0);
 });
 
 describe('Throw error', () => {
