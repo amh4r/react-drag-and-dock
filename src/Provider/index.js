@@ -145,12 +145,10 @@ export class Provider extends Component {
   };
 
   movePanelToTopOfStack = (panelUid) => {
-    const { newPanels } = movePanelToTopOfStack({
+    this.panels = movePanelToTopOfStack({
       panels: this.panels,
       panelUid,
     });
-
-    this.panels = newPanels;
 
     this.setState({
       panels: this.panels,
