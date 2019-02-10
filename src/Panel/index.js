@@ -107,9 +107,10 @@ class Panel extends React.Component {
       title,
     } = this.props;
 
-    const { panelsContainerRef } = context;
+    console.log(context.panelsContainerRef)
+    const portalTargetRef = context.panelsContainerRef;
 
-    if (!panelsContainerRef.current) return null;
+    if (!portalTargetRef.current) return null;
 
     const { isGrabbing } = this.state;
     const panel = this.getPanel();
@@ -133,7 +134,7 @@ class Panel extends React.Component {
       position: 'absolute',
       left: 0,
       top: 0,
-      zIndex: isGrabbing ? 100000 : panel.zIndex,
+      zIndex: panel.zIndex,
     };
 
     const contents = (
@@ -155,7 +156,7 @@ class Panel extends React.Component {
       </Draggable>
     );
 
-    return ReactDOM.createPortal(contents, panelsContainerRef.current);
+    return ReactDOM.createPortal(contents, portalTargetRef.current);
   }
 }
 

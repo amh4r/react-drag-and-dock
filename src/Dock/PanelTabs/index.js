@@ -6,9 +6,18 @@ import PanelTab from './PanelTab';
 import { Wrap } from './styles';
 
 const PanelTabs = (props) => {
-  const { activePanelUid, dockRef, height, onTabClick, panels, position, width } = props;
+  const {
+    activePanelUid,
+    dockRef,
+    height,
+    onTabClick,
+    panels,
+    portalTargetRef,
+    position,
+    width,
+  } = props;
 
-  if (!dockRef.current) return null;
+  if (!dockRef.current || !portalTargetRef.current) return null;
 
   const tabs = [];
 
@@ -43,7 +52,7 @@ const PanelTabs = (props) => {
     </Wrap>
   );
 
-  return ReactDOM.createPortal(component, document.body);
+  return ReactDOM.createPortal(component, portalTargetRef.current);
 };
 
 PanelTabs.propTypes = {
@@ -54,6 +63,7 @@ PanelTabs.propTypes = {
   height: PropTypes.number.isRequired,
   onTabClick: PropTypes.func,
   panels: PropTypes.instanceOf(Map).isRequired,
+  portalTargetRef: PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
   position: PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,

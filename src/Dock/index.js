@@ -53,7 +53,8 @@ class Dock extends Component {
   };
 
   render() {
-    const { children } = this.props;
+    const { children, context } = this.props;
+    const { panelTabsContainerRef } = context;
     const dock = this.getDock();
     const panels = this.getPanels();
     const activePanelUid = dock ? dock.activePanelUid : null;
@@ -89,6 +90,7 @@ class Dock extends Component {
             dockRef={this.ref}
             height={dock.panelTabsHeight}
             panels={panels}
+            portalTargetRef={panelTabsContainerRef}
             position={position}
             width={width}
             onTabClick={this.handleTabClick}
