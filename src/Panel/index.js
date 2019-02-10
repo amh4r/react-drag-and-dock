@@ -21,6 +21,14 @@ class Panel extends React.Component {
   }
 
   componentDidMount() {
+    const { context, uid } = this.props;
+
+    this.uid = context.registerPanel(uid, {
+      props: this.props,
+      ref: this.ref,
+      renderContents: this.renderContents,
+    });
+
     this.snapToInitialDock();
   }
 
@@ -91,13 +99,17 @@ class Panel extends React.Component {
   render() {
     const {
       children,
+      context,
       defaultHeight,
       defaultPosition,
       defaultWidth,
       styles,
       title,
-      zIndex,
     } = this.props;
+
+    const { panelsContainerRef } = context;
+
+    if (!panelsContainerRef.current) return null;
 
     const { isGrabbing } = this.state;
     const panel = this.getPanel();
@@ -121,7 +133,7 @@ class Panel extends React.Component {
       position: 'absolute',
       left: 0,
       top: 0,
-      zIndex: isGrabbing ? 100000 : zIndex,
+      zIndex: isGrabbing ? 100000 : panel.zIndex,
     };
 
     const contents = (
@@ -143,7 +155,7 @@ class Panel extends React.Component {
       </Draggable>
     );
 
-    return ReactDOM.createPortal(contents, document.body);
+    return ReactDOM.createPortal(contents, panelsContainerRef.current);
   }
 }
 
@@ -169,7 +181,6 @@ Panel.propTypes = {
   }),
   title: PropTypes.string,
   uid: PropTypes.string,
-  zIndex: PropTypes.number,
 };
 
 Panel.defaultProps = {
@@ -180,7 +191,6 @@ Panel.defaultProps = {
   styles: {},
   title: 'Panel',
   uid: null,
-  zIndex: null,
 };
 
 export default withContext(Panel);

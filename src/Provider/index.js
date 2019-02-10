@@ -15,7 +15,6 @@ import {
   updatePanel,
 } from './utils';
 import Context from '../Context';
-import PanelContainer from './PanelContainer';
 
 export class Provider extends Component {
   positionObserverInterval = null;
@@ -29,6 +28,7 @@ export class Provider extends Component {
 
     this.dockPositions = new Map();
     this.panelTabsContainerRef = React.createRef();
+    this.panelsContainerRef = React.createRef();
 
     this.state = {
       panels: this.panels,
@@ -74,7 +74,12 @@ export class Provider extends Component {
 
   registerDock = (dockUid, data) => {
     dockUid = dockUid || uuidv4();
-    this.docks = registerDock({ data, docks: this.docks, dockUid });
+
+    this.docks = registerDock({
+      data,
+      docks: this.docks,
+      dockUid,
+    });
 
     this.setState({ docks: this.docks });
 
@@ -83,7 +88,12 @@ export class Provider extends Component {
 
   registerPanel = (panelUid, data) => {
     panelUid = panelUid || uuidv4();
-    this.panels = registerPanel({ data, panels: this.panels, panelUid });
+
+    this.panels = registerPanel({
+      data,
+      panels: this.panels,
+      panelUid,
+    });
 
     this.setState({ panels: this.panels });
 
@@ -163,6 +173,7 @@ export class Provider extends Component {
       docks,
       movePanelToTopOfStack: this.movePanelToTopOfStack,
       panels,
+      panelsContainerRef: this.panelsContainerRef,
       panelTabsContainerRef: this.panelTabsContainerRef,
       provider: this,
       registerPanel: this.registerPanel,
@@ -175,7 +186,7 @@ export class Provider extends Component {
     return (
       <Context.Provider value={contextValue}>
         {ReactDOM.createPortal(<div ref={this.panelTabsContainerRef} />, document.body)}
-        <PanelContainer panels={panels} />
+        {ReactDOM.createPortal(<div ref={this.panelsContainerRef} />, document.body)}
         {children}
       </Context.Provider>
     );
