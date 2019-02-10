@@ -1,10 +1,36 @@
 import changeDockActivePanel from './changeDockActivePanel';
 import updateDock from './updateDock';
+import validate from './validate';
 
-const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
-  const dock = docks.get(dockRef);
-  const panel = panels.get(panelRef);
-  const newDockPanels = new Map(dock.panels).set(panelRef, panel);
+const validateArgs = ({ docks, dockUid, panels, panelUid }) => {
+  validate.docks(docks);
+  validate.dockUid(dockUid);
+  validate.panels(panels);
+  validate.panelUid(panelUid);
+};
+
+const validateDock = (dock) => {
+  if (!dock) {
+    throw new Error(`Dock not found`);
+  }
+};
+
+const validatePanel = (panel) => {
+  if (!panel) {
+    throw new Error(`Panel not found`);
+  }
+};
+
+const addPanelToDock = ({ docks, dockUid, panels, panelUid }) => {
+  validateArgs({ docks, dockUid, panels, panelUid });
+
+  const dock = docks.get(dockUid);
+  const panel = panels.get(panelUid);
+
+  validateDock(dock);
+  validatePanel(panel);
+
+  const newDockPanels = new Map(dock.panels).set(panelUid, panel);
 
   const newDockData = {
     panels: newDockPanels,
@@ -12,17 +38,17 @@ const addPanelToDock = ({ docks, dockRef, panels, panelRef }) => {
   };
 
   let newDocks = updateDock({
-    newData: newDockData,
-    ref: dockRef,
     docks,
+    dockUid,
+    newData: newDockData,
   });
 
   let newPanels = null;
 
   ({ newDocks, newPanels } = changeDockActivePanel({
-    dockRef,
     docks: newDocks,
-    activePanelRef: panelRef,
+    dockUid,
+    activePanelUid: panelUid,
     panels,
   }));
 

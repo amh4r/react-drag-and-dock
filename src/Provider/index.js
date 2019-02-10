@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import isEqual from 'lodash/isEqual';
 import PropTypes from 'prop-types';
+import uuidv4 from 'uuid/v4';
 
 import {
   changeDockActivePanel,
   getPanelDimensions,
+  movePanelToTopOfStack,
   registerDock,
   registerPanel,
   snapPanelToDock,
@@ -24,6 +27,8 @@ export class Provider extends Component {
     this.docks = new Map();
 
     this.dockPositions = new Map();
+    this.panelTabsContainerRef = React.createRef();
+    this.panelsContainerRef = React.createRef();
 
     this.state = {
       panels: this.panels,
@@ -42,69 +47,84 @@ export class Provider extends Component {
   }
 
   handleDockPositionChanges = () => {
-    this.docks.forEach((dock) => {
-      const prevDockPosition = this.dockPositions.get(dock.ref);
-
+    this.docks.forEach((dock, dockUid) => {
+      const prevDockPosition = this.dockPositions.get(dockUid);
       const { x, y } = dock.ref.current.getBoundingClientRect();
-      const newDockPosition = { x, y };
+
+      const newDockPosition = {
+        x: x + window.scrollX,
+        y: y + window.scrollY,
+      };
 
       if (!prevDockPosition || !isEqual(newDockPosition, prevDockPosition)) {
-        this.dockPositions.set(dock.ref, newDockPosition);
+        this.dockPositions.set(dockUid, newDockPosition);
 
-        dock.panels.forEach((dockPanel) => {
-          const newPanelDimensions = getPanelDimensions({
-            initialDimensions: dockPanel.initialDimensions,
-            dock,
-            panel: dockPanel,
-          });
+        dock.panels.forEach((dockPanel, dockPanelUid) => {
+          const newPanelDimensions = getPanelDimensions({ dock });
 
           const newPanelData = {
             dimensions: newPanelDimensions,
           };
 
-          this.updatePanel(dockPanel.ref, newPanelData);
+          this.updatePanel(dockPanelUid, newPanelData);
         });
       }
     });
   };
 
-  registerDock = (ref, data) => {
-    this.docks = registerDock({ data, ref, docks: this.docks });
+  registerDock = (dockUid, data) => {
+    dockUid = dockUid || uuidv4();
+
+    this.docks = registerDock({
+      data,
+      docks: this.docks,
+      dockUid,
+    });
 
     this.setState({ docks: this.docks });
+
+    return dockUid;
   };
 
-  registerPanel = (ref, data) => {
-    this.panels = registerPanel({ data, ref, panels: this.panels });
+  registerPanel = (panelUid, data) => {
+    panelUid = panelUid || uuidv4();
+
+    this.panels = registerPanel({
+      data,
+      panels: this.panels,
+      panelUid,
+    });
 
     this.setState({ panels: this.panels });
+
+    return panelUid;
   };
 
-  updateDock = (ref, newData) => {
+  updateDock = (dockUid, newData) => {
     this.docks = updateDock({
-      newData,
-      ref,
       docks: this.docks,
+      dockUid,
+      newData,
     });
 
     this.setState({ docks: this.docks });
   };
 
-  updatePanel = (ref, newData) => {
+  updatePanel = (panelUid, newData) => {
     this.panels = updatePanel({
       newData,
-      ref,
       panels: this.panels,
+      panelUid,
     });
 
     this.setState({ panels: this.panels });
   };
 
-  setDockActivePanel = (dockRef, activePanelRef) => {
+  setDockActivePanel = (dockUid, activePanelUid) => {
     const { newDocks, newPanels } = changeDockActivePanel({
-      dockRef,
+      activePanelUid,
       docks: this.docks,
-      activePanelRef,
+      dockUid,
       panels: this.panels,
     });
 
@@ -117,12 +137,12 @@ export class Provider extends Component {
     });
   };
 
-  snapToDock = (panelRef, dockRef) => {
+  snapPanelToDock = (panelUid, dockUid) => {
     const { newDocks, newPanels } = snapPanelToDock({
       docks: this.docks,
-      dockRef,
+      dockUid,
       panels: this.panels,
-      panelRef,
+      panelUid,
     });
 
     this.docks = newDocks;
@@ -130,6 +150,17 @@ export class Provider extends Component {
 
     this.setState({
       docks: this.docks,
+      panels: this.panels,
+    });
+  };
+
+  movePanelToTopOfStack = (panelUid) => {
+    this.panels = movePanelToTopOfStack({
+      panels: this.panels,
+      panelUid,
+    });
+
+    this.setState({
       panels: this.panels,
     });
   };
@@ -140,16 +171,25 @@ export class Provider extends Component {
 
     const contextValue = {
       docks,
+      movePanelToTopOfStack: this.movePanelToTopOfStack,
       panels,
+      panelsContainerRef: this.panelsContainerRef,
+      panelTabsContainerRef: this.panelTabsContainerRef,
       provider: this,
       registerPanel: this.registerPanel,
       registerDock: this.registerDock,
       setDockActivePanel: this.setDockActivePanel,
-      snapToDock: this.snapToDock,
+      snapPanelToDock: this.snapPanelToDock,
       updateDock: this.updateDock,
     };
 
-    return <Context.Provider value={contextValue}>{children}</Context.Provider>;
+    return (
+      <Context.Provider value={contextValue}>
+        {ReactDOM.createPortal(<div ref={this.panelTabsContainerRef} />, document.body)}
+        {ReactDOM.createPortal(<div ref={this.panelsContainerRef} />, document.body)}
+        {children}
+      </Context.Provider>
+    );
   }
 }
 

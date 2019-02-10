@@ -1,4 +1,18 @@
-const registerDock = ({ data, ref, docks }) => {
+import validate from './validate';
+
+const validateArguments = ({ data, docks, dockUid }) => {
+  validate.dockData(data);
+  validate.docks(docks);
+  validate.dockUid(dockUid);
+};
+
+const registerDock = ({ data, docks, dockUid }) => {
+  validateArguments({ data, docks, dockUid });
+
+  if (docks.has(dockUid)) {
+    throw new Error(`Panel already registered with uid "${dockUid}"`);
+  }
+
   const defaults = {
     panels: new Map(),
   };
@@ -8,10 +22,9 @@ const registerDock = ({ data, ref, docks }) => {
     ...data,
     arePanelTabsVisible: false,
     panelTabsHeight: 20,
-    ref,
   };
 
-  const newDocks = new Map(docks).set(ref, newDock);
+  const newDocks = new Map(docks).set(dockUid, newDock);
 
   return newDocks;
 };

@@ -1,29 +1,46 @@
-const registerPanel = ({ data, ref, panels }) => {
-  const { height, width, x, y } = ref.current.getBoundingClientRect();
+import validate from './validate';
 
-  const dimensions = {
-    height,
-    width,
-    x: x + window.scrollX,
-    y: y + window.scrollY,
-  };
+const validateArguments = ({ data, panels, panelUid }) => {
+  validate.panelData(data);
+  validate.panels(panels);
+  validate.panelUid(panelUid);
+};
+
+const registerPanel = ({ data, panels, panelUid }) => {
+  validateArguments({ data, panels, panelUid });
+
+  if (panels.has(panelUid)) {
+    throw new Error(`Panel already registered with uid "${panelUid}"`);
+  }
+
+  const dimensions = (() => {
+    let rect = {};
+
+    if (data.ref && data.ref.current) {
+      rect = data.ref.current.getBoundingClientRect();
+    }
+
+    return {
+      height: rect.height || null,
+      width: rect.width || null,
+      x: rect.x + window.scrollX || null,
+      y: rect.y + window.scrollY || null,
+    };
+  })();
 
   const defaults = {
     dimensions,
-    initialDimensions: {
-      ...dimensions,
-    },
     isVisible: true,
-    snappedDock: null,
+    snappedDockUid: null,
+    zIndex: panels.size + 1,
   };
 
   const newPanel = {
     ...defaults,
     ...data,
-    ref,
   };
 
-  const newPanels = new Map(panels).set(ref, newPanel);
+  const newPanels = new Map(panels).set(panelUid, newPanel);
 
   return newPanels;
 };

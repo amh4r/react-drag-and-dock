@@ -1,13 +1,13 @@
-const updatePanel = ({ newData, ref, panels }) => {
-  const oldPanel = panels.get(ref);
+const updatePanel = ({ newData, panels, panelUid }) => {
+  if (!panelUid) throw new Error()
+  const oldPanel = panels.get(panelUid);
 
   const newPanel = {
     ...oldPanel,
     ...newData,
-    ref,
   };
 
-  const newPanels = new Map(panels).set(ref, newPanel);
+  const newPanels = new Map(panels).set(panelUid, newPanel);
 
   return newPanels;
 };
