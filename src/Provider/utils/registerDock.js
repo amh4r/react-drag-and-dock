@@ -1,24 +1,17 @@
+import validate from './validate';
+
 const validateArguments = ({ data, docks, dockUid }) => {
-  if (!data) {
-    throw new Error('data is falsy');
-  }
-
-  if (!docks) {
-    throw new Error('docks is falsy');
-  }
-
-  if (!dockUid) {
-    throw new Error('dockUid is falsy');
-  }
+  validate.dockData(data);
+  validate.docks(docks);
+  validate.dockUid(dockUid);
 };
 
 const registerDock = ({ data, docks, dockUid }) => {
   validateArguments({ data, docks, dockUid });
 
   if (docks.has(dockUid)) {
-    throw new Error(`Panel already registered with uid "${dockUid}"`)
+    throw new Error(`Panel already registered with uid "${dockUid}"`);
   }
-
 
   const defaults = {
     panels: new Map(),

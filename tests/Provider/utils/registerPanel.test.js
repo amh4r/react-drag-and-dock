@@ -1,10 +1,9 @@
 import { registerPanel } from '../../../src/Provider/utils';
 
 it('Success', () => {
-  const data = {};
   const panels = new Map();
   const panelUid = 'panel-1';
-  const newPanels = registerPanel({ data, panels, panelUid });
+  const newPanels = registerPanel({ data: {}, panels, panelUid });
 
   expect(newPanels.size).toEqual(1);
 
@@ -24,42 +23,25 @@ describe('Throw error', () => {
     panels = new Map();
   });
 
-  it('on falsy data', () => {
+  it('on falsy arguments', () => {
     expect(() => {
-      const data = null;
-      const panelUid = 'panel-1';
-
-      registerPanel({ data, panels, panelUid });
+      registerPanel({ data: null, panels, panelUid: 'panel-1' });
     }).toThrow();
-  });
 
-  it('on falsy docks', () => {
     expect(() => {
-      const data = {};
-      const panelUid = 'panel-1';
-      panels = null;
-
-      registerPanel({ data, panels, panelUid });
+      registerPanel({ data: {}, panels: null, panelUid: 'panel-1' });
     }).toThrow();
-  });
 
-  it('on falsy panelUid', () => {
     expect(() => {
-      const data = {};
-      const panelUid = null;
-
-      registerPanel({ data, panels, panelUid });
+      registerPanel({ data: {}, panels, panelUid: null });
     }).toThrow();
   });
 
   it('on registering same panelUid twice', () => {
-    const data = {};
-    const panelUid = 'panel-1';
-
-    panels = registerPanel({ data, panels, panelUid });
+    panels = registerPanel({ data: {}, panels, panelUid: 'panel-1' });
 
     expect(() => {
-      registerPanel({ data, panels, panelUid });
+      registerPanel({ data: {}, panels, panelUid: 'panel-1' });
     }).toThrow();
   });
 });

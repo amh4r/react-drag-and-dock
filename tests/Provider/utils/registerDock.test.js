@@ -1,10 +1,9 @@
 import { registerDock } from '../../../src/Provider/utils';
 
 it('Success', () => {
-  const data = {};
   const docks = new Map();
   const dockUid = 'dock-1';
-  const newDocks = registerDock({ data, docks, dockUid });
+  const newDocks = registerDock({ data: {}, docks, dockUid });
 
   expect(newDocks.size).toEqual(1);
 
@@ -24,42 +23,25 @@ describe('Throw error', () => {
     docks = new Map();
   });
 
-  it('on falsy data', () => {
+  it('on invalid arguments', () => {
     expect(() => {
-      const data = null;
-      const dockUid = 'dock-1';
-
-      registerDock({ data, docks, dockUid });
+      registerDock({ data: null, docks, dockUid: 'dock-1' });
     }).toThrow();
-  });
 
-  it('on falsy docks', () => {
     expect(() => {
-      const data = {};
-      const dockUid = 'dock-1';
-      docks = null;
-
-      registerDock({ data, docks, dockUid });
+      registerDock({ data: {}, docks: null, dockUid: 'dock-1' });
     }).toThrow();
-  });
 
-  it('on falsy dockUid', () => {
     expect(() => {
-      const data = {};
-      const dockUid = null;
-
-      registerDock({ data, docks, dockUid });
+      registerDock({ data: {}, docks, dockUid: null });
     }).toThrow();
   });
 
   it('on registering same dockUid twice', () => {
-    const data = {};
-    const dockUid = 'dock-1';
-
-    docks = registerDock({ data, docks, dockUid });
+    docks = registerDock({ data: {}, docks, dockUid: 'dock-1' });
 
     expect(() => {
-      registerDock({ data, docks, dockUid });
+      registerDock({ data: {}, docks, dockUid: 'dock-1' });
     }).toThrow();
   });
 });

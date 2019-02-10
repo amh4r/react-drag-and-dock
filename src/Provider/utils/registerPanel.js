@@ -1,22 +1,16 @@
+import validate from './validate';
+
 const validateArguments = ({ data, panels, panelUid }) => {
-  if (!data) {
-    throw new Error('data is falsy');
-  }
-
-  if (!panels) {
-    throw new Error('panels is falsy');
-  }
-
-  if (!panelUid) {
-    throw new Error('panelUid is falsy');
-  }
+  validate.panelData(data);
+  validate.panels(panels);
+  validate.panelUid(panelUid);
 };
 
 const registerPanel = ({ data, panels, panelUid }) => {
   validateArguments({ data, panels, panelUid });
 
   if (panels.has(panelUid)) {
-    throw new Error(`Panel already registered with uid "${panelUid}"`)
+    throw new Error(`Panel already registered with uid "${panelUid}"`);
   }
 
   const dimensions = (() => {

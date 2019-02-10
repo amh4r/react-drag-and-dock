@@ -1,8 +1,17 @@
 import changeDockActivePanel from './changeDockActivePanel';
 import handleDockPanelDimensions from './handleDockPanelDimensions';
 import updateDock from './updateDock';
+import validate from './validate';
+
+const validateArgs = ({ docks, panels, panelUid }) => {
+  validate.docks(docks);
+  validate.panels(panels);
+  validate.panelUid(panelUid);
+};
 
 const removePanelFromDocks = ({ docks, panels, panelUid }) => {
+  validateArgs({ docks, panels, panelUid });
+
   let newDocks = new Map(docks);
   let newPanels = new Map(panels);
 
