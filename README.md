@@ -2,13 +2,60 @@
 
 Create free-floating panels that "dock" into designated docks. Panel docking does not cause its children to remount.
 
-[CodePen Demo](https://codepen.io/goodoldneon/pen/WPraLE)
+# Demos
+
+[Dock area](https://codepen.io/goodoldneon/pen/mvxVom)
+
+[Custom layout](https://codepen.io/goodoldneon/pen/WPraLE)
 
 # Install
 
 `npm i react-drag-and-dock`
 
 # Examples
+
+## Dock area
+
+Dock areas are an simple, opinionated way to create a layout with docks.
+
+```jsx
+import React, { Component } from 'react';
+import DragAndDock from 'react-drag-and-dock';
+
+const App = () => {
+  render() {
+    return (
+      <div
+        style={{
+          background: 'lightblue',
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100vh',
+        }}
+      >
+        <DragAndDock.Area>
+          <DragAndDock.Area.Center>
+            <div style={{ height: '100%', width: '100%' }}>hello</div>
+          </DragAndDock.Area.Center>
+
+          <DragAndDock.Area.Dock location="left" width={300} />
+          <DragAndDock.Area.Dock location="right" width={300} />
+
+          <DragAndDock.Area.Panel title="Panel 1" initialDockUid="left">
+            <div>I am panel 1</div>
+          </DragAndDock.Area.Panel>
+
+          <DragAndDock.Area.Panel title="Panel 2" defaultPosition={{ x: 400, y: 100 }}>
+            <div>I am panel 2</div>
+          </DragAndDock.Area.Panel>
+        </DragAndDock.Area>
+      </div>
+    );
+  }
+}
+
+export default Example;
+```
 
 ## Two docks and one panel
 
