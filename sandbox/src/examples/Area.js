@@ -26,7 +26,7 @@ class Example extends Component {
             <div>I am panel 1</div>
           </DragAndDock.Area.Panel>
 
-          <DragAndDock.Area.Panel title="Panel 2">
+          <DragAndDock.Area.Panel title="Panel 2" defaultPosition={{ x: 400, y: 100 }}>
             <Timer />
           </DragAndDock.Area.Panel>
         </DragAndDock.Area>

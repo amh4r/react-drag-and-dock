@@ -60,13 +60,6 @@ class Panel extends React.Component {
     return panel;
   };
 
-  handleClick = () => {
-    const { context } = this.props;
-    const { movePanelToTopOfStack } = context;
-
-    movePanelToTopOfStack(this.uid);
-  };
-
   handleDrag = (e) => {
     this.draggedOverDock = this.getDraggedOverDock(e);
   };
@@ -85,6 +78,13 @@ class Panel extends React.Component {
     const dockUid = get(this, 'draggedOverDock.uid') || null;
 
     snapPanelToDock(this.uid, dockUid);
+  };
+
+  handleMouseDown = () => {
+    const { context } = this.props;
+    const { movePanelToTopOfStack } = context;
+
+    movePanelToTopOfStack(this.uid);
   };
 
   render() {
@@ -131,11 +131,12 @@ class Panel extends React.Component {
         handle=".handle"
         defaultPosition={defaultPosition}
         position={position}
-        onStart={this.handleDragStart}
         onDrag={this.handleDrag}
+        onMouseDown={this.handleMouseDown}
+        onStart={this.handleDragStart}
         onStop={this.handleDragStop}
       >
-        <Root ref={this.ref} onClick={this.handleClick} style={style}>
+        <Root ref={this.ref} style={style}>
           <Handle className="handle" style={{ ...handleStyle }}>
             {title}
           </Handle>
