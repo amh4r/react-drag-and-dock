@@ -94,7 +94,7 @@ const App = () => {
 
 ## Start docked in dock
 
-Give the `Dock` an `id`, and then set `initialDockId` on the `Panel` to the same value.
+Give the `Dock` an `id`, and then set `initialDockUid` on the `Panel` to the same value.
 
 ```jsx
 import React from 'react';
@@ -104,13 +104,13 @@ const App = () => {
     return (
         <div>
             <DragAndDock.Provider>
-                <DragAndDock.Dock id="dock-1">
+                <DragAndDock.Dock uid="dock-1">
                     <div style={{ background: '#ddd', height: '80vh', width: '50vw' }}>
                         I am a dock
                     </div>
                 </DragAndDock.Dock>
 
-                <DragAndDock.Panel initialDockId="dock-1" title="Panel">
+                <DragAndDock.Panel initialDockUid="dock-1" title="Panel">
                     <div>yo</div>
                 </DragAndDock.Panel>
             </DragAndDock.Provider>
@@ -120,6 +120,50 @@ const App = () => {
 ```
 
 # API
+
+## `<DragAndDock.Area>`
+
+-   Used to create a simple, opinionated dock layout.
+-   [Demo](https://codepen.io/goodoldneon/pen/mvxVom)
+
+### `<DragAndDock.Area.Center>`
+
+-   Required.
+-   Center content.
+-   Not dockable.
+
+### `<DragAndDock.Area.Dock>`
+
+-   Dockable area.
+
+<table class="table table-bordered table-striped">
+    <thead>
+    <tr>
+        <th style="width: 50px;">name</th>
+        <th style="width: 50px;">type</th>
+        <th>default</th>
+        <th>description</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr>
+          <td>location</td>
+          <td>string</td>
+          <td><code>null</code></td>
+          <td>Can only be <code>"left"</code> or <code>"right"</code>.</td>
+      </tr>
+      <tr>
+          <td>width</td>
+          <td>number</td>
+          <td><code>null</code></td>
+          <td>Width in pixels.</td>
+      </tr>
+    </tbody>
+</table>
+
+### `<DragAndDock.Area.Dock>`
+
+-   See `<DragAndDock.Panel>`.
 
 ## `<DragAndDock.Provider>`
 
@@ -163,7 +207,7 @@ const App = () => {
           <td>Panel width on initial load. Does nothing after the <code>Panel</code> is docked.</td>
       </tr>
       <tr>
-          <td>initialDockId</td>
+          <td>initialDockUid</td>
           <td>string</td>
           <td><code>null</code></td>
           <td>On initial load, which <code>Dock</code> to snap to. Must correspond to the <code>id</code> of an existing <code>Dock</code>.</td>
@@ -204,10 +248,10 @@ const App = () => {
     </thead>
     <tbody>
       <tr>
-          <td>id</td>
+          <td>uid</td>
           <td>string</td>
-          <th><code>null</code></th>
-          <td>Only used for <code>initialDockId</code> prop in <code>Panel</code>.</td>
+          <td><code>null</code></td>
+          <td>Only used for <code>initialDockUid</code> prop in <code>Panel</code>.</td>
       </tr>
     </tbody>
 </table>
