@@ -4,17 +4,12 @@ Create free-floating panels that "dock" into designated docks. Panel docking doe
 
 # Contents
 
-[Demos](#demos)
-
-[Install](#install)
-
-[How It Works](#how-it-works)
-
-[Examples](#examples)
-
-[API](#api)
-
-[Development](#development)
+- [Demos](#demos)
+- [Install](#install)
+- [How It Works](#how-it-works)
+- [Examples](#examples)
+- [API](#api)
+- [Development](#development)
 
 # Demos
 
