@@ -2,6 +2,20 @@
 
 Create free-floating panels that "dock" into designated docks. Panel docking does not cause its children to remount.
 
+# Contents
+
+[Demos](#demos)
+
+[Install](#install)
+
+[How It Works](#how-it-works)
+
+[Examples](#examples)
+
+[API](#api)
+
+[Development](#development)
+
 # Demos
 
 [Dock area](https://codepen.io/goodoldneon/pen/mvxVom)
@@ -22,7 +36,7 @@ To the user, the `Panel` appears to be inside the `Dock`. In reality, the `Panel
 
 ## Dock area
 
-Dock areas are an simple, opinionated way to create a layout with docks.
+Dock areas are a simple, opinionated way to create a layout with docks.
 
 ```jsx
 import React, { Component } from 'react';
