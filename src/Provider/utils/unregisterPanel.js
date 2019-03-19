@@ -2,7 +2,7 @@ import removePanelFromDocks from './removePanelFromDocks';
 import validate from './validate';
 
 const validateArguments = ({ docks, panels, panelUid }) => {
-  validate.panels(docks);
+  validate.docks(docks);
   validate.panels(panels);
   validate.panelUid(panelUid);
 };
