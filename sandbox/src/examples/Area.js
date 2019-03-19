@@ -4,13 +4,7 @@ import DragAndDock from '../DragAndDock';
 import Timer from '../components/Timer';
 
 class Example extends Component {
-  state = {
-    isVisible: true,
-  };
-
   render() {
-    const { isVisible } = this.state;
-
     return (
       <div
         style={{
@@ -20,8 +14,6 @@ class Example extends Component {
           height: '100vh',
         }}
       >
-        <button onClick={() => this.setState({ isVisible: !isVisible })}>Click</button>
-
         <DragAndDock.Area>
           <DragAndDock.Area.Center>
             <div style={{ height: '100%', width: '100%' }}>hello</div>
@@ -34,11 +26,9 @@ class Example extends Component {
             <div>I am panel 1</div>
           </DragAndDock.Area.Panel>
 
-          {isVisible && (
-            <DragAndDock.Area.Panel title="Panel 2" defaultPosition={{ x: 400, y: 100 }}>
-              <Timer />
-            </DragAndDock.Area.Panel>
-          )}
+          <DragAndDock.Area.Panel title="Panel 2" defaultPosition={{ x: 400, y: 100 }}>
+            <Timer />
+          </DragAndDock.Area.Panel>
         </DragAndDock.Area>
       </div>
     );
