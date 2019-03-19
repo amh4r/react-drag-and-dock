@@ -27,6 +27,12 @@ class Panel extends React.Component {
     this.snapToInitialDock();
   }
 
+  componentWillUnmount() {
+    const { context } = this.props;
+
+    context.unregisterPanel(this.uid);
+  }
+
   snapToInitialDock = () => {
     const { context, initialDockUid } = this.props;
 
@@ -103,6 +109,9 @@ class Panel extends React.Component {
     if (!portalTargetRef.current) return null;
 
     const panel = this.getPanel();
+
+    if (!panel) return null;
+
     const handleStyle = styles.handle || {};
     const rootStyle = styles.root || {};
 

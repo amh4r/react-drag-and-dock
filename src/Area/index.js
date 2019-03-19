@@ -71,8 +71,10 @@ Area.Dock = AreaDock;
 Area.Panel = Panel;
 
 Area.propTypes = {
-  children: PropTypes.oneOfType([PropTypes.element, PropTypes.arrayOf(PropTypes.element)])
-    .isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.element, () => null])),
+  ]).isRequired,
 };
 
 export default Area;
