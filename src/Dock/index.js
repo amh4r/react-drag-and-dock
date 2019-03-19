@@ -30,6 +30,12 @@ class Dock extends Component {
     resizeObserver.observe(parentNode);
   }
 
+  componentWillUnmount() {
+    const { context } = this.props;
+
+    context.unregisterDock(this.uid);
+  }
+
   getDock = () => {
     const { context } = this.props;
     const dock = context.provider.docks.get(this.uid);

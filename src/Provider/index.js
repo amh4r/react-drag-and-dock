@@ -11,6 +11,7 @@ import {
   registerDock,
   registerPanel,
   snapPanelToDock,
+  unregisterPanel,
   updateDock,
   updatePanel,
 } from './utils';
@@ -100,6 +101,35 @@ export class Provider extends Component {
     return panelUid;
   };
 
+  unregisterDock = (dockUid) => {
+    const { newDocks } = unregisterPanel({
+      docks: this.docks,
+      dockUid,
+    });
+
+    this.docks = newDocks;
+
+    this.setState({
+      docks: this.docks,
+    });
+  };
+
+  unregisterPanel = (panelUid) => {
+    const { newDocks, newPanels } = unregisterPanel({
+      docks: this.docks,
+      panels: this.panels,
+      panelUid,
+    });
+
+    this.docks = newDocks;
+    this.panels = newPanels;
+
+    this.setState({
+      docks: this.docks,
+      panels: this.panels,
+    });
+  };
+
   updateDock = (dockUid, newData) => {
     this.docks = updateDock({
       docks: this.docks,
@@ -180,6 +210,8 @@ export class Provider extends Component {
       registerDock: this.registerDock,
       setDockActivePanel: this.setDockActivePanel,
       snapPanelToDock: this.snapPanelToDock,
+      unregisterDock: this.unregisterDock,
+      unregisterPanel: this.unregisterPanel,
       updateDock: this.updateDock,
     };
 
