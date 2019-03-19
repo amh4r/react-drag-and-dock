@@ -102,12 +102,19 @@ export class Provider extends Component {
   };
 
   unregisterPanel = (panelUid) => {
-    this.panels = unregisterPanel({
+    const { newDocks, newPanels } = unregisterPanel({
+      docks: this.docks,
       panels: this.panels,
       panelUid,
     });
 
-    this.setState({ panels: this.panels });
+    this.docks = newDocks;
+    this.panels = newPanels;
+
+    this.setState({
+      docks: this.docks,
+      panels: this.panels,
+    });
   };
 
   updateDock = (dockUid, newData) => {
