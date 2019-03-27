@@ -222,11 +222,11 @@ const App = () => {
           <td>On initial load, which <code>Dock</code> to snap to. Must correspond to the <code>id</code> of an existing <code>Dock</code>.</td>
       </tr>
       <tr>
-          <td>renderHandle</td>
+          <td>renderTitleBar</td>
           <td>function</td>
           <td><code>null</code></td>
           <td>
-            Render a custom handle. Passes an object with the following properties:
+            Render a custom title bar component. Passes an object with the following properties:
             <ul>
                 <li><code>draggableClassName</code> -- Put on the element which should be "draggable".
                 <li><code>styles</code> -- Style object.
