@@ -16,6 +16,7 @@ function Panel(props) {
     defaultPosition,
     defaultWidth,
     initialDockUid,
+    renderHandle,
     styles,
     title,
     uid: propsUid,
@@ -127,9 +128,11 @@ function Panel(props) {
     zIndex: panel.zIndex,
   };
 
+  const draggableClassName = 'handle';
+
   const contents = (
     <Draggable
-      handle=".handle"
+      handle={`.${draggableClassName}`}
       defaultPosition={defaultPosition}
       position={position}
       onDrag={handleDrag}
@@ -138,9 +141,18 @@ function Panel(props) {
       onStop={handleDragStop}
     >
       <Root ref={ref} style={style}>
-        <Handle className="handle" style={{ ...handleStyle }}>
-          {title}
-        </Handle>
+        {renderHandle &&
+          renderHandle({
+            draggableClassName,
+            styles: handleStyle,
+            title,
+          })}
+
+        {!renderHandle && (
+          <Handle className={draggableClassName} style={{ ...handleStyle }}>
+            {title}
+          </Handle>
+        )}
 
         <div>{children}</div>
       </Root>
@@ -166,6 +178,7 @@ Panel.propTypes = {
   }),
   defaultWidth: PropTypes.number,
   initialDockUid: PropTypes.string,
+  renderHandle: PropTypes.func,
   styles: PropTypes.shape({
     handle: PropTypes.object,
     root: PropTypes.object,
@@ -179,6 +192,7 @@ Panel.defaultProps = {
   defaultWidth: null,
   defaultPosition: undefined,
   initialDockUid: null,
+  renderHandle: null,
   styles: {},
   title: 'Panel',
   uid: null,

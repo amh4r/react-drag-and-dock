@@ -4,12 +4,12 @@ Create free-floating panels that "dock" into designated docks. Panel docking doe
 
 # Contents
 
-- [Demos](#demos)
-- [Install](#install)
-- [How It Works](#how-it-works)
-- [Examples](#examples)
-- [API](#api)
-- [Development](#development)
+-   [Demos](#demos)
+-   [Install](#install)
+-   [How It Works](#how-it-works)
+-   [Examples](#examples)
+-   [API](#api)
+-   [Development](#development)
 
 # Demos
 
@@ -220,6 +220,19 @@ const App = () => {
           <td>string</td>
           <td><code>null</code></td>
           <td>On initial load, which <code>Dock</code> to snap to. Must correspond to the <code>id</code> of an existing <code>Dock</code>.</td>
+      </tr>
+      <tr>
+          <td>renderHandle</td>
+          <td>function</td>
+          <td><code>null</code></td>
+          <td>
+            Render a custom handle. Passes an object with the following properties:
+            <ul>
+                <li><code>draggableClassName</code> -- Put on the element which should be "draggable".
+                <li><code>styles</code> -- Style object.
+                <li><code>title</code> -- Panel title.
+            </ul>
+          </td>
       </tr>
       <tr>
         <td>styles</td>
