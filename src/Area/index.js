@@ -6,7 +6,7 @@ import Center from './Center';
 import Panel from '../Panel';
 import Provider from '../Provider';
 
-const Area = (props) => {
+function Area(props) {
   const { children } = props;
 
   const getChildren = () => {
@@ -64,7 +64,7 @@ const Area = (props) => {
       </div>
     </Provider>
   );
-};
+}
 
 Area.Center = Center;
 Area.Dock = AreaDock;

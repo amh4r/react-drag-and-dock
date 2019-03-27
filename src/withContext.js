@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 
 import Context from './Context';
 
-const withContext = (Component) => {
+function withContext(Component) {
   const ContextConsumerWrapper = (props) => {
     return (
       <Context.Consumer>
@@ -27,6 +27,6 @@ const withContext = (Component) => {
   };
 
   return ContextConsumerWrapper;
-};
+}
 
 export default withContext;

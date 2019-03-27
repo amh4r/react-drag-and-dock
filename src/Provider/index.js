@@ -17,7 +17,8 @@ import {
 } from './utils';
 import Context from '../Context';
 
-export class Provider extends Component {
+/* Probably don't refactor this to a function component. */
+class Provider extends Component {
   positionObserverInterval = null;
 
   constructor() {

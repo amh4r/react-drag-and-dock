@@ -25,3 +25,18 @@ export {
   updateDock,
   updatePanel,
 };
+
+export default {
+  addPanelToDock,
+  changeDockActivePanel,
+  getPanelDimensions,
+  movePanelToTopOfStack,
+  registerDock,
+  registerPanel,
+  removePanelFromDocks,
+  snapPanelToDock,
+  unregisterDock,
+  unregisterPanel,
+  updateDock,
+  updatePanel,
+};

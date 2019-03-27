@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import PanelTab from './PanelTab';
 import { Wrap } from './styles';
 
-const PanelTabs = (props) => {
+function PanelTabs(props) {
   const {
     activePanelUid,
     dockRef,
@@ -53,7 +53,7 @@ const PanelTabs = (props) => {
   );
 
   return ReactDOM.createPortal(component, portalTargetRef.current);
-};
+}
 
 PanelTabs.propTypes = {
   activePanelUid: PropTypes.string,

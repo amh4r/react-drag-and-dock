@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 
 import Context from '../Context';
@@ -20,31 +20,27 @@ const getStyle = ({ hasPanels, location, width }) => {
   return style;
 };
 
-class AreaDock extends Component {
-  uid = null;
+function AreaDock(props) {
+  const { location, width } = props;
+  const uidRef = useRef(location);
+  const uid = uidRef.current;
 
-  render() {
-    const { location, width } = this.props;
+  return (
+    <Context.Consumer>
+      {(context) => {
+        const { docks } = context;
+        const dock = docks.get(uid);
+        const hasPanels = dock && dock.panels.size > 0;
+        const style = getStyle({ hasPanels, location, width });
 
-    this.uid = location;
-
-    return (
-      <Context.Consumer>
-        {(context) => {
-          const { docks } = context;
-          const dock = docks.get(this.uid);
-          const hasPanels = dock && dock.panels.size > 0;
-          const style = getStyle({ hasPanels, location, width });
-
-          return (
-            <Dock uid={this.uid}>
-              <div style={style} />
-            </Dock>
-          );
-        }}
-      </Context.Consumer>
-    );
-  }
+        return (
+          <Dock uid={uid}>
+            <div style={style} />
+          </Dock>
+        );
+      }}
+    </Context.Consumer>
+  );
 }
 
 AreaDock.propTypes = {

@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment, useLayoutEffect, useRef } from 'react';
 import get from 'lodash/get';
 import PropTypes from 'prop-types';
 import ResizeObserver from 'resize-observer-polyfill';
@@ -6,107 +6,99 @@ import ResizeObserver from 'resize-observer-polyfill';
 import withContext from '../withContext';
 import PanelTabs from './PanelTabs';
 
-class Dock extends Component {
-  constructor() {
-    super();
-    this.ref = React.createRef();
-    this.uid = null;
-  }
+function Dock(props) {
+  const { children, context, uid: propsUid } = props;
+  const ref = useRef(null);
+  const uidRef = useRef(propsUid);
+  let uid = uidRef.current;
 
-  componentDidMount() {
-    const { context, uid } = this.props;
-
-    this.uid = context.registerDock(uid, {
-      props: this.props,
-      ref: this.ref,
+  useLayoutEffect(() => {
+    uid = context.registerDock(uid, {
+      props,
+      ref,
     });
 
-    const { parentNode } = this.ref.current;
+    uidRef.current = uid;
+
+    const { parentNode } = ref.current;
 
     const resizeObserver = new ResizeObserver(() => {
-      context.updateDock(this.uid, this.props);
+      context.updateDock(uid, props);
     });
 
     resizeObserver.observe(parentNode);
-  }
 
-  componentWillUnmount() {
-    const { context } = this.props;
+    return () => {
+      context.unregisterDock(uidRef.current);
+    };
+  }, []);
 
-    context.unregisterDock(this.uid);
-  }
-
-  getDock = () => {
-    const { context } = this.props;
-    const dock = context.provider.docks.get(this.uid);
+  const getDock = () => {
+    const dock = context.provider.docks.get(uid);
 
     return dock;
   };
 
-  getPanels = () => {
-    const dock = this.getDock();
+  const getPanels = () => {
+    const dock = getDock();
 
     if (!dock) return new Map();
 
     return dock.panels;
   };
 
-  handleTabClick = (panelUid) => {
-    const { context } = this.props;
+  const handleTabClick = (panelUid) => {
     const { setDockActivePanel } = context;
 
-    setDockActivePanel(this.uid, panelUid);
+    setDockActivePanel(uid, panelUid);
   };
 
-  render() {
-    const { children, context } = this.props;
-    const { panelTabsContainerRef } = context;
-    const dock = this.getDock();
-    const panels = this.getPanels();
-    const activePanelUid = dock ? dock.activePanelUid : null;
-    const arePanelTabsVisible = get(dock, 'arePanelTabsVisible') || false;
+  const { panelTabsContainerRef } = context;
+  const dock = getDock();
+  const panels = getPanels();
+  const activePanelUid = dock ? dock.activePanelUid : null;
+  const arePanelTabsVisible = get(dock, 'arePanelTabsVisible') || false;
 
-    const childProps = {
-      ...children.props,
-      dock,
-      ref: this.ref,
-      style: {
-        ...children.props.style,
-      },
+  const childProps = {
+    ...children.props,
+    dock,
+    ref,
+    style: {
+      ...children.props.style,
+    },
+  };
+
+  const dockRect = dock ? dock.ref.current.getBoundingClientRect() : null;
+
+  const position = (() => {
+    if (!dockRect) return null;
+
+    return {
+      x: dockRect.x + window.scrollX,
+      y: dockRect.y + window.scrollY,
     };
+  })();
 
-    const dockRect = dock ? dock.ref.current.getBoundingClientRect() : null;
+  const width = dockRect ? dockRect.width : null;
 
-    const position = (() => {
-      if (!dockRect) return null;
+  return (
+    <Fragment>
+      {arePanelTabsVisible && (
+        <PanelTabs
+          activePanelUid={activePanelUid}
+          dockRef={ref}
+          height={dock.panelTabsHeight}
+          panels={panels}
+          portalTargetRef={panelTabsContainerRef}
+          position={position}
+          width={width}
+          onTabClick={handleTabClick}
+        />
+      )}
 
-      return {
-        x: dockRect.x + window.scrollX,
-        y: dockRect.y + window.scrollY,
-      };
-    })();
-
-    const width = dockRect ? dockRect.width : null;
-
-    return (
-      <Fragment>
-        {arePanelTabsVisible && (
-          <PanelTabs
-            activePanelUid={activePanelUid}
-            dockRef={this.ref}
-            height={dock.panelTabsHeight}
-            panels={panels}
-            portalTargetRef={panelTabsContainerRef}
-            position={position}
-            width={width}
-            onTabClick={this.handleTabClick}
-          />
-        )}
-
-        {React.cloneElement(children, childProps)}
-      </Fragment>
-    );
-  }
+      {React.cloneElement(children, childProps)}
+    </Fragment>
+  );
 }
 
 Dock.propTypes = {
