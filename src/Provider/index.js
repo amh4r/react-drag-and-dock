@@ -241,7 +241,6 @@ class Provider extends Component {
 
     const contextValue = {
       docks,
-      handlePanelDrag: this.handlePanelDrag,
       movePanelToTopOfStack: this.movePanelToTopOfStack,
       panels,
       panelsContainerRef: this.panelsContainerRef,
@@ -256,7 +255,6 @@ class Provider extends Component {
       unregisterDock: this.unregisterDock,
       unregisterPanel: this.unregisterPanel,
       updateDock: this.updateDock,
-      updatePanel: this.updatePanel,
     };
 
     return (

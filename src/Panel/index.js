@@ -88,7 +88,7 @@ function Panel(props) {
   const handleDragStart = () => {
     const { snapPanelToDock } = context;
     const dockUid = null;
-    snapPanelToDock(uid, dockUid, false);
+    snapPanelToDock(uid, dockUid);
   };
 
   const handleDragStop = () => {
