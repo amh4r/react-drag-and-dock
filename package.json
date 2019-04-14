@@ -12,7 +12,7 @@
     "build": "webpack --mode production",
     "test": "jest tests -o --watch",
     "start": "concurrently \"npm run start:server\" \"npm run start:src-watch\"",
-    "start:server": "cd sandbox && PORT=3010 react-scripts start",
+    "start:server": "cd sandbox && cross-env PORT=3010 react-scripts start",
     "start:src-watch": "cpx \"src/**/*.js\" \"sandbox/src/DragAndDock\" --watch"
   },
   "jest": {
@@ -21,7 +21,7 @@
   "dependencies": {
     "lodash": "^4.17.11",
     "prop-types": "^15.6.2",
-    "react-draggable": "^3.1.1",
+    "react-rnd": "^9.1.2",
     "resize-observer-polyfill": "^1.5.1",
     "styled-components": "^4.1.3",
     "uuid": "^3.3.2"
@@ -37,6 +37,7 @@
     "babel-preset-react": "^6.24.1",
     "concurrently": "^4.1.0",
     "cpx": "^1.5.0",
+    "cross-env": "^5.2.0",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.11.2",
     "eslint-config-airbnb": "^17.1.0",

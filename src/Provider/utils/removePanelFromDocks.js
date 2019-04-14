@@ -2,6 +2,7 @@ import changeDockActivePanel from './changeDockActivePanel';
 import handleDockPanelDimensions from './handleDockPanelDimensions';
 import updateDock from './updateDock';
 import validate from './validate';
+import updatePanel from './updatePanel';
 
 const validateArgs = ({ docks, panels, panelUid }) => {
   validate.docks(docks);
@@ -14,6 +15,12 @@ const removePanelFromDocks = ({ docks, panels, panelUid }) => {
 
   let newDocks = new Map(docks);
   let newPanels = new Map(panels);
+
+  newPanels = updatePanel({
+    newData: { snappedDockUid: null },
+    panels: newPanels,
+    panelUid,
+  });
 
   docks.forEach((dock, dockUid) => {
     const isPanelInDock = dock.panels.has(panelUid);

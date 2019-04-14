@@ -21,7 +21,7 @@ const validatePanel = (panel) => {
   }
 };
 
-const addPanelToDock = ({ docks, dockUid, panels, panelUid }) => {
+const addPanelToDock = ({ docks, dockUid, panels, panelUid, panelTabsVisible = true }) => {
   validateArgs({ docks, dockUid, panels, panelUid });
 
   const dock = docks.get(dockUid);
@@ -34,7 +34,7 @@ const addPanelToDock = ({ docks, dockUid, panels, panelUid }) => {
 
   const newDockData = {
     panels: newDockPanels,
-    arePanelTabsVisible: newDockPanels.size > 1,
+    arePanelTabsVisible: panelTabsVisible && newDockPanels.size > 1,
   };
 
   let newDocks = updateDock({
@@ -43,14 +43,16 @@ const addPanelToDock = ({ docks, dockUid, panels, panelUid }) => {
     newData: newDockData,
   });
 
-  let newPanels = null;
+  let newPanels = panels;
 
-  ({ newDocks, newPanels } = changeDockActivePanel({
-    docks: newDocks,
-    dockUid,
-    activePanelUid: panelUid,
-    panels,
-  }));
+  if (panelTabsVisible) {
+    ({ newDocks, newPanels } = changeDockActivePanel({
+      docks: newDocks,
+      dockUid,
+      activePanelUid: panelUid,
+      panels,
+    }));
+  }
 
   return {
     newDocks,

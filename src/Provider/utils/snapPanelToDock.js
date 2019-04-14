@@ -53,6 +53,7 @@ const snapPanelToDock = ({ docks, dockUid, panels, panelUid, shouldHandleDimensi
         ...newPanelDimensions,
       },
       snappedDockUid: dockUid || null,
+      dockSection: 'over',
     };
 
     newPanels = updatePanel({

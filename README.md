@@ -156,10 +156,33 @@ const App = () => {
     </thead>
     <tbody>
       <tr>
+          <td>components</td>
+          <td>
+            object
+            <br>
+            <code>{DockContainer, TabsContainer, TabComponent}</code>
+          </td>
+          <td><code>{}</code></td>
+          <td>Replace the underlying components. Details below.
+          </td>
+      </tr>
+      <tr>
           <td>location</td>
           <td>string</td>
           <td><code>null</code></td>
           <td>Can only be <code>"left"</code> or <code>"right"</code>.</td>
+      </tr>      
+      <tr>
+          <td>split</td>
+          <td>boolean</td>
+          <td><code>true</code></td>
+          <td>Enable split view in Dock.</td>
+      </tr>
+      <tr>
+          <td>tabLocation</td>
+          <td>string</td>
+          <td><code>"top"</code></td>
+          <td>Can only be <code>"top"</code> or <code>"bottom"</code>.</td>
       </tr>
       <tr>
           <td>width</td>
@@ -169,6 +192,16 @@ const App = () => {
       </tr>
     </tbody>
 </table>
+
+##### `Replacing components`
+Default components can be replaced by using the `components` property. These components are given all the props they required. 
+```$js
+{
+    DockContainer: (props: ({hasPanels, location, width, isOver})) => (),
+    TabsContainer: (props: ({style})) => (),
+    TabComponent: (props: ({className, isActive, onClick, title})) => (),
+}
+```
 
 ### `<DragAndDock.Area.Dock>`
 
@@ -195,7 +228,7 @@ const App = () => {
     <tbody>
       <tr>
           <td>defaultHeight</td>
-          <td>number</td>
+          <td>number | string</td>
           <td><code>null</code></td>
           <td>Panel height on initial load. Does nothing after the <code>Panel</code> is docked.</td>
       </tr>
@@ -210,8 +243,18 @@ const App = () => {
           <td>Position (x and y, relative to <code>body</code>) on initial load. Does nothing after the <code>Panel</code> is docked.</td>
       </tr>
       <tr>
+          <td>components</td>
+          <td>
+            object
+            <br />
+            <code>{RootContainer, TitleBar, PanelArea}</code>
+          </td>
+          <td><code>undefined</code></td>
+          <td>Components to replace.</td>
+      </tr>
+      <tr>
           <td>defaultWidth</td>
-          <td>number</td>
+          <td>number | string</td>
           <td><code>null</code></td>
           <td>Panel width on initial load. Does nothing after the <code>Panel</code> is docked.</td>
       </tr>
@@ -221,6 +264,12 @@ const App = () => {
           <td><code>null</code></td>
           <td>On initial load, which <code>Dock</code> to snap to. Must correspond to the <code>id</code> of an existing <code>Dock</code>.</td>
       </tr>
+      <tr>
+          <td>initialDockSection</td>
+          <td>string</td>
+          <td><code>undefined</code></td>
+          <td>Can only be <code>"top"</code> or <code>"bottom"</code>. On initial load, which section of <code>Dock</code> to snap to. Dock must support <code>split</code> and should have a panel snapped to it.</td>
+      </tr>      
       <tr>
           <td>renderTitleBar</td>
           <td>function</td>
@@ -255,6 +304,16 @@ const App = () => {
     </tbody>
 </table>
 
+##### `Replacing components`
+Default components can be replaced by using the `components` property. These components are given all the props they required. 
+```$js
+{
+    RootContainer: (props: ({isDocked, style})) => (),
+    TitleBar: (props: ({draggableClassName, isDocked, style, title})) => (),
+    PanelArea: (props: ({children, isDocked, style})) => (),
+}
+```
+
 ## `<DragAndDock.Dock>`
 
 -   `Panels` "dock" into `Docks`.
@@ -275,7 +334,30 @@ const App = () => {
           <td><code>null</code></td>
           <td>Only used for <code>initialDockUid</code> prop in <code>Panel</code>.</td>
       </tr>
-    </tbody>
+      <tr>
+        <td>components</td>
+        <td>
+          object
+          <br>
+          <code>{TabsContainer, TabComponent}</code>
+        </td>
+        <td><code>{}</code></td>
+        <td>Replace the underlying components..
+        </td>
+    </tr>    
+    <tr>
+        <td>split</td>
+        <td>boolean</td>
+        <td><code>true</code></td>
+        <td>Enable split view in Dock.</td>
+    </tr>
+    <tr>
+        <td>tabLocation</td>
+        <td>string</td>
+        <td><code>"top"</code></td>
+        <td>Can only be <code>"top"</code> or <code>"bottom"</code>.</td>
+    </tr>
+   </tbody>
 </table>
 
 # Development

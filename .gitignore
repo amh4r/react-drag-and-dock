@@ -1,3 +1,4 @@
 **/node_modules
 dist
 sandbox/src/DragAndDock
+.idea

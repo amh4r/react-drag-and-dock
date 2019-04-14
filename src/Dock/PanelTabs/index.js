@@ -8,6 +8,7 @@ import { Wrap } from './styles';
 function PanelTabs(props) {
   const {
     activePanelUid,
+    components,
     dockRef,
     height,
     onTabClick,
@@ -22,7 +23,7 @@ function PanelTabs(props) {
   const tabs = [];
 
   const style = {
-    background: 'white',
+    background: 'transparent',
     boxSizing: 'border-box',
     left: position ? position.x : null,
     top: position ? position.y : null,
@@ -35,21 +36,29 @@ function PanelTabs(props) {
     const isActive = panelUid === activePanelUid;
 
     tabs.push(
-      <PanelTab key={title} isActive={isActive} onClick={() => onTabClick(panelUid)}>
+      <PanelTab
+        component={components.TabComponent}
+        key={title}
+        isActive={isActive}
+        onClick={() => onTabClick(panelUid)}
+      >
         {title}
       </PanelTab>,
     );
   });
 
+  const RootContainer = components.TabsContainer || Wrap;
+
   const component = (
-    <Wrap
+    <RootContainer
+      className="clazz"
       style={{
         ...style,
         height,
       }}
     >
       {tabs}
-    </Wrap>
+    </RootContainer>
   );
 
   return ReactDOM.createPortal(component, portalTargetRef.current);
@@ -57,6 +66,10 @@ function PanelTabs(props) {
 
 PanelTabs.propTypes = {
   activePanelUid: PropTypes.string,
+  components: PropTypes.shape({
+    TabsContainer: PropTypes.func,
+    TabComponent: PropTypes.func,
+  }),
   dockRef: PropTypes.shape({
     current: PropTypes.oneOfType([PropTypes.element, PropTypes.object]),
   }),
@@ -73,6 +86,7 @@ PanelTabs.propTypes = {
 
 PanelTabs.defaultProps = {
   activePanelUid: null,
+  components: {},
   dockRef: null,
   onTabClick: () => {},
   position: null,

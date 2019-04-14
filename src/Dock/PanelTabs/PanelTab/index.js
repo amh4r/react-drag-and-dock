@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 import { Button } from './styles';
 
 function PanelTab(props) {
-  const { children, isActive, onClick } = props;
+  const { children, component, isActive, onClick } = props;
   const className = isActive ? 'active' : '';
-
+  const title = typeof children === 'string' ? children : '';
+  const ButtonComponent = component || Button;
   return (
-    <Button className={className} onClick={onClick}>
+    <ButtonComponent className={className} isActive={isActive} onClick={onClick} title={title}>
       {children}
-    </Button>
+    </ButtonComponent>
   );
 }
 
@@ -18,6 +19,7 @@ PanelTab.propTypes = {
   children: PropTypes.oneOfType([PropTypes.element, PropTypes.string]).isRequired,
   isActive: PropTypes.bool,
   onClick: PropTypes.func,
+  component: PropTypes.func,
 };
 
 PanelTab.defaultProps = {
