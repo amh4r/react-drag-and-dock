@@ -44,7 +44,7 @@ function AreaDock(props) {
 }
 
 AreaDock.propTypes = {
-  compoenents: PropTypes.shape({
+  components: PropTypes.shape({
     DockContainer: PropTypes.func,
     TabsContainer: PropTypes.func,
     TabComponent: PropTypes.func,
