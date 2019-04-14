@@ -9,7 +9,7 @@ it('Move panel to top of 2 panels', () => {
 
   let panel = panels.get('panel-1');
 
-  expect(panel.zIndex).toBe(2);
+  expect(panel.zIndex).toBe(2002);
   panel = panels.get('panel-2');
-  expect(panel.zIndex).toBe(1);
+  expect(panel.zIndex).toBe(2001);
 });

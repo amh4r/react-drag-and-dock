@@ -7,7 +7,6 @@ const Button = styled.button`
   cursor: pointer;
   padding: 0.2em;
   font-size: 0.8em;
-
   &.active {
     background: #3a89ea;
   }

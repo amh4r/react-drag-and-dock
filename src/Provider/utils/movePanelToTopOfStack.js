@@ -18,7 +18,7 @@ const movePanelToTopOfStack = ({ panels, panelUid }) => {
     if (uid === panelUid) {
       newPanels.set(uid, {
         ...panel,
-        zIndex: panels.size,
+        zIndex: panels.size + 2000,
       });
     } else if (panel.zIndex > zIndex) {
       newPanels.set(uid, {

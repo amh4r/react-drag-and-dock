@@ -2,11 +2,10 @@ import React, { useLayoutEffect, useRef, useState } from 'react';
 import get from 'lodash/get';
 import PropTypes from 'prop-types';
 import ReactDOM from 'react-dom';
-import Draggable from 'react-draggable';
+import { Rnd } from 'react-rnd';
 
-import { checkMouseEventIntersectsElement } from './utils';
 import withContext from '../withContext';
-import { Handle, Root } from './styles';
+import { defaultComponents } from './components';
 
 function Panel(props) {
   const {
@@ -15,8 +14,8 @@ function Panel(props) {
     defaultHeight,
     defaultPosition,
     defaultWidth,
+    initialDockSection,
     initialDockUid,
-    renderTitleBar,
     styles,
     title,
     uid: propsUid,
@@ -25,13 +24,14 @@ function Panel(props) {
   const ref = useRef(null);
   const uidRef = useRef(propsUid);
   const [draggedOverDock, setDraggedOverDock] = useState(null);
+  const [hoverSectionOnDock, setHoverSectionOnDock] = useState(null);
   let uid = uidRef.current;
 
   const snapToInitialDock = () => {
     if (initialDockUid) {
-      const { snapPanelToDock } = context;
+      const { snapPanelToDockSection } = context;
 
-      snapPanelToDock(uid, initialDockUid);
+      snapPanelToDockSection(uid, initialDockUid, initialDockSection);
     }
   };
 
@@ -50,19 +50,21 @@ function Panel(props) {
     };
   }, []);
 
-  const getDraggedOverDock = (e) => {
+  const getDraggedOverDockAndSection = (e) => {
     const { docks } = context;
     let newDraggedOverDock = null;
+    let newHoverSectionOnDock = null;
 
     docks.forEach((dock) => {
-      const isMouseInsideDock = checkMouseEventIntersectsElement(e, dock.ref.current);
+      const { isOver = false, hoverSection = null } = dock.hover(e);
 
-      if (isMouseInsideDock) {
+      if (isOver) {
         newDraggedOverDock = dock;
+        newHoverSectionOnDock = hoverSection;
       }
     });
 
-    return newDraggedOverDock;
+    return { newDraggedOverDock, newHoverSectionOnDock };
   };
 
   const getPanel = () => {
@@ -72,29 +74,44 @@ function Panel(props) {
   };
 
   const handleDrag = (e) => {
-    const newDraggedOverDock = getDraggedOverDock(e);
+    const { previewPanelOnDock } = context;
+    const { newDraggedOverDock, newHoverSectionOnDock } = getDraggedOverDockAndSection(e);
 
     setDraggedOverDock(newDraggedOverDock);
+    setHoverSectionOnDock(newHoverSectionOnDock);
+
+    const dockUid = get(draggedOverDock, 'uid') || null;
+    /* TODO: Check performace impact. */
+    previewPanelOnDock(uid, dockUid, hoverSectionOnDock);
   };
 
   const handleDragStart = () => {
     const { snapPanelToDock } = context;
     const dockUid = null;
-
-    snapPanelToDock(uid, dockUid);
+    snapPanelToDock(uid, dockUid, false);
   };
 
   const handleDragStop = () => {
-    const { snapPanelToDock } = context;
+    const { snapPanelToDockSection } = context;
     const dockUid = get(draggedOverDock, 'uid') || null;
-
-    snapPanelToDock(uid, dockUid);
+    snapPanelToDockSection(uid, dockUid, hoverSectionOnDock);
   };
 
   const handleMouseDown = () => {
     const { movePanelToTopOfStack } = context;
 
     movePanelToTopOfStack(uid);
+  };
+
+  const handleResize = (e, direction, ref, delta, position) => {
+    let dimensions = getPanel().dimensions;
+    dimensions = {
+      ...dimensions,
+      ...position,
+      height: ref.offsetHeight,
+      width: ref.offsetWidth,
+    };
+    context.updatePanel(uid, { dimensions });
   };
 
   const portalTargetRef = context.panelsContainerRef;
@@ -107,6 +124,7 @@ function Panel(props) {
 
   const handleStyle = styles.handle || {};
   const rootStyle = styles.root || {};
+  let areaStyle = styles.area || {};
 
   const position = (() => {
     if (!panel || !panel.snappedDockUid) return null;
@@ -117,46 +135,73 @@ function Panel(props) {
     };
   })();
 
+  const enableResizing = (() => {
+    return {
+      top: panel.snappedDockUid === null,
+      right: panel.snappedDockUid === null,
+      bottom: panel.snappedDockUid === null,
+      left: panel.snappedDockUid === null,
+      topRight: panel.snappedDockUid === null,
+      bottomRight: panel.snappedDockUid === null,
+      bottomLeft: panel.snappedDockUid === null,
+      topLeft: panel.snappedDockUid === null,
+    };
+  })();
+
   const style = {
     ...rootStyle,
-    display: !panel || panel.isVisible ? 'block' : 'none',
+    display: !panel || panel.isVisible ? 'flex' : 'none',
     height: get(panel, 'dimensions.height') || defaultHeight,
     width: get(panel, 'dimensions.width') || defaultWidth,
     position: 'absolute',
     left: 0,
     top: 0,
     zIndex: panel.zIndex,
+    flexDirection: 'column',
   };
 
   const draggableClassName = 'handle';
+  const isDocked = panel.snappedDockUid !== null;
+  const { PanelArea, RootContainer, TitleBar } = defaultComponents(props);
 
   const contents = (
-    <Draggable
-      handle={`.${draggableClassName}`}
-      defaultPosition={defaultPosition}
+    <Rnd
+      dragHandleClassName={draggableClassName}
+      default={{
+        height: style.height,
+        width: style.width,
+        ...defaultPosition,
+      }}
+      size={{ height: style.height, width: style.width }}
+      resizeHandleStyles={{
+        bottom: { cursor: 'ns-resize' },
+        top: { cursor: 'ns-resize' },
+        left: { cursor: 'ew-resize' },
+        right: { cursor: 'ew-resize' },
+      }}
       position={position}
       onDrag={handleDrag}
       onMouseDown={handleMouseDown}
-      onStart={handleDragStart}
-      onStop={handleDragStop}
+      onDragStart={handleDragStart}
+      onDragStop={handleDragStop}
+      onResize={handleResize}
+      enableResizing={enableResizing}
+      ref={ref}
+      // bounds="window"
+      style={{ zIndex: panel.zIndex, visibility: !panel || panel.isVisible ? 'visible' : 'hidden' }}
     >
-      <Root ref={ref} style={style}>
-        {renderTitleBar &&
-          renderTitleBar({
-            draggableClassName,
-            styles: handleStyle,
-            title,
-          })}
-
-        {!renderTitleBar && (
-          <Handle className={draggableClassName} style={{ ...handleStyle }}>
-            {title}
-          </Handle>
-        )}
-
-        <div>{children}</div>
-      </Root>
-    </Draggable>
+      <RootContainer isDocked={isDocked} style={style}>
+        <TitleBar
+          isDocked={isDocked}
+          draggableClassName={draggableClassName}
+          style={handleStyle}
+          title={title}
+        />
+        <PanelArea isDocked={isDocked} style={areaStyle}>
+          {children}
+        </PanelArea>
+      </RootContainer>
+    </Rnd>
   );
 
   return ReactDOM.createPortal(contents, portalTargetRef.current);
@@ -171,15 +216,22 @@ Panel.propTypes = {
     registerPanel: PropTypes.func.isRequired,
     snapPanelToDock: PropTypes.func.isRequired,
   }).isRequired,
-  defaultHeight: PropTypes.number,
+  defaultHeight: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   defaultPosition: PropTypes.shape({
     x: PropTypes.number.isRequired,
     y: PropTypes.number.isRequired,
   }),
-  defaultWidth: PropTypes.number,
+  components: PropTypes.shape({
+    RootContainer: PropTypes.func,
+    TitleBar: PropTypes.func,
+    PanelArea: PropTypes.func,
+  }),
+  defaultWidth: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  initialDockSection: PropTypes.string,
   initialDockUid: PropTypes.string,
   renderTitleBar: PropTypes.func,
   styles: PropTypes.shape({
+    area: PropTypes.object,
     handle: PropTypes.object,
     root: PropTypes.object,
   }),
@@ -188,8 +240,8 @@ Panel.propTypes = {
 };
 
 Panel.defaultProps = {
-  defaultHeight: null,
-  defaultWidth: null,
+  defaultHeight: '60',
+  defaultWidth: '120',
   defaultPosition: undefined,
   initialDockUid: null,
   renderTitleBar: null,

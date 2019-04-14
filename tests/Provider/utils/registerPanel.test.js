@@ -12,7 +12,7 @@ it('Register 1 panel', () => {
     dimensions: { height: null, width: null, x: null, y: null },
     isVisible: true,
     snappedDockUid: null,
-    zIndex: 1,
+    zIndex: 2001,
   });
 });
 
@@ -29,7 +29,7 @@ it('Register 2 panels', () => {
     dimensions: { height: null, width: null, x: null, y: null },
     isVisible: true,
     snappedDockUid: null,
-    zIndex: 1,
+    zIndex: 2001,
   });
 
   panel = panels.get('panel-2');
@@ -38,7 +38,7 @@ it('Register 2 panels', () => {
     dimensions: { height: null, width: null, x: null, y: null },
     isVisible: true,
     snappedDockUid: null,
-    zIndex: 2,
+    zIndex: 2002,
   });
 });
 

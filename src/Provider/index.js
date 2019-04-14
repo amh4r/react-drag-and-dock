@@ -8,9 +8,11 @@ import {
   changeDockActivePanel,
   getPanelDimensions,
   movePanelToTopOfStack,
+  previewPanelOnDock,
   registerDock,
   registerPanel,
   snapPanelToDock,
+  snapPanelToDockSection,
   unregisterPanel,
   updateDock,
   updatePanel,
@@ -51,9 +53,10 @@ class Provider extends Component {
   handleDockPositionChanges = () => {
     this.docks.forEach((dock, dockUid) => {
       const prevDockPosition = this.dockPositions.get(dockUid);
-      const { x, y } = dock.ref.current.getBoundingClientRect();
+      const { x, y, height } = dock.ref.current.getBoundingClientRect();
 
       const newDockPosition = {
+        height,
         x: x + window.scrollX,
         y: y + window.scrollY,
       };
@@ -62,7 +65,11 @@ class Provider extends Component {
         this.dockPositions.set(dockUid, newDockPosition);
 
         dock.panels.forEach((dockPanel, dockPanelUid) => {
-          const newPanelDimensions = getPanelDimensions({ dock });
+          const panel = this.panels.get(dockPanelUid);
+          const newPanelDimensions = getPanelDimensions({
+            dock,
+            dockSection: panel.dockSection,
+          });
 
           const newPanelData = {
             dimensions: newPanelDimensions,
@@ -185,6 +192,24 @@ class Provider extends Component {
     });
   };
 
+  snapPanelToDockSection = (panelUid, dockUid, dockSection) => {
+    const { newDocks, newPanels } = snapPanelToDockSection({
+      docks: this.docks,
+      dockUid,
+      panels: this.panels,
+      panelUid,
+      dockSection,
+    });
+
+    this.docks = newDocks;
+    this.panels = newPanels;
+
+    this.setState({
+      docks: this.docks,
+      panels: this.panels,
+    });
+  };
+
   movePanelToTopOfStack = (panelUid) => {
     this.panels = movePanelToTopOfStack({
       panels: this.panels,
@@ -196,30 +221,51 @@ class Provider extends Component {
     });
   };
 
+  previewPanelOnDock = (panelUid, dockUid, hoverSectionOnDock) => {
+    const { newDocks, newPanels } = previewPanelOnDock({
+      dockUid,
+      hoverSectionOnDock,
+      panelUid,
+      docks: this.docks,
+      panels: this.panels,
+    });
+
+    this.docks = newDocks;
+    this.panels = newPanels;
+    this.setState({ docks: this.docks, panels: this.panels });
+  };
+
   render() {
     const { children } = this.props;
     const { panels, docks } = this.state;
 
     const contextValue = {
       docks,
+      handlePanelDrag: this.handlePanelDrag,
       movePanelToTopOfStack: this.movePanelToTopOfStack,
       panels,
       panelsContainerRef: this.panelsContainerRef,
       panelTabsContainerRef: this.panelTabsContainerRef,
+      previewPanelOnDock: this.previewPanelOnDock,
       provider: this,
       registerPanel: this.registerPanel,
       registerDock: this.registerDock,
       setDockActivePanel: this.setDockActivePanel,
       snapPanelToDock: this.snapPanelToDock,
+      snapPanelToDockSection: this.snapPanelToDockSection,
       unregisterDock: this.unregisterDock,
       unregisterPanel: this.unregisterPanel,
       updateDock: this.updateDock,
+      updatePanel: this.updatePanel,
     };
 
     return (
       <Context.Provider value={contextValue}>
         {ReactDOM.createPortal(<div ref={this.panelTabsContainerRef} />, document.body)}
-        {ReactDOM.createPortal(<div ref={this.panelsContainerRef} />, document.body)}
+        {ReactDOM.createPortal(
+          <div ref={this.panelsContainerRef} style={{ position: 'absolute', top: 0, left: 0 }} />,
+          document.body,
+        )}
         {children}
       </Context.Provider>
     );
