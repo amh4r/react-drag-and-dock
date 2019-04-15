@@ -110,11 +110,11 @@ function Dock(props) {
       y:
         dockRect.y +
         window.scrollY +
-        (tabLocation === 'bottom' ? dockRect.height - dock.panelTabsHeight + 2 : 0),
+        (tabLocation === 'bottom' ? dockRect.height - dock.panelTabsHeight : 0),
     };
   })();
 
-  const width = dockRect ? dockRect.width - 2 : null;
+  const width = dockRect ? dockRect.width : null;
 
   return (
     <Fragment>
@@ -123,7 +123,7 @@ function Dock(props) {
           activePanelUid={activePanelUid}
           components={components}
           dockRef={ref}
-          height={dock.panelTabsHeight + 1}
+          height={dock.panelTabsHeight}
           panels={panels}
           portalTargetRef={panelTabsContainerRef}
           position={position}

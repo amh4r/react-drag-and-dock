@@ -8,7 +8,7 @@ const getPanelDimensions = ({ dock, dockSection, panelTabsVisible }) => {
   const dockRect = dock.ref.current.getBoundingClientRect();
 
   const height = dockRect.height - panelTabsOffset;
-  const width = dockRect.width - 2;
+  const { width } = dockRect;
   const x = dockRect.x + window.scrollX;
   const y = dockRect.y + window.scrollY + (tabLocation === 'bottom' ? 0 : panelTabsOffset);
 
