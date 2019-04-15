@@ -27,14 +27,6 @@ function Panel(props) {
   const [hoverSectionOnDock, setHoverSectionOnDock] = useState(null);
   let uid = uidRef.current;
 
-  const snapToInitialDock = () => {
-    if (initialDockUid) {
-      const { snapPanelToDockSection } = context;
-
-      snapPanelToDockSection(uid, initialDockUid, initialDockSection);
-    }
-  };
-
   useLayoutEffect(() => {
     uid = context.registerPanel(uid, {
       props,
@@ -50,7 +42,7 @@ function Panel(props) {
     };
   }, []);
 
-  const getDraggedOverDockAndSection = (e) => {
+  function getDraggedOverDockAndSection(e) {
     const { docks } = context;
     let newDraggedOverDock = null;
     let newHoverSectionOnDock = null;
@@ -65,15 +57,15 @@ function Panel(props) {
     });
 
     return { newDraggedOverDock, newHoverSectionOnDock };
-  };
+  }
 
-  const getPanel = () => {
+  function getPanel() {
     const panel = context.panels.get(uid);
 
     return panel;
-  };
+  }
 
-  const handleDrag = (e) => {
+  function handleDrag(e) {
     const { previewPanelOnDock } = context;
     const { newDraggedOverDock, newHoverSectionOnDock } = getDraggedOverDockAndSection(e);
 
@@ -83,27 +75,27 @@ function Panel(props) {
     const dockUid = get(draggedOverDock, 'uid') || null;
     /* TODO: Check performace impact. */
     previewPanelOnDock(uid, dockUid, hoverSectionOnDock);
-  };
+  }
 
-  const handleDragStart = () => {
+  function handleDragStart() {
     const { snapPanelToDock } = context;
     const dockUid = null;
     snapPanelToDock(uid, dockUid);
-  };
+  }
 
-  const handleDragStop = () => {
+  function handleDragStop() {
     const { snapPanelToDockSection } = context;
     const dockUid = get(draggedOverDock, 'uid') || null;
     snapPanelToDockSection(uid, dockUid, hoverSectionOnDock);
-  };
+  }
 
-  const handleMouseDown = () => {
+  function handleMouseDown() {
     const { movePanelToTopOfStack } = context;
 
     movePanelToTopOfStack(uid);
-  };
+  }
 
-  const handleResize = (e, direction, ref, delta, position) => {
+  function handleResize(e, direction, ref, delta, position) {
     let dimensions = getPanel().dimensions;
     dimensions = {
       ...dimensions,
@@ -112,7 +104,15 @@ function Panel(props) {
       width: ref.offsetWidth,
     };
     context.updatePanel(uid, { dimensions });
-  };
+  }
+
+  function snapToInitialDock() {
+    if (initialDockUid) {
+      const { snapPanelToDockSection } = context;
+
+      snapPanelToDockSection(uid, initialDockUid, initialDockSection);
+    }
+  }
 
   const portalTargetRef = context.panelsContainerRef;
 
@@ -124,7 +124,7 @@ function Panel(props) {
 
   const handleStyle = styles.handle || {};
   const rootStyle = styles.root || {};
-  let areaStyle = styles.area || {};
+  const areaStyle = styles.area || {};
 
   const position = (() => {
     if (!panel || !panel.snappedDockUid) return null;

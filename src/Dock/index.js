@@ -12,7 +12,29 @@ function Dock(props) {
   const uidRef = useRef(propsUid);
   let uid = uidRef.current;
 
-  const hover = (mouseEvent) => {
+  useLayoutEffect(() => {
+    uid = context.registerDock(uid, {
+      props,
+      ref,
+      hover,
+    });
+
+    uidRef.current = uid;
+
+    const { parentNode } = ref.current;
+
+    const resizeObserver = new ResizeObserver(() => {
+      context.updateDock(uid, props);
+    });
+
+    resizeObserver.observe(parentNode);
+
+    return () => {
+      context.unregisterDock(uidRef.current);
+    };
+  }, []);
+
+  function hover(mouseEvent) {
     const dock = getDock();
     const element = dock.ref.current;
     let hoverSection = null;
@@ -41,49 +63,27 @@ function Dock(props) {
     }
 
     return { isOver, hoverSection };
-  };
+  }
 
-  useLayoutEffect(() => {
-    uid = context.registerDock(uid, {
-      props,
-      ref,
-      hover,
-    });
-
-    uidRef.current = uid;
-
-    const { parentNode } = ref.current;
-
-    const resizeObserver = new ResizeObserver(() => {
-      context.updateDock(uid, props);
-    });
-
-    resizeObserver.observe(parentNode);
-
-    return () => {
-      context.unregisterDock(uidRef.current);
-    };
-  }, []);
-
-  const getDock = () => {
+  function getDock() {
     const dock = context.provider.docks.get(uid);
 
     return dock;
-  };
+  }
 
-  const getPanels = () => {
+  function getPanels() {
     const dock = getDock();
 
     if (!dock) return new Map();
 
     return dock.panels;
-  };
+  }
 
-  const handleTabClick = (panelUid) => {
+  function handleTabClick(panelUid) {
     const { setDockActivePanel } = context;
 
     setDockActivePanel(uid, panelUid);
-  };
+  }
 
   const { panelTabsContainerRef } = context;
   const dock = getDock();
@@ -115,6 +115,7 @@ function Dock(props) {
   })();
 
   const width = dockRect ? dockRect.width - 2 : null;
+
   return (
     <Fragment>
       {arePanelTabsVisible && (

@@ -19,6 +19,7 @@
     "max-params": "warn",
     "no-param-reassign": "warn",
     "no-underscore-dangle": "off",
+    "no-use-before-define": "off",
     "prefer-destructuring": "warn",
     "react/destructuring-assignment": "warn",
     "react/forbid-prop-types": "warn",

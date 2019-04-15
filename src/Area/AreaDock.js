@@ -13,9 +13,11 @@ function AreaDock(props) {
     tabLocation,
     width,
   } = props;
+
   const uidRef = useRef(location);
   const uid = uidRef.current;
   const Container = RootContainer || DockContainer;
+
   return (
     <Context.Consumer>
       {(context) => {
