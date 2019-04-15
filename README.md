@@ -193,8 +193,10 @@ const App = () => {
     </tbody>
 </table>
 
-##### `Replacing components`
-Default components can be replaced by using the `components` property. These components are given all the props they required. 
+#### Replacing components
+
+Default components can be replaced by using the `components` property. These components are given all the props they required.
+
 ```$js
 {
     DockContainer: (props: ({hasPanels, location, width, isOver})) => (),
@@ -304,8 +306,10 @@ Default components can be replaced by using the `components` property. These com
     </tbody>
 </table>
 
-##### `Replacing components`
-Default components can be replaced by using the `components` property. These components are given all the props they required. 
+### Replacing components
+
+Default components can be replaced by using the `components` property. These components are given all the props they required.
+
 ```$js
 {
     RootContainer: (props: ({isDocked, style})) => (),
@@ -359,10 +363,3 @@ Default components can be replaced by using the `components` property. These com
     </tr>
    </tbody>
 </table>
-
-# Development
-
-1. Run `npm start` to watch the `src` files and launch the sandbox server at http://localhost:3010.
-2. Change source code in `src` folder.
-3. Change sandbox code in `sandbox/src` folder.
-    - Don't edit the files in `sandbox/src/DragAndDock`. The `src` folder is copied into in on change.
